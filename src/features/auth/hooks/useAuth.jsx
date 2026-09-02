@@ -16,6 +16,12 @@ const useAuth = () => {
   const handleLoginSubmit = (credentials) => {
     handleLogin(credentials);
   };
+  const handleRegister = (data) => {
+    console.log("Register data:", data);
+  };
+  const handleRegisterSubmit = (data) => {
+    handleRegister(data);
+  }
   const loading = useSelector((state) => state.auth.Loading);
 
   return {
@@ -24,6 +30,7 @@ const useAuth = () => {
     handleSubmit,
     loading,
     errors,
+    handleRegisterSubmit,
   };
 };
 

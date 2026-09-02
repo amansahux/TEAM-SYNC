@@ -1,13 +1,10 @@
-import { useForm } from "react-hook-form";
 import { User, Mail, Lock, ShieldCheck, Network } from "lucide-react";
 import { Link } from "react-router";
+import useAuth from "../hooks/useAuth";
 
 export default function Signup() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+  const { register, handleSubmit, errors, loading, handleRegisterSubmit } =
+    useAuth();
 
   const onSubmit = (data) => {
     console.log(data);
@@ -69,7 +66,7 @@ export default function Signup() {
               Experience the future of collaborative data intelligence.
             </p>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={handleSubmit(handleRegisterSubmit)} className="space-y-6">
               {/* Full Name */}
               <div>
                 <label className="block mb-2 text-sm text-zinc-300">
@@ -200,7 +197,10 @@ export default function Signup() {
 
             <p className="text-center text-zinc-400 mt-10">
               Already have an account?{" "}
-              <Link to="/" className="text-violet-300 font-medium cursor-pointer">
+              <Link
+                to="/"
+                className="text-violet-300 font-medium cursor-pointer"
+              >
                 Log In
               </Link>
             </p>

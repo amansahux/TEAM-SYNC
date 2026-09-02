@@ -1,6 +1,6 @@
 import React from 'react'
 import { useDispatch } from "react-redux";
-import {toggleTheme} from "../../../shared/state/Theme.slice.jsx";
+import {toggleTheme} from "../../../../shared/state/Theme.slice.jsx";
 
 const Home = () => {
     const dispatch = useDispatch();

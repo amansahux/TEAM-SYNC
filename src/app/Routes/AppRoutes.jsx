@@ -4,7 +4,7 @@ import AuthLayout from "../Layout/AuthLayout";
 import Login from "../../features/auth/pages/Login";
 import Register from "../../features/auth/pages/Register";
 import DashboardLayout from "../Layout/DashboardLayout";
-import Home from "../../features/dashboard/pages/Home";
+import Home from "../../features/dashboard/ui/pages/Home";
 import { useDispatch } from "react-redux";
 import { getCurrentEmployee } from "../../features/auth/state/auth/AuthAction";
 import ProtectedRoutes from "../proectedRoutes/ProtectedRoutes";
@@ -12,7 +12,7 @@ import PublicRoutes from "../proectedRoutes/PublicRoutes";
 
 const AppRoutes = () => {
 
-  
+
   const dispatch = useDispatch();
   useEffect(() => {
     (() => {

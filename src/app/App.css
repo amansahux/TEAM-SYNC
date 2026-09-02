@@ -1,0 +1,152 @@
+@import "tailwindcss";
+/* =========================
+   DARK THEME (DEFAULT)
+   ========================= */
+:root {
+  /* Brand */
+  --primary: #8069bf;
+  --primary-hover: #9178d4;
+  --primary-light: #bca9f5;
+  --primary-foreground: #ffffff;
+
+  /* Secondary */
+  --secondary: #7c7296;
+  --secondary-hover: #9086ab;
+  --secondary-foreground: #ffffff;
+
+  /* Accent / Tertiary */
+  --accent: #c9a74d;
+  --accent-hover: #ddb85a;
+  --accent-foreground: #1a1405;
+
+  /* Status */
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+
+  /* Backgrounds */
+  --background: #0f0d15;
+  --background-secondary: #17141f;
+  --background-tertiary: #1f1a2b;
+
+  /* Cards */
+  --card: #1a1722;
+  --card-hover: #221d2d;
+  --card-elevated: #272132;
+
+  /* Inputs */
+  --input: #201c2a;
+  --input-border: #342d44;
+  --input-focus: #8069bf;
+
+  /* Text */
+  --text-primary: #f5f3ff;
+  --text-secondary: #b8b3c7;
+  --text-muted: #8c8799;
+  --text-disabled: #666170;
+
+  /* Borders */
+  --border: #2f2a3b;
+  --border-light: #403a4f;
+
+  /* Navigation */
+  --navbar: #16131e;
+  --sidebar: #16131e;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.45);
+
+  /* Glows */
+  --glow-primary: 0 0 30px rgba(128, 105, 191, 0.35);
+  --glow-accent: 0 0 30px rgba(201, 167, 77, 0.25);
+
+  /* Charts */
+  --chart-1: #8069bf;
+  --chart-2: #a58be7;
+  --chart-3: #c9a74d;
+  --chart-4: #22c55e;
+  --chart-5: #ef4444;
+}
+
+/* =========================
+   LIGHT THEME
+   ========================= */
+
+.light {
+  /* Brand */
+  --primary: #6366f1;
+  --primary-hover: #4f46e5;
+  --primary-light: #c7d2fe;
+  --primary-foreground: #ffffff;
+
+  /* Secondary */
+  --secondary: #64748b;
+  --secondary-hover: #475569;
+  --secondary-foreground: #ffffff;
+
+  /* Accent */
+  --accent: #b95f00;
+  --accent-hover: #d97706;
+  --accent-foreground: #ffffff;
+
+  /* Status */
+  --success: #16a34a;
+  --warning: #f59e0b;
+  --danger: #dc2626;
+  --info: #2563eb;
+
+  /* Backgrounds */
+  --background: #f8f9fc;
+  --background-secondary: #ffffff;
+  --background-tertiary: #f1f5f9;
+
+  /* Cards */
+  --card: #ffffff;
+  --card-hover: #f8fafc;
+  --card-elevated: #ffffff;
+
+  /* Inputs */
+  --input: #ffffff;
+  --input-border: #d7dce5;
+  --input-focus: #6366f1;
+
+  /* Text */
+  --text-primary: #18181b;
+  --text-secondary: #52525b;
+  --text-muted: #71717a;
+  --text-disabled: #a1a1aa;
+
+  /* Borders */
+  --border: #e4e4e7;
+  --border-light: #d4d4d8;
+
+  /* Navigation */
+  --navbar: #ffffff;
+  --sidebar: #ffffff;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.1);
+  --shadow-lg: 0 12px 30px rgba(0,0,0,.12);
+
+  /* Glows */
+  --glow-primary: 0 0 25px rgba(99,102,241,.15);
+  --glow-accent: 0 0 25px rgba(185,95,0,.12);
+
+  /* Charts */
+  --chart-1: #6366f1;
+  --chart-2: #8b5cf6;
+  --chart-3: #f59e0b;
+  --chart-4: #22c55e;
+  --chart-5: #ef4444;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  transition: background-color 0.3s, color 0.3s;
+}

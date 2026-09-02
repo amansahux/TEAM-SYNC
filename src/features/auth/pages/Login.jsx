@@ -3,7 +3,7 @@ import useAuth from "../hooks/useAuth";
 import { Link } from "react-router";
 
 export default function Login() {
-  const { handleSubmit, register, errors, handleLoginSubmit, loading } =
+  const { handleSubmit, register, errors, handleLogin, loading } =
     useAuth();
   return (
     <div className="min-h-screen bg-[#090711] relative overflow-hidden flex items-center justify-center px-4">
@@ -61,7 +61,7 @@ export default function Login() {
 
           {/* Form */}
           <form
-            onSubmit={handleSubmit(handleLoginSubmit)}
+            onSubmit={handleSubmit(handleLogin)}
             className="space-y-5"
           >
             <div>

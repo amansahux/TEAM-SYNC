@@ -13,24 +13,18 @@ const useAuth = () => {
   const handleLogin = (credentials) => {
     dispatch(LoginEmployee(credentials));
   };
-  const handleLoginSubmit = (credentials) => {
-    handleLogin(credentials);
-  };
   const handleRegister = (data) => {
     console.log("Register data:", data);
   };
-  const handleRegisterSubmit = (data) => {
-    handleRegister(data);
-  }
   const loading = useSelector((state) => state.auth.Loading);
 
   return {
-    handleLoginSubmit,
     register,
     handleSubmit,
     loading,
     errors,
-    handleRegisterSubmit,
+    handleRegister,
+    handleLogin
   };
 };
 

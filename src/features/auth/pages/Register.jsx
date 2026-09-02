@@ -3,15 +3,22 @@ import { Link } from "react-router";
 import useAuth from "../hooks/useAuth";
 
 export default function Signup() {
-  const { register, handleSubmit, errors, loading, handleRegisterSubmit } =
-    useAuth();
-
-  const onSubmit = (data) => {
-    console.log(data);
-  };
+  const {
+    register,
+    handleSubmit,
+    errors,
+    loading,
+    handleRegister,
+  } = useAuth();
 
   return (
     <div className="min-h-screen bg-[#07050E] text-white flex flex-col">
+      {loading && (
+        <div className=" absolute inset-0 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
+          <div className="w-16 h-16 border-4 border-violet-600 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
+
       {/* Main */}
       <div className="flex-1 flex flex-col lg:flex-row">
         {/* Left Side */}
@@ -66,7 +73,7 @@ export default function Signup() {
               Experience the future of collaborative data intelligence.
             </p>
 
-            <form onSubmit={handleSubmit(handleRegisterSubmit)} className="space-y-6">
+            <form onSubmit={handleSubmit(handleRegister)} className="space-y-6">
               {/* Full Name */}
               <div>
                 <label className="block mb-2 text-sm text-zinc-300">

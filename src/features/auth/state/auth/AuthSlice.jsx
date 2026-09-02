@@ -28,7 +28,7 @@ const authSlice = createSlice({
       })
       .addCase(LoginEmployee.rejected, (state, action) => {
         state.Loading = false;
-        state.error = action.payload;
+        state.error = action.payload.message;
       })
       .addCase(getCurrentEmployee.pending, (state) => {
         state.Loading = true;
@@ -40,7 +40,7 @@ const authSlice = createSlice({
       })
       .addCase(getCurrentEmployee.rejected, (state, action) => {
         state.Loading = false;
-        state.error = action.payload;
+        state.error = action.payload.message;
       });
   },
 });

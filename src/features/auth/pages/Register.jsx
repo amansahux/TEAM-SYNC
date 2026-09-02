@@ -6,18 +6,12 @@ export default function Signup() {
   const {
     register,
     handleSubmit,
-    errors,
-    loading,
     handleRegister,
+    errors
   } = useAuth();
 
   return (
     <div className="min-h-screen bg-[#07050E] text-white flex flex-col">
-      {loading && (
-        <div className=" absolute inset-0 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
-          <div className="w-16 h-16 border-4 border-violet-600 border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      )}
 
       {/* Main */}
       <div className="flex-1 flex flex-col lg:flex-row">

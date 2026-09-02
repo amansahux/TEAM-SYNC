@@ -3,19 +3,13 @@ import useAuth from "../hooks/useAuth";
 import { Link } from "react-router";
 
 export default function Login() {
-  const { handleSubmit, register, errors, handleLogin, loading } =
+  const { handleSubmit, register, handleLogin , errors} =
     useAuth();
   return (
     <div className="min-h-screen bg-[#090711] relative overflow-hidden flex items-center justify-center px-4">
       {/* Background Glow */}
       <div className="absolute left-[-200px] bottom-[-200px] h-[500px] w-[500px] rounded-full bg-violet-700/10 blur-[120px]" />
       <div className="absolute right-[-150px] top-[-150px] h-[400px] w-[400px] rounded-full bg-indigo-700/10 blur-[120px]" />
-
-      {loading && (
-        <div className=" absolute inset-0 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
-          <div className="w-16 h-16 border-4 border-violet-600 border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      )}
 
       {/* Floating Decoration */}
       <div className="hidden lg:block absolute bottom-20 right-20">

@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getCurrentEmployee, LoginEmployee } from "./AuthAction";
+import { getCurrentEmployee, LoginEmployee, LogoutEmployee } from "./AuthAction";
 
 const authSlice = createSlice({
   name: "auth",
@@ -39,6 +39,18 @@ const authSlice = createSlice({
         state.employee = action.payload;
       })
       .addCase(getCurrentEmployee.rejected, (state, action) => {
+        state.Loading = false;
+        state.error = action.payload.message;
+      })
+      .addCase(LogoutEmployee.pending, (state) => {
+        state.Loading = true;
+        state.error = null;
+      })
+      .addCase(LogoutEmployee.fulfilled, (state) => {
+        state.Loading = false;
+        state.employee = null;
+      })
+      .addCase(LogoutEmployee.rejected, (state, action) => {
         state.Loading = false;
         state.error = action.payload.message;
       });

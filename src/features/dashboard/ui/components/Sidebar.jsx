@@ -1,0 +1,97 @@
+import React from "react";
+import {
+  CheckSquare,
+  Grid2X2,
+  LogOut,
+  MessageSquare,
+  Plus,
+  Settings,
+  Users,
+  X,
+} from "lucide-react";
+
+const navigationItems = [
+  { label: "Dashboard", icon: Grid2X2 },
+  { label: "Tasks", icon: CheckSquare },
+  { label: "Team", icon: Users },
+  { label: "Chat", icon: MessageSquare },
+  { label: "Settings", icon: Settings },
+];
+
+
+const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
+  return (
+    <>
+      {isSidebarOpen && (
+        <button
+          type="button"
+          aria-label="Close sidebar"
+          className="fixed inset-0 z-30 bg-black/50 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      <aside
+        className={`fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-[var(--border)] bg-[var(--sidebar)] px-3 py-5 shadow-[var(--shadow-lg)] transition-transform duration-300 lg:translate-x-0 lg:shadow-none ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="flex items-start justify-between px-3 pb-8">
+          <div>
+            <p className="text-lg font-bold leading-none text-[var(--primary)]">
+              TEAM SYNC
+            </p>
+            <p className="mt-1 text-[10px] font-medium tracking-wide text-[var(--text-secondary)]">
+              Enterprise Workspace
+            </p>
+          </div>
+          <button
+            type="button"
+            aria-label="Close navigation"
+            className="rounded-md p-1 text-[var(--text-muted)] hover:bg-[var(--card-hover)] hover:text-[var(--text-primary)] lg:hidden"
+            onClick={() => setIsSidebarOpen(false)}
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        <nav aria-label="Main navigation" className="space-y-1">
+          {navigationItems.map(({ label, icon: Icon }, index) => (
+            <a
+              href="#"
+              key={label}
+              className={`flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
+                index === 0
+                  ? "bg-[var(--primary)]/20 text-[var(--primary)]"
+                  : "text-[var(--text-secondary)] hover:bg-[var(--card-hover)] hover:text-[var(--text-primary)]"
+              }`}
+              onClick={() => setIsSidebarOpen(false)}
+            >
+              <Icon size={17} strokeWidth={1.8} />
+              {label}
+            </a>
+          ))}
+        </nav>
+
+        <div className="mt-auto space-y-3 border-t border-[var(--border)] pt-4">
+          <button
+            type="button"
+            className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-[var(--primary-foreground)] shadow-[var(--glow-primary)] transition-colors hover:bg-[var(--primary-hover)]"
+          >
+            <Plus size={17} />
+            New Task
+          </button>
+          <button
+            type="button"
+            className="group cursor-pointer flex w-full items-center justify-center gap-2 rounded-md border border-[var(--accent)]/35 bg-[var(--accent)]/10 px-4 py-2.5 text-sm font-semibold text-[var(--accent)] shadow-[var(--glow-accent)] transition-all hover:border-[var(--accent)] hover:bg-[var(--accent)]/20 hover:text-[var(--accent-hover)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/40"
+          >
+            <LogOut size={17} className="transition-transform group-hover:-translate-x-0.5" />
+            Log out
+          </button>
+        </div>
+      </aside>
+    </>
+  );
+};
+
+export default Sidebar

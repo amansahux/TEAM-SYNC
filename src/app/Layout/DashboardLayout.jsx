@@ -5,11 +5,11 @@ import {
   Bell,
   CheckSquare,
   Grid2X2,
+  LogOut,
   Menu,
   MessageSquare,
   Plus,
   Settings,
-  Sparkles,
   Users,
   X,
 } from "lucide-react";
@@ -87,13 +87,22 @@ const DashboardLayout = () => {
           ))}
         </nav>
 
-        <button
-          type="button"
-          className="mt-auto flex items-center justify-center gap-2 rounded-md bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-[var(--primary-foreground)] shadow-[var(--glow-primary)] transition-colors hover:bg-[var(--primary-hover)]"
-        >
-          <Plus size={17} />
-          New Task
-        </button>
+        <div className="mt-auto space-y-3 border-t border-[var(--border)] pt-4">
+          <button
+            type="button"
+            className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-[var(--primary-foreground)] shadow-[var(--glow-primary)] transition-colors hover:bg-[var(--primary-hover)]"
+          >
+            <Plus size={17} />
+            New Task
+          </button>
+          <button
+            type="button"
+            className="group cursor-pointer flex w-full items-center justify-center gap-2 rounded-md border border-[var(--accent)]/35 bg-[var(--accent)]/10 px-4 py-2.5 text-sm font-semibold text-[var(--accent)] shadow-[var(--glow-accent)] transition-all hover:border-[var(--accent)] hover:bg-[var(--accent)]/20 hover:text-[var(--accent-hover)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/40"
+          >
+            <LogOut size={17} className="transition-transform group-hover:-translate-x-0.5" />
+            Log out
+          </button>
+        </div>
       </aside>
 
       <section className="min-h-screen lg:pl-64">

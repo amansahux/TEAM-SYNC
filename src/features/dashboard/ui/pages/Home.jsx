@@ -11,7 +11,7 @@ const Home = () => {
   return (
     <div>
     
-   <h1>I m Home.jsx inside dashboard</h1>
+   <h1>I m Home.jsx inside dashboard at the pace of Outlet</h1>
     <h3 onClick={handleChangeTheme}>Change Theme</h3>  
     </div>
   )

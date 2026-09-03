@@ -14,8 +14,11 @@ const DashboardLayout = () => {
 
   return (
     <main>
-      <nav>This is Navbar</nav>
-      <Outlet />
+      <aside>sidebar</aside>
+      <section>
+        <nav>top navbar</nav>
+        <Outlet />
+      </section>
     </main>
   );
 };

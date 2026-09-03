@@ -9,6 +9,7 @@ import {
   Users,
   X,
 } from "lucide-react";
+import { useDashboard } from "../../hooks/useDashboard";
 
 const navigationItems = [
   { label: "Dashboard", icon: Grid2X2 },
@@ -18,8 +19,8 @@ const navigationItems = [
   { label: "Settings", icon: Settings },
 ];
 
-
 const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
+  const { handleLogout } = useDashboard();
   return (
     <>
       {isSidebarOpen && (
@@ -82,10 +83,14 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
             New Task
           </button>
           <button
+            onClick={handleLogout}
             type="button"
             className="group cursor-pointer flex w-full items-center justify-center gap-2 rounded-md border border-[var(--accent)]/35 bg-[var(--accent)]/10 px-4 py-2.5 text-sm font-semibold text-[var(--accent)] shadow-[var(--glow-accent)] transition-all hover:border-[var(--accent)] hover:bg-[var(--accent)]/20 hover:text-[var(--accent-hover)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/40"
           >
-            <LogOut size={17} className="transition-transform group-hover:-translate-x-0.5" />
+            <LogOut
+              size={17}
+              className="transition-transform group-hover:-translate-x-0.5"
+            />
             Log out
           </button>
         </div>
@@ -94,4 +99,4 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
   );
 };
 
-export default Sidebar
+export default Sidebar;

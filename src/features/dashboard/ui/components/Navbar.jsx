@@ -3,10 +3,14 @@ import {
   Bell,
   Grid2X2,
   Menu,
+  Moon,
+  Sun,
 } from "lucide-react";
+
+
 import { useDashboard } from '../../hooks/useDashboard';
 const Navbar = ({ setIsSidebarOpen }) => {
-    const {Loading , initials } = useDashboard();
+    const {Loading , initials, handleChangeTheme , theme} = useDashboard();
 
 
   return (
@@ -33,6 +37,14 @@ const Navbar = ({ setIsSidebarOpen }) => {
           </div>
 
           <div className="ml-auto flex items-center gap-2 sm:gap-4">
+            <button
+            onClick={handleChangeTheme}
+              type="button"
+              aria-label="Notifications"
+              className="relative rounded-md p-2 cursor-pointer text-[var(--text-secondary)] hover:bg-[var(--card-hover)] hover:text-[var(--text-primary)]"
+            >
+             {theme !== "dark" ? <Moon size={18} /> : <Sun size={18} />}
+            </button>
             <button
               type="button"
               aria-label="Notifications"

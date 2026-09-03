@@ -150,3 +150,9 @@ body {
   font-family: 'Inter', sans-serif;
   transition: background-color 0.3s, color 0.3s;
 }
+
+button,
+a,
+input {
+  -webkit-tap-highlight-color: transparent;
+}

@@ -1,11 +1,7 @@
-import React from 'react'
+import React from "react";
 
-const Page = () => {
-  return (
-    <div>
-      This is Task Page in admin module
-    </div>
-  )
-}
+const Task = () => {
+  return <div>This is Task Page in admin module</div>;
+};
 
-export default Page
+export default Task;

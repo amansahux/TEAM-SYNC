@@ -9,6 +9,7 @@ import { useDispatch } from "react-redux";
 import { getCurrentEmployee } from "../../features/auth/state/auth/AuthAction";
 import ProtectedRoutes from "../proectedRoutes/ProtectedRoutes";
 import PublicRoutes from "../proectedRoutes/PublicRoutes";
+import { commonRoutes } from "./CommonRoutes";
 
 const AppRoutes = () => {
 
@@ -45,7 +46,7 @@ const AppRoutes = () => {
         {
           path: "",
           element: <DashboardLayout />,
-          children: [{ path: "", element: <Home /> }],
+          children:[...commonRoutes],
         },
       ],
     },

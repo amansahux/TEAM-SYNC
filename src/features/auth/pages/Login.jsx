@@ -1,10 +1,9 @@
 import { Mail, Lock, Cloud, LogIn, Network } from "lucide-react";
-import useAuth from "../hooks/useAuth";
+import useAuth, { loginSchema } from "../hooks/useAuth";
 import { Link } from "react-router";
 
 export default function Login() {
-  const { handleSubmit, register, handleLogin , errors} =
-    useAuth();
+  const { handleSubmit, register, handleLogin, errors } = useAuth(loginSchema);
   return (
     <div className="min-h-screen bg-[#090711] relative overflow-hidden flex items-center justify-center px-4">
       {/* Background Glow */}
@@ -70,16 +69,16 @@ export default function Login() {
                 />
 
                 <input
-                  {...register("email", {
-                    required: "Email required",
-                  })}
+                  {...register("email")}
                   placeholder="name@company.com"
                   className="w-full h-12 rounded-xl bg-[#090711] border border-white/10 pl-11 pr-4 text-white outline-none focus:border-violet-500"
                 />
               </div>
 
               {errors?.email && (
-                <p className="text-red-400 text-sm mt-1">{errors.email}</p>
+                <p className="text-red-400 text-sm mt-1">
+                  {errors.email.message}
+                </p>
               )}
             </div>
 
@@ -102,13 +101,17 @@ export default function Login() {
 
                 <input
                   type="password"
-                  {...register("password", {
-                    required: "Password required",
-                  })}
+                  {...register("password")}
                   placeholder="••••••••"
                   className="w-full h-12 rounded-xl bg-[#090711] border border-white/10 pl-11 pr-4 text-white outline-none focus:border-violet-500"
                 />
               </div>
+
+              {errors?.password && (
+                <p className="mt-1 text-sm text-red-400">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
 
             {/* Remember Me */}

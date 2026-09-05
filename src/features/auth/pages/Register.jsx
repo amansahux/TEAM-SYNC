@@ -1,6 +1,6 @@
 import { User, Mail, Lock, ShieldCheck, Network } from "lucide-react";
 import { Link } from "react-router";
-import useAuth from "../hooks/useAuth";
+import useAuth, { registerSchema } from "../hooks/useAuth";
 
 export default function Signup() {
   const {
@@ -8,7 +8,7 @@ export default function Signup() {
     handleSubmit,
     handleRegister,
     errors
-  } = useAuth();
+  } = useAuth(registerSchema);
 
   return (
     <div className="min-h-screen bg-[#07050E] text-white flex flex-col">
@@ -81,9 +81,7 @@ export default function Signup() {
                   />
 
                   <input
-                    {...register("name", {
-                      required: "Name is required",
-                    })}
+                    {...register("name")}
                     placeholder="Enter your full name"
                     className="w-full bg-[#11101A] border border-white/10 rounded-xl h-14 pl-12 pr-4 outline-none focus:border-violet-500"
                   />
@@ -109,13 +107,17 @@ export default function Signup() {
                   />
 
                   <input
-                    {...register("email", {
-                      required: "Email is required",
-                    })}
+                    {...register("email")}
                     placeholder="name@company.com"
                     className="w-full bg-[#11101A] border border-white/10 rounded-xl h-14 pl-12 pr-4 outline-none focus:border-violet-500"
                   />
                 </div>
+
+                {errors.email && (
+                  <p className="mt-2 text-sm text-red-400">
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
 
               {/* Password */}
@@ -132,13 +134,17 @@ export default function Signup() {
 
                   <input
                     type="password"
-                    {...register("password", {
-                      required: "Password is required",
-                    })}
+                    {...register("password")}
                     placeholder="••••••••"
                     className="w-full bg-[#11101A] border border-white/10 rounded-xl h-14 pl-12 pr-4 outline-none focus:border-violet-500"
                   />
                 </div>
+
+                {errors.password && (
+                  <p className="mt-2 text-sm text-red-400">
+                    {errors.password.message}
+                  </p>
+                )}
 
                 {/* Password Strength */}
                 <div className="mt-4">

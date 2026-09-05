@@ -11,9 +11,12 @@ export const useDashboard = () => {
   const handleLogout = () => {
     dispatch(LogoutEmployee());
   };
+  // console.log(employee)
   const initials =
-    employee.user.name
+    (employee?.user?.name || "")
+      .trim()
       .split(/\s+/)
+      .filter(Boolean)
       .slice(0, 2)
       .map((namePart) => namePart.charAt(0).toUpperCase())
       .join("") || "?";

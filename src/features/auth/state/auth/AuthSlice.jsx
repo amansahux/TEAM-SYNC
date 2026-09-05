@@ -5,7 +5,9 @@ const authSlice = createSlice({
   name: "auth",
   initialState: {
     employee: null,
-    Loading: false,
+    isHydrating: true,
+    isLoggingIn: false,
+    isLoggingOut: false,
     error: null,
   },
   reducers: {
@@ -19,40 +21,41 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(LoginEmployee.pending, (state) => {
-        state.Loading = true;
+        state.isLoggingIn = true;
         state.error = null;
       })
       .addCase(LoginEmployee.fulfilled, (state, action) => {
-        state.Loading = false;
+        state.isLoggingIn = false;
         state.employee = action.payload;
       })
       .addCase(LoginEmployee.rejected, (state, action) => {
-        state.Loading = false;
-        state.error = action.payload.message;
+        state.isLoggingIn = false;
+        state.error = action.payload || action.error.message;
       })
       .addCase(getCurrentEmployee.pending, (state) => {
-        state.Loading = true;
+        state.isHydrating = true;
         state.error = null;
       })
       .addCase(getCurrentEmployee.fulfilled, (state, action) => {
-        state.Loading = false;
+        state.isHydrating = false;
         state.employee = action.payload;
       })
       .addCase(getCurrentEmployee.rejected, (state, action) => {
-        state.Loading = false;
-        state.error = action.payload.message;
+        state.isHydrating = false;
+        state.employee = null;
+        state.error = action.payload || action.error.message;
       })
       .addCase(LogoutEmployee.pending, (state) => {
-        state.Loading = true;
+        state.isLoggingOut = true;
         state.error = null;
       })
       .addCase(LogoutEmployee.fulfilled, (state) => {
-        state.Loading = false;
+        state.isLoggingOut = false;
         state.employee = null;
       })
       .addCase(LogoutEmployee.rejected, (state, action) => {
-        state.Loading = false;
-        state.error = action.payload.message;
+        state.isLoggingOut = false;
+        state.error = action.payload || action.error.message;
       });
   },
 });

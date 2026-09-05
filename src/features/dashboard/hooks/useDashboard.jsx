@@ -5,7 +5,7 @@ import { toggleTheme } from "../../../shared/state/Theme.slice.jsx";
 
 export const useDashboard = () => {
   const dispatch = useDispatch();
-  const { employee, Loading, error } = useSelector((state) => state.auth);
+  const { employee, isLoggingOut, error } = useSelector((state) => state.auth);
   const theme = useSelector((state) => state.theme.mode);
 
   const handleLogout = () => {
@@ -26,7 +26,7 @@ export const useDashboard = () => {
   };
   return {
     employee,
-    Loading,
+    isLoggingOut,
     error,
     handleLogout,
     initials,

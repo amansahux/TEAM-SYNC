@@ -20,7 +20,7 @@ const navigationItems = [
 ];
 
 const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
-  const { handleLogout } = useDashboard();
+  const { handleLogout, isLoggingOut } = useDashboard();
   return (
     <>
       {isSidebarOpen && (
@@ -37,6 +37,11 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
+        {isLoggingOut && (
+          <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/50">
+            <div className="w-16 h-16 border-4 border-violet-600 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        )}
         <div className="flex items-start justify-between px-3 pb-8">
           <div>
             <p className="text-lg font-bold leading-none text-[var(--primary)]">
@@ -85,13 +90,14 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
           <button
             onClick={handleLogout}
             type="button"
+            disabled={isLoggingOut}
             className="group cursor-pointer flex w-full items-center justify-center gap-2 rounded-md border border-[var(--accent)]/35 bg-[var(--accent)]/10 px-4 py-2.5 text-sm font-semibold text-[var(--accent)] shadow-[var(--glow-accent)] transition-all hover:border-[var(--accent)] hover:bg-[var(--accent)]/20 hover:text-[var(--accent-hover)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/40"
           >
             <LogOut
               size={17}
               className="transition-transform group-hover:-translate-x-0.5"
             />
-            Log out
+            {isLoggingOut ? "Signing out..." : "Log out"}
           </button>
         </div>
       </aside>

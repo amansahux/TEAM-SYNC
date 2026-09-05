@@ -9,7 +9,9 @@ export const LoginEmployee = createAsyncThunk(
       // console.log(response.data.data);
       return response.data.data;
     } catch (error) {
-      return thunkApi.rejectWithValue(error);
+      return thunkApi.rejectWithValue(
+        error.response?.data?.message || "Unable to sign in"
+      );
     }
   },
 );
@@ -21,7 +23,9 @@ export const getCurrentEmployee = createAsyncThunk(
       const res = await axiosInstance.get("/auth/me");
       return res.data;
     } catch (error) {
-      return thunkApi.rejectWithValue(error);
+      return thunkApi.rejectWithValue(
+        error.response?.data?.message || "Unable to restore your session"
+      );
     }
   },
 );
@@ -33,7 +37,9 @@ export const LogoutEmployee = createAsyncThunk(
       const res = await axiosInstance.post("/auth/logout");
       return res.data;
     } catch (error) {
-      return thunkApi.rejectWithValue(error);
+      return thunkApi.rejectWithValue(
+        error.response?.data?.message || "Unable to sign out"
+      );
     }
   }
 );

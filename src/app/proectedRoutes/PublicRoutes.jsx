@@ -3,8 +3,8 @@ import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router";
 
 const PublicRoutes = () => {
-  const { employee, Loading } = useSelector((state) => state.auth);
-  if (Loading) {
+  const { employee, isHydrating } = useSelector((state) => state.auth);
+  if (isHydrating) {
     return (
       <div className=" absolute inset-0 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
         <div className="w-16 h-16 border-4 border-violet-600 border-t-transparent rounded-full animate-spin"></div>

@@ -10,7 +10,7 @@ import {
 
 import { useDashboard } from '../../hooks/useDashboard';
 const Navbar = ({ setIsSidebarOpen }) => {
-    const {Loading , initials, handleChangeTheme , theme} = useDashboard();
+  const { initials, handleChangeTheme , theme} = useDashboard();
 
 
   return (

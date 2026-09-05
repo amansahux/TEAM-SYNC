@@ -1,8 +1,10 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap");
 @import "tailwindcss";
 /* =========================
    DARK THEME (DEFAULT)
    ========================= */
 :root {
+  font-family: "Poppins", "Segoe UI", sans-serif;
   /* Brand */
   --primary: #8069bf;
   --primary-hover: #9178d4;
@@ -147,12 +149,15 @@
 body {
   background-color: var(--background);
   color: var(--text-primary);
-  font-family: 'Inter', sans-serif;
+  font-family: "Poppins", "Segoe UI", sans-serif;
   transition: background-color 0.3s, color 0.3s;
 }
 
 button,
 a,
-input {
+input,
+textarea,
+select {
+  font-family: inherit;
   -webkit-tap-highlight-color: transparent;
 }

@@ -10,10 +10,11 @@ import { getCurrentEmployee } from "../../features/auth/state/auth/AuthAction";
 import ProtectedRoutes from "../proectedRoutes/ProtectedRoutes";
 import PublicRoutes from "../proectedRoutes/PublicRoutes";
 import { commonRoutes } from "./CommonRoutes";
+import RoleBasedRoute from "../proectedRoutes/RoleBasedRoute";
+import { adminRoutes } from "./AdminRoutes";
+import { employeeRoutes } from "./EmployeeRoutes.jsx";
 
 const AppRoutes = () => {
-
-
   const dispatch = useDispatch();
   useEffect(() => {
     (() => {
@@ -46,7 +47,17 @@ const AppRoutes = () => {
         {
           path: "",
           element: <DashboardLayout />,
-          children:[...commonRoutes],
+          children: [
+            ...commonRoutes,
+            {
+              element: <RoleBasedRoute AllowedRoles={["admin"]} />,
+              children: adminRoutes,
+            },
+            {
+              element: <RoleBasedRoute AllowedRoles={["employee"]} />,
+              children: employeeRoutes,
+            },
+          ],
         },
       ],
     },

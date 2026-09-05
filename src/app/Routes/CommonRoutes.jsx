@@ -8,11 +8,11 @@ export const commonRoutes = [
         element:<Home/>
     },
     {
-        path:"/chat",
+        path:"chat",
         element:<Chat/>
     },
     {
-        path:"/setting",
+        path:"setting",
         element:<Setting/>
     }
 ]

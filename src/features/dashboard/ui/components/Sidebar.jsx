@@ -9,18 +9,18 @@ import {
   Users,
   X,
 } from "lucide-react";
+import { NavLink, useLocation } from "react-router";
 import { useDashboard } from "../../hooks/useDashboard";
 
 const navigationItems = [
-  { label: "Dashboard", icon: Grid2X2 },
-  { label: "Tasks", icon: CheckSquare },
-  { label: "Team", icon: Users },
-  { label: "Chat", icon: MessageSquare },
-  { label: "Settings", icon: Settings },
+  { label: "Dashboard", icon: Grid2X2, to: "/dashboard" },
+  { label: "Chat", icon: MessageSquare, to: "/dashboard/chat" },
+  { label: "Settings", icon: Settings, to: "/dashboard/setting" },
 ];
 
 const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
   const { handleLogout, isLoggingOut } = useDashboard();
+  const location = useLocation();
   return (
     <>
       {isSidebarOpen && (
@@ -78,20 +78,23 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
         </div>
 
         <nav aria-label="Main navigation" className="space-y-1">
-          {navigationItems.map(({ label, icon: Icon }, index) => (
-            <a
-              href="#"
+          {navigationItems.map(({ label, icon: Icon, to }) => (
+            <NavLink
+              to={to}
               key={label}
-              className={`flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
-                index === 0
-                  ? "bg-[var(--primary)]/20 text-[var(--primary)]"
-                  : "text-[var(--text-secondary)] hover:bg-[var(--card-hover)] hover:text-[var(--text-primary)]"
-              }`}
+              end={to === "/dashboard"}
+              className={({ isActive }) =>
+                `flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
+                  isActive || (to === "/dashboard" && location.pathname === "/dashboard")
+                    ? "bg-[var(--primary)]/20 text-[var(--primary)]"
+                    : "text-[var(--text-secondary)] hover:bg-[var(--card-hover)] hover:text-[var(--text-primary)]"
+                }`
+              }
               onClick={() => setIsSidebarOpen(false)}
             >
               <Icon size={17} strokeWidth={1.8} />
               {label}
-            </a>
+            </NavLink>
           ))}
         </nav>
 

@@ -5,18 +5,18 @@ import Task from "../../features/admin module/tasks/ui/page/Task";
 
 export const adminRoutes = [
     {
-        path:"/home/department",
+        path:"home/department",
         element:<Department/>
     },
     {
-        path:"/home/employee",
+        path:"home/employee",
         element:<Employee/>
     },
     {
-        path:"/home/document",
+        path:"home/document",
         element:<Document/>
     },{
-        path:"/home/task",
+        path:"home/task",
         element:<Task/>
     }
 ]

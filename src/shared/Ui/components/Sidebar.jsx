@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Book,
   CheckSquare,
   Grid2X2,
   LogOut,
@@ -10,17 +11,44 @@ import {
   X,
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router";
+import { useSelector } from "react-redux";
 import { useDashboard } from "../../../features/dashboard/hooks/useDashboard";
 
-const navigationItems = [
+const commonNavigationItems = [
   { label: "Dashboard", icon: Grid2X2, to: "/dashboard" },
   { label: "Chat", icon: MessageSquare, to: "/dashboard/chat" },
   { label: "Settings", icon: Settings, to: "/dashboard/setting" },
 ];
 
+const roleNavigationItems = {
+  employee: [
+    { label: "Attendance", icon: Book, to: "/dashboard/home/attendance" },
+    { label: "My Tasks", icon: CheckSquare, to: "/dashboard/home/my-task" },
+    { label: "Profile", icon: Users, to: "/dashboard/home/profile" },
+  ],
+  admin: [
+    { label: "Departments", icon: Users, to: "/dashboard/home/department" },
+    { label: "Employees", icon: Users, to: "/dashboard/home/employee" },
+    { label: "Documents", icon: CheckSquare, to: "/dashboard/home/document" },
+    { label: "Tasks", icon: CheckSquare, to: "/dashboard/home/task" },
+  ],
+};
+
 const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
   const { handleLogout, isLoggingOut } = useDashboard();
+  const employee = useSelector((state) => state.auth.employee);
   const location = useLocation();
+  const employeeRole = (
+    employee?.user?.role ||
+    employee?.role ||
+    employee?.employee?.user?.role ||
+    employee?.data?.user?.role ||
+    ""
+  ).toLowerCase();
+  const navigationItems = [
+    ...commonNavigationItems,
+    ...(roleNavigationItems[employeeRole] || []),
+  ];
   return (
     <>
       {isSidebarOpen && (

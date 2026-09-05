@@ -1,6 +1,7 @@
 import { Mail, Lock, Cloud, LogIn, Network } from "lucide-react";
 import useAuth, { loginSchema } from "../hooks/useAuth";
 import { Link } from "react-router";
+import AuthLoader from "../components/AuthLoader";
 
 export default function Login() {
   const { handleSubmit, register, handleLogin, errors, isLoggingIn } = useAuth(loginSchema);
@@ -11,19 +12,11 @@ export default function Login() {
       <div className="absolute right-[-150px] top-[-150px] h-[400px] w-[400px] rounded-full bg-indigo-700/10 blur-[120px]" />
 
       {isLoggingIn && (
-        <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/55 p-6 backdrop-blur-sm"
-          role="status"
-          aria-live="polite"
-        >
-
-            <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-violet-500/15 text-violet-300">
-              <div className="absolute inset-0 animate-spin rounded-full border-2 border-violet-400/20 border-t-violet-300" />
-              <LogIn size={24} />
-            </div>
-
-          </div>
-  
+        <AuthLoader
+          type="login"
+          title="Signing you in"
+          message="Connecting to your workspace..."
+        />
       )}
 
       {/* Floating Decoration */}
@@ -46,7 +39,6 @@ export default function Login() {
 
             <p className="text-zinc-400 mt-2">Sign in to your workspace</p>
           </div>
-
           {/* Social Login */}
           <div className="grid grid-cols-2 gap-4 mt-8">
             <button className="h-12 rounded-xl border border-white/10 bg-[#24202D] hover:bg-[#2c2738] transition flex items-center justify-center gap-2 text-white font-medium">
@@ -69,10 +61,7 @@ export default function Login() {
           </div>
 
           {/* Form */}
-          <form
-            onSubmit={handleSubmit(handleLogin)}
-            className="space-y-5"
-          >
+          <form onSubmit={handleSubmit(handleLogin)} className="space-y-5">
             <div>
               <label className="block text-xs uppercase tracking-wider text-zinc-300 mb-2">
                 Email Address

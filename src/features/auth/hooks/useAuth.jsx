@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { LoginEmployee } from "../state/auth/AuthAction";
@@ -18,7 +19,8 @@ export const registerSchema = z.object({
 });
 
 const useAuth = (schema) => {
-  const {isLoggingIn} = useSelector((state) => state.auth);
+  const { isLoggingIn } = useSelector((state) => state.auth);
+  const [isRegistering, setIsRegistering] = useState(false);
   const dispatch = useDispatch();
   const {
     register,
@@ -36,10 +38,15 @@ const useAuth = (schema) => {
     dispatch(LoginEmployee(credentials));
   };
   const handleRegister = async (data) => {
-    const res = await RegisterEmployee(data);
-    reset();
-    navigate("/");
-    return res;
+    setIsRegistering(true);
+    try {
+      const res = await RegisterEmployee(data);
+      reset();
+      navigate("/");
+      return res;
+    } finally {
+      setIsRegistering(false);
+    }
   };
 
   return {
@@ -48,7 +55,8 @@ const useAuth = (schema) => {
     handleRegister,
     handleLogin,
     errors,
-    isLoggingIn
+    isLoggingIn,
+    isRegistering,
   };
 };
 

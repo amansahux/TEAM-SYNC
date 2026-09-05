@@ -1,17 +1,26 @@
 import { User, Mail, Lock, ShieldCheck, Network } from "lucide-react";
 import { Link } from "react-router";
 import useAuth, { registerSchema } from "../hooks/useAuth";
+import AuthLoader from "../components/AuthLoader";
 
 export default function Signup() {
   const {
     register,
     handleSubmit,
     handleRegister,
-    errors
+    errors,
+    isRegistering,
   } = useAuth(registerSchema);
 
   return (
     <div className="min-h-screen bg-[#07050E] text-white flex flex-col">
+      {isRegistering && (
+        <AuthLoader
+          type="register"
+          title="Creating your account"
+          message="Setting up your workspace..."
+        />
+      )}
 
       {/* Main */}
       <div className="flex-1 flex flex-col lg:flex-row">
@@ -176,9 +185,10 @@ export default function Signup() {
               {/* Button */}
               <button
                 type="submit"
+                disabled={isRegistering}
                 className="w-full h-14 rounded-xl bg-gradient-to-r from-violet-600 to-violet-300 text-black font-semibold text-lg hover:opacity-90 transition"
               >
-                Create Account
+                {isRegistering ? "Creating account..." : "Create Account"}
               </button>
             </form>
 

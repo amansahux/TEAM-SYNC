@@ -3,6 +3,7 @@ import { LoginEmployee } from "../state/auth/AuthAction";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { RegisterEmployee } from "../apis/auth.api";
 
 export const loginSchema = z.object({
   email: z.string().trim().min(1, "Email is required").email("Enter a valid email address"),
@@ -30,8 +31,9 @@ const useAuth = (schema) => {
   const handleLogin = (credentials) => {
     dispatch(LoginEmployee(credentials));
   };
-  const handleRegister = (data) => {
-    console.log("Register data:", data);
+  const handleRegister = async (data) => {
+   const res = await RegisterEmployee(data);
+   return res;
   };
 
   return {

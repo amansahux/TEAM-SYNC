@@ -216,7 +216,7 @@ export default function Signup() {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 px-8 py-5 flex flex-col lg:flex-row justify-between items-center gap-4 text-sm text-zinc-500">
+      {/* <footer className="border-t border-white/10 px-8 py-5 flex flex-col lg:flex-row justify-between items-center gap-4 text-sm text-zinc-500">
         <h2 className="font-semibold text-white">TEAM_SYNC</h2>
 
         <div className="flex gap-6">
@@ -227,7 +227,7 @@ export default function Signup() {
         </div>
 
         <p>© 2024 TEAM_SYNC. Enterprise Intelligence Platforms.</p>
-      </footer>
+      </footer> */}
     </div>
   );
 }

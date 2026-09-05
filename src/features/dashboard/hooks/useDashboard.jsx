@@ -12,8 +12,17 @@ export const useDashboard = () => {
     dispatch(LogoutEmployee());
   };
   // console.log(employee)
+  const employeeName =
+    employee?.user?.name ||
+    employee?.name ||
+    employee?.employee?.user?.name ||
+    employee?.employee?.name ||
+    employee?.data?.user?.name ||
+    employee?.data?.name ||
+    "";
+
   const initials =
-    (employee?.user?.name || "")
+    employeeName
       .trim()
       .split(/\s+/)
       .filter(Boolean)

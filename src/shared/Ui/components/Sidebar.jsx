@@ -38,13 +38,11 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
   const { handleLogout, isLoggingOut } = useDashboard();
   const employee = useSelector((state) => state.auth.employee);
   const location = useLocation();
-  const employeeRole = (
+  const employeeRole =
     employee?.user?.role ||
     employee?.role ||
     employee?.employee?.user?.role ||
-    employee?.data?.user?.role ||
-    ""
-  ).toLowerCase();
+    employee?.data?.user?.role;
   const navigationItems = [
     ...commonNavigationItems,
     ...(roleNavigationItems[employeeRole] || []),

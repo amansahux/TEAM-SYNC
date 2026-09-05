@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 
 
-import { useDashboard } from '../../hooks/useDashboard';
+import { useDashboard } from '../../../features/dashboard/hooks/useDashboard';
 const Navbar = ({ setIsSidebarOpen }) => {
   const { initials, handleChangeTheme , theme} = useDashboard();
 

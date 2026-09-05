@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Outlet } from "react-router";
 
-import Sidebar from "../../features/dashboard/ui/components/Sidebar.jsx";
-import Navbar from "../../features/dashboard/ui/components/Navbar.jsx";
+import Sidebar from "../../shared/Ui/components/Sidebar.jsx";
+import Navbar from "../../shared/Ui/components/Navbar.jsx";
 
 
 

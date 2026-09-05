@@ -10,7 +10,7 @@ import {
   X,
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router";
-import { useDashboard } from "../../hooks/useDashboard";
+import { useDashboard } from "../../../features/dashboard/hooks/useDashboard";
 
 const navigationItems = [
   { label: "Dashboard", icon: Grid2X2, to: "/dashboard" },

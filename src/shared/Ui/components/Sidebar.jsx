@@ -1,25 +1,15 @@
 import { LogOut, Plus, X } from "lucide-react";
-import { NavLink, useLocation } from "react-router";
-import { useSelector } from "react-redux";
 import { useDashboard } from "../../../features/dashboard/hooks/useDashboard";
-import {
-  commonNavigationItems,
-  roleNavigationItems,
-} from "../../../app/constants/navigations";
+import Button from "./Button";
+import NavItem from "./NavItem";
+import { useShared } from "../../hooks/useShared";
+
 
 const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
   const { handleLogout, isLoggingOut } = useDashboard();
-  const employee = useSelector((state) => state.auth.employee);
-  const location = useLocation();
-  const employeeRole =
-    employee?.user?.role ||
-    employee?.role ||
-    employee?.employee?.user?.role ||
-    employee?.data?.user?.role;
-  const navigationItems = [
-    ...commonNavigationItems,
-    ...(roleNavigationItems[employeeRole] || []),
-  ];
+  const { navigationItems } = useShared();
+ 
+
   return (
     <>
       {isSidebarOpen && (
@@ -66,58 +56,42 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
               Enterprise Workspace
             </p>
           </div>
-          <button
-            type="button"
-            aria-label="Close navigation"
+          <Button
+            icon={X}
+            ariaLabel="Close navigation"
+            fullWidth={false}
             className="rounded-md p-1 text-[var(--text-muted)] hover:bg-[var(--card-hover)] hover:text-[var(--text-primary)] lg:hidden"
             onClick={() => setIsSidebarOpen(false)}
-          >
-            <X size={18} />
-          </button>
+          />
         </div>
 
         <nav aria-label="Main navigation" className="space-y-1">
           {navigationItems.map(({ label, icon: Icon, to }) => (
-            <NavLink
+            <NavItem
+              label={label}
+              icon={Icon}
               to={to}
               key={label}
-              end={to === "/dashboard"}
-              className={({ isActive }) =>
-                `flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
-                  isActive ||
-                  (to === "/dashboard" && location.pathname === "/dashboard")
-                    ? "bg-[var(--primary)]/20 text-[var(--primary)]"
-                    : "text-[var(--text-secondary)] hover:bg-[var(--card-hover)] hover:text-[var(--text-primary)]"
-                }`
-              }
               onClick={() => setIsSidebarOpen(false)}
-            >
-              <Icon size={17} strokeWidth={1.8} />
-              {label}
-            </NavLink>
+            />
           ))}
         </nav>
 
         <div className="mt-auto space-y-3 border-t border-[var(--border)] pt-4">
-          <button
-            type="button"
+          <Button
+            icon={Plus}
             className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-[var(--primary-foreground)] shadow-[var(--glow-primary)] transition-colors hover:bg-[var(--primary-hover)]"
           >
-            <Plus size={17} />
             New Task
-          </button>
-          <button
+          </Button>
+          <Button
+            icon={LogOut}
             onClick={handleLogout}
-            type="button"
             disabled={isLoggingOut}
-            className="group cursor-pointer flex w-full items-center justify-center gap-2 rounded-md border border-[var(--accent)]/35 bg-[var(--accent)]/10 px-4 py-2.5 text-sm font-semibold text-[var(--accent)] shadow-[var(--glow-accent)] transition-all hover:border-[var(--accent)] hover:bg-[var(--accent)]/20 hover:text-[var(--accent-hover)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/40"
+            className="group border border-[var(--accent)]/35 bg-[var(--accent)]/10 text-[var(--accent)] shadow-[var(--glow-accent)] hover:border-[var(--accent)] hover:bg-[var(--accent)]/20 hover:text-[var(--accent-hover)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/40"
           >
-            <LogOut
-              size={17}
-              className="transition-transform group-hover:-translate-x-0.5"
-            />
             {isLoggingOut ? "Signing out..." : "Log out"}
-          </button>
+          </Button>
         </div>
       </aside>
     </>

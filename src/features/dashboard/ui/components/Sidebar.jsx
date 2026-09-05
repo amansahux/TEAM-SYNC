@@ -32,16 +32,32 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
         />
       )}
 
+      {isLoggingOut && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/55 p-6 backdrop-blur-sm"
+          role="status"
+          aria-live="polite"
+        >
+          <div className="flex w-full max-w-xs flex-col items-center rounded-2xl border border-white/10 bg-[var(--sidebar)] px-8 py-7 text-center shadow-2xl">
+            <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-[var(--accent)]/15 text-[var(--accent)]">
+              <div className="absolute inset-0 animate-spin rounded-full border-2 border-[var(--accent)]/20 border-t-[var(--accent)]" />
+              <LogOut size={24} />
+            </div>
+            <p className="mt-5 text-base font-semibold text-[var(--text-primary)]">
+              Signing you out
+            </p>
+            <p className="mt-1 text-sm text-[var(--text-secondary)]">
+              Securing your workspace...
+            </p>
+          </div>
+        </div>
+      )}
+
       <aside
         className={`fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-[var(--border)] bg-[var(--sidebar)] px-3 py-5 shadow-[var(--shadow-lg)] transition-transform duration-300 lg:translate-x-0 lg:shadow-none ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        {isLoggingOut && (
-          <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/50">
-            <div className="w-16 h-16 border-4 border-violet-600 border-t-transparent rounded-full animate-spin"></div>
-          </div>
-        )}
         <div className="flex items-start justify-between px-3 pb-8">
           <div>
             <p className="text-lg font-bold leading-none text-[var(--primary)]">

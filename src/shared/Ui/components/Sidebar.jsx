@@ -1,38 +1,11 @@
-import React from "react";
-import {
-  Book,
-  CheckSquare,
-  Grid2X2,
-  LogOut,
-  MessageSquare,
-  Plus,
-  Settings,
-  Users,
-  X,
-} from "lucide-react";
+import { LogOut, Plus, X } from "lucide-react";
 import { NavLink, useLocation } from "react-router";
 import { useSelector } from "react-redux";
 import { useDashboard } from "../../../features/dashboard/hooks/useDashboard";
-
-const commonNavigationItems = [
-  { label: "Dashboard", icon: Grid2X2, to: "/dashboard" },
-  { label: "Chat", icon: MessageSquare, to: "/dashboard/chat" },
-  { label: "Settings", icon: Settings, to: "/dashboard/setting" },
-];
-
-const roleNavigationItems = {
-  employee: [
-    { label: "Attendance", icon: Book, to: "/dashboard/attendance" },
-    { label: "My Tasks", icon: CheckSquare, to: "/dashboard/my-task" },
-    { label: "Profile", icon: Users, to: "/dashboard/profile" },
-  ],
-  admin: [
-    { label: "Departments", icon: Users, to: "/dashboard/department" },
-    { label: "Employees", icon: Users, to: "/dashboard/employee" },
-    { label: "Documents", icon: CheckSquare, to: "/dashboard/document" },
-    { label: "Tasks", icon: CheckSquare, to: "/dashboard/task" },
-  ],
-};
+import {
+  commonNavigationItems,
+  roleNavigationItems,
+} from "../../../app/constants/navigations";
 
 const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
   const { handleLogout, isLoggingOut } = useDashboard();
@@ -111,7 +84,8 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
               end={to === "/dashboard"}
               className={({ isActive }) =>
                 `flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
-                  isActive || (to === "/dashboard" && location.pathname === "/dashboard")
+                  isActive ||
+                  (to === "/dashboard" && location.pathname === "/dashboard")
                     ? "bg-[var(--primary)]/20 text-[var(--primary)]"
                     : "text-[var(--text-secondary)] hover:bg-[var(--card-hover)] hover:text-[var(--text-primary)]"
                 }`

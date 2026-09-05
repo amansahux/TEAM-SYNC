@@ -1,4 +1,5 @@
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router";
 import { LoginEmployee } from "../state/auth/AuthAction";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,6 +22,7 @@ const useAuth = (schema) => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: schema ? zodResolver(schema) : undefined,
@@ -28,12 +30,15 @@ const useAuth = (schema) => {
     reValidateMode: "onChange",
     shouldFocusError: true,
   });
+  const navigate = useNavigate();
   const handleLogin = (credentials) => {
     dispatch(LoginEmployee(credentials));
   };
   const handleRegister = async (data) => {
-   const res = await RegisterEmployee(data);
-   return res;
+    const res = await RegisterEmployee(data);
+    reset();
+    navigate("/");
+    return res;
   };
 
   return {

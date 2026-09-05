@@ -1,4 +1,4 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { LoginEmployee } from "../state/auth/AuthAction";
 import { useForm } from "react-hook-form";
@@ -18,6 +18,7 @@ export const registerSchema = z.object({
 });
 
 const useAuth = (schema) => {
+  const {isLoggingIn} = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const {
     register,
@@ -47,6 +48,7 @@ const useAuth = (schema) => {
     handleRegister,
     handleLogin,
     errors,
+    isLoggingIn
   };
 };
 

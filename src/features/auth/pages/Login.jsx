@@ -3,12 +3,33 @@ import useAuth, { loginSchema } from "../hooks/useAuth";
 import { Link } from "react-router";
 
 export default function Login() {
-  const { handleSubmit, register, handleLogin, errors } = useAuth(loginSchema);
+  const { handleSubmit, register, handleLogin, errors, isLoggingIn } = useAuth(loginSchema);
   return (
     <div className="min-h-screen bg-[#090711] relative overflow-hidden flex items-center justify-center px-4">
       {/* Background Glow */}
       <div className="absolute left-[-200px] bottom-[-200px] h-[500px] w-[500px] rounded-full bg-violet-700/10 blur-[120px]" />
       <div className="absolute right-[-150px] top-[-150px] h-[400px] w-[400px] rounded-full bg-indigo-700/10 blur-[120px]" />
+
+      {isLoggingIn && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/55 p-6 backdrop-blur-sm"
+          role="status"
+          aria-live="polite"
+        >
+          <div className="flex w-full max-w-xs flex-col items-center rounded-2xl border border-white/10 bg-[#15121D] px-8 py-7 text-center shadow-2xl">
+            <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-violet-500/15 text-violet-300">
+              <div className="absolute inset-0 animate-spin rounded-full border-2 border-violet-400/20 border-t-violet-300" />
+              <LogIn size={24} />
+            </div>
+            <p className="mt-5 text-base font-semibold text-white">
+              Signing you in
+            </p>
+            <p className="mt-1 text-sm text-zinc-400">
+              Connecting to your workspace...
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Floating Decoration */}
       <div className="hidden lg:block absolute bottom-20 right-20">
@@ -124,10 +145,11 @@ export default function Login() {
             {/* Submit */}
             <button
               type="submit"
+              disabled={isLoggingIn}
               className="w-full h-12 rounded-xl bg-violet-600 hover:bg-violet-500 transition text-white font-medium flex items-center justify-center gap-2"
             >
-              Sign In
-              <LogIn size={18} />
+              {isLoggingIn ? "Signing in..." : "Sign In"}
+              {!isLoggingIn && <LogIn size={18} />}
             </button>
           </form>
 

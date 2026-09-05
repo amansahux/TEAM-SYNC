@@ -22,15 +22,15 @@ const commonNavigationItems = [
 
 const roleNavigationItems = {
   employee: [
-    { label: "Attendance", icon: Book, to: "/dashboard/home/attendance" },
-    { label: "My Tasks", icon: CheckSquare, to: "/dashboard/home/my-task" },
-    { label: "Profile", icon: Users, to: "/dashboard/home/profile" },
+    { label: "Attendance", icon: Book, to: "/dashboard/attendance" },
+    { label: "My Tasks", icon: CheckSquare, to: "/dashboard/my-task" },
+    { label: "Profile", icon: Users, to: "/dashboard/profile" },
   ],
   admin: [
-    { label: "Departments", icon: Users, to: "/dashboard/home/department" },
-    { label: "Employees", icon: Users, to: "/dashboard/home/employee" },
-    { label: "Documents", icon: CheckSquare, to: "/dashboard/home/document" },
-    { label: "Tasks", icon: CheckSquare, to: "/dashboard/home/task" },
+    { label: "Departments", icon: Users, to: "/dashboard/department" },
+    { label: "Employees", icon: Users, to: "/dashboard/employee" },
+    { label: "Documents", icon: CheckSquare, to: "/dashboard/document" },
+    { label: "Tasks", icon: CheckSquare, to: "/dashboard/task" },
   ],
 };
 

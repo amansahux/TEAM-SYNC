@@ -69,7 +69,6 @@ const Employee = () => {
         {/* Filters Bar */}
         <div className="p-6 border-b border-[var(--border)] bg-[var(--background-secondary)]/50 flex flex-wrap items-center gap-4">
           <div className="relative flex-1 min-w-[200px]">
-            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] text-[20px]">filter_list</span>
             <select className="w-full pl-12 pr-4 py-2 bg-[var(--input)] border border-[var(--input-border)] rounded-lg text-sm text-[var(--text-primary)] outline-none focus:ring-2 focus:ring-[var(--primary)]/10 focus:border-[var(--primary)] appearance-none">
               <option>All Roles</option>
               <option>Engineer</option>
@@ -107,7 +106,7 @@ const Employee = () => {
                 <th className="px-6 py-4 text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Department</th>
                 <th className="px-6 py-4 text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Status</th>
                 <th className="px-6 py-4 text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Joined Date</th>
-                <th className="px-6 py-4 text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider text-right">Actions</th>
+                {/* <th className="px-6 py-4 text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider text-right">Actions</th> */}
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--border)]">
@@ -145,11 +144,11 @@ const Employee = () => {
                   <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
                     {new Date(emp.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
                   </td>
-                  <td className="px-6 py-4 text-right">
+                  {/* <td className="px-6 py-4 text-right">
                     <button className="p-2 rounded-lg hover:bg-[var(--card-elevated)] transition-colors text-[var(--text-secondary)]">
                       <span className="material-symbols-outlined">more_horiz</span>
                     </button>
-                  </td>
+                  </td> */}
                 </tr>
               )) : (
                 <tr>

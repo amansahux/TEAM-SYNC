@@ -1,4 +1,4 @@
-import { ChevronRight } from 'lucide-react';
+import { ChevronLast, ChevronLeft, ChevronRight } from 'lucide-react';
 import React from 'react';
 
 const Pagination = ({ total, page, limit, totalPages, onPageChange }) => {
@@ -30,7 +30,7 @@ const Pagination = ({ total, page, limit, totalPages, onPageChange }) => {
           disabled={Number(page) === 1}
           className="w-10 h-10 flex items-center justify-center rounded-lg border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--card-hover)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
-          <span className="material-symbols-outlined">chevron_left</span>
+         <ChevronLeft/>
         </button>
         
         {getPages().map((p, i) => (

@@ -1,7 +1,6 @@
 import asyncHandler from "../utils/asyncHandler.js";
 import {
   loginService,
-  addEmployeeService,
   getCurrentUserService,
   refreshAccessTokenService,
   logoutService,
@@ -30,17 +29,7 @@ export const login = asyncHandler(async (req, res) => {
   });
 });
 
-export const addEmployee = asyncHandler(async (req, res) => {
-  const { user } = await addEmployeeService(req.body);
 
-  res.status(201).json({
-    success: true,
-    message: "Employee added successfully",
-    data: {
-      user,
-    },
-  });
-});
 
 export const getMe = asyncHandler(async (req, res) => {
   const { user } = await getCurrentUserService(req.user._id);

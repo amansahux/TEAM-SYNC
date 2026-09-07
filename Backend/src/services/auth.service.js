@@ -35,19 +35,7 @@ export const loginService = async ({ email, password }) => {
   };
 };
 
-export const addEmployeeService = async (employeeData) => {
-  const existingUser = await User.findOne({ email: employeeData.email });
-  if (existingUser) {
-    throw new AppError("User with this email already exists", 409);
-  }
 
-  const user = new User(employeeData);
-  await user.save();
-
-  return {
-    user: user.toSafeObject(),
-  };
-};
 
 export const getCurrentUserService = async (userId) => {
   const user = await User.findById(userId);

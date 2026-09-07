@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router";
 import AuthLayout from "../Layout/AuthLayout";
 import Login from "../../features/auth/pages/Login";
-import Register from "../../features/auth/pages/Register";
 import DashboardLayout from "../Layout/DashboardLayout";
 import Home from "../../features/dashboard/ui/pages/Home";
 import { useDispatch } from "react-redux";
@@ -32,10 +31,6 @@ const AppRoutes = () => {
           element: <AuthLayout />,
           children: [
             { path: "", element: <Login /> },
-            {
-              path: "register",
-              element: <Register />,
-            },
           ],
         },
       ],

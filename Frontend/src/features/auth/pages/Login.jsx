@@ -5,12 +5,12 @@ import { Eye, EyeOff, ShieldCheck, ArrowRight } from "lucide-react";
 import { useState } from "react";
 
 export default function Login() {
-  const { handleSubmit, register, handleLogin, errors, isLoggingIn } = useAuth(loginSchema);
-  const [showPassword, setShowPassword] = useState(false);
+  const { handleSubmit, register, handleLogin, errors, isLoggingIn , showPassword , setShowPassword } = useAuth(loginSchema);
+
 
   return (
     <>
-      <div className="min-h-screen flex flex-col lg:flex-row bg-[#F5F5F0] text-[#1a1c19] font-inter antialiased overflow-hidden">
+      <div className="min-h-screen lg:h-screen flex flex-col lg:flex-row bg-[#F5F5F0] text-[#1a1c19] font-inter antialiased overflow-hidden">
         
         {isLoggingIn && (
           <AuthLoader
@@ -21,7 +21,7 @@ export default function Login() {
         )}
 
         {/* Left Architectural Hero Panel */}
-        <section className="relative lg:w-[44%] w-full min-h-[420px] lg:min-h-screen flex flex-col justify-between p-6 md:p-12 overflow-hidden bg-[#2f312e] text-white">
+        <section className="relative lg:w-[44%] w-full min-h-[420px] lg:h-full flex flex-col justify-between p-6 md:p-12 overflow-hidden bg-[#2f312e] text-white">
           <img 
             alt="Corporate Workspace" 
             className="absolute inset-0 w-full h-full object-cover object-center transform scale-[1.02] filter contrast-[1.05] brightness-[0.92]" 
@@ -62,26 +62,27 @@ export default function Login() {
         </section>
 
         {/* Right Authentication Panel */}
-        <section className="lg:w-[56%] w-full bg-[#F5F5F0] flex flex-col items-center justify-center p-4 sm:p-8 lg:p-12 relative">
+        <section className="lg:w-[56%] w-full h-full overflow-hidden bg-[#F5F5F0] flex flex-col p-6 sm:p-8 lg:p-10 relative">
           
           {/* Top Header/Logo area for mobile & desktop consistency */}
-          <div className="absolute top-6 left-6 md:top-8 md:left-12 flex items-center gap-3">
-            <div className="w-7 h-7 rounded bg-[#5D866C] flex items-center justify-center text-white font-garamond text-lg font-bold">
-              <span className="tracking-tighter">§</span>
+          <div className="flex items-center gap-3 mb-6 lg:mb-auto">
+            <div className="w-8 h-8 rounded bg-[#5D866C] flex items-center justify-center text-white font-inter text-xl font-bold">
+              <div className="absolute inset-2 rounded-lg border border-[#5D866C]/30"></div>
+                  <div className="w-4 h-4 bg-[#5D866C] rounded-md transform rotate-45 group-hover:rotate-90 transition-transform duration-500"></div>
             </div>
-            <span className="text-xl font-bold tracking-tight text-[#1a1c19]">TEAM_SYNC</span>
+            <span className="text-2xl font-bold tracking-tight text-[#1a1c19]">TEAM_SYNC</span>
           </div>
 
-          <div className="w-full max-w-md space-y-8 mt-16 lg:mt-0">
+          <div className="w-full max-w-lg space-y-6 mx-auto my-auto">
             
-            <div className="bg-white border border-[#C2A68C]/30 rounded-xl p-6 md:p-10 shadow-[0_20px_48px_-12px_rgba(28,25,23,0.07)]">
+            <div className="bg-white border border-[#C2A68C]/30 rounded-2xl p-6 md:p-10 shadow-[0_24px_60px_-12px_rgba(28,25,23,0.08)]">
               
               <div className="text-center space-y-2 mb-8">
-                <div className="mx-auto w-12 h-12 rounded-lg bg-[#F5F5F0] border border-gray-200 flex items-center justify-center p-2 relative group">
-                  <div className="absolute inset-1.5 rounded border border-[#5D866C]/30"></div>
-                  <div className="w-4 h-4 bg-[#5D866C] rounded-sm transform rotate-45 group-hover:rotate-90 transition-transform duration-500"></div>
+                <div className="mx-auto w-12 h-12 rounded-xl bg-[#F5F5F0] border border-gray-200 flex items-center justify-center p-2 relative group">
+                  <div className="absolute inset-2 rounded-lg border border-[#5D866C]/30"></div>
+                  <div className="w-4 h-4 bg-[#5D866C] rounded-md transform rotate-45 group-hover:rotate-90 transition-transform duration-500"></div>
                 </div>
-                <h2 className="text-3xl font-medium text-[#1a1c19] pt-2 font-garamond">
+                <h2 className="text-3xl md:text-3xl font-semibold text-[#1a1c19] pt-2 font-inter tracking-tight">
                   Welcome back
                 </h2>
                 <p className="text-sm text-gray-500">
@@ -89,11 +90,11 @@ export default function Login() {
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit(handleLogin)} className="space-y-5" noValidate>
+              <form onSubmit={handleSubmit(handleLogin)} className="space-y-8" noValidate>
                 
                 {/* Email */}
-                <div className="space-y-1">
-                  <label className="block text-xs uppercase tracking-wider text-gray-600 font-medium">
+                <div className="space-y-1.5">
+                  <label className="block text-sm uppercase tracking-wider text-gray-600 font-medium">
                     Email Address
                   </label>
                   <div className="relative">
@@ -101,21 +102,21 @@ export default function Login() {
                       {...register("email")}
                       type="email"
                       placeholder="name@company.com"
-                      className={`w-full px-3.5 py-2.5 text-sm rounded-lg bg-[#F5F5F0] border \${errors?.email ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-[#5D866C] focus:border-[#5D866C]'} text-[#1a1c19] placeholder:text-gray-400 focus:outline-none focus:ring-1 transition-all duration-150`}
+                      className={`w-full px-4 py-3 text-base rounded-xl bg-[#F5F5F0] border ${errors?.email ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-[#5D866C] focus:border-[#5D866C]'} text-[#1a1c19] placeholder:text-gray-400 focus:outline-none focus:ring-2 transition-all duration-150`}
                     />
                   </div>
                   {errors?.email && (
-                    <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
+                    <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
                   )}
                 </div>
 
                 {/* Password */}
-                <div className="space-y-1">
+                <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <label className="block text-xs uppercase tracking-wider text-gray-600 font-medium">
+                    <label className="block text-sm uppercase tracking-wider text-gray-600 font-medium">
                       Password
                     </label>
-                    <button type="button" className="text-xs text-[#5D866C] hover:underline transition-colors duration-150">
+                    <button type="button" className="text-sm font-medium text-[#5D866C] hover:underline transition-colors duration-150">
                       Forgot Password?
                     </button>
                   </div>
@@ -124,27 +125,28 @@ export default function Login() {
                       {...register("password")}
                       type={showPassword ? "text" : "password"}
                       placeholder="••••••••"
-                      className={`w-full px-3.5 py-2.5 pr-10 text-sm rounded-lg bg-[#F5F5F0] border ${errors?.password ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-[#5D866C] focus:border-[#5D866C]'} text-[#1a1c19] placeholder:text-gray-400 focus:outline-none focus:ring-1 transition-all duration-150`}
+                      className={`w-full px-4 py-3 pr-12 text-base rounded-xl bg-[#F5F5F0] border ${errors?.password ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-[#5D866C] focus:border-[#5D866C]'} text-[#1a1c19] placeholder:text-gray-400 focus:outline-none focus:ring-2 transition-all duration-150`}
                     />
                     <button 
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1"
                     >
-                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
                   {errors?.password && (
-                    <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+                    <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
                   )}
                 </div>
 
                 {/* Remember Me */}
                 <div className="flex items-center justify-between pt-1">
-                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                  <label className="flex items-center gap-2.5 cursor-pointer" id="check">
                     <input 
+                    name="check"
                       type="checkbox" 
-                      className="w-4 h-4 rounded text-[#5D866C] focus:ring-[#5D866C] border-gray-300 cursor-pointer accent-[#5D866C]"
+                      className="w-4.5 h-4.5 rounded text-[#5D866C] focus:ring-[#5D866C] border-gray-300 cursor-pointer accent-[#5D866C]"
                     />
                     <span className="text-sm text-gray-600">Stay signed in</span>
                   </label>
@@ -154,41 +156,32 @@ export default function Login() {
                 <button
                   type="submit"
                   disabled={isLoggingIn}
-                  className="w-full mt-2 bg-[#5D866C] text-white py-2.5 px-4 rounded-lg text-sm font-medium hover:bg-[#4a6b56] active:scale-[0.99] transition-all duration-150 flex items-center justify-center gap-2 shadow-sm disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="w-full mt-3 bg-[#5D866C] text-white py-3 px-6 rounded-xl text-base font-semibold tracking-wide hover:bg-[#4a6b56] active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2.5 shadow-md disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   <span>{isLoggingIn ? "Signing in..." : "Sign In"}</span>
-                  {!isLoggingIn && <ArrowRight size={16} />}
+                  {!isLoggingIn && <ArrowRight size={18} />}
                 </button>
               </form>
 
-              {/* Register */}
-              <div className="mt-8 text-center">
-                <p className="text-sm text-gray-600">
-                  Don't have an enterprise account?{" "}
-                  <Link to="/register" className="font-semibold text-[#5D866C] hover:underline ml-1">
-                    Sign Up
-                  </Link>
-                </p>
-              </div>
               
             </div>
             
             {/* Trust Banner */}
             <div className="text-center space-y-1">
-              <div className="inline-flex items-center justify-center gap-1.5 text-xs text-gray-500">
-                <ShieldCheck size={14} />
-                <span>Enterprise-grade 256-bit encryption • Sovereign governance protocol</span>
+              <div className="inline-flex items-center justify-center gap-2 text-sm text-gray-500 font-medium">
+                <ShieldCheck size={16} className="text-[#C2A68C]" />
+                <span>Enterprise-grade 256-bit encryption • Sovereign governance</span>
               </div>
             </div>
 
           </div>
           
           {/* Footer */}
-          <div className="mt-auto pt-8 w-full max-w-md text-center text-xs text-gray-500">
+          <div className="mt-6 lg:mt-auto pt-4 w-full max-w-lg mx-auto text-center text-sm text-gray-500">
             <p>© 2024 TEAM_SYNC. Enterprise Intelligence Platforms.</p>
-            <div className="flex justify-center gap-4 mt-2">
-              <button className="hover:text-gray-700 hover:underline">Privacy Policy</button>
-              <button className="hover:text-gray-700 hover:underline">Terms of Service</button>
+            <div className="flex justify-center gap-6 mt-2">
+              <button className="hover:text-gray-800 hover:underline transition-colors">Privacy Policy</button>
+              <button className="hover:text-gray-800 hover:underline transition-colors">Terms of Service</button>
             </div>
           </div>
 

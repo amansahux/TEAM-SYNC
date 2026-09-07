@@ -18,6 +18,7 @@ export const login = asyncHandler(async (req, res) => {
   const { user, accessToken, refreshToken } = await loginService(req.body);
 
   res.cookie("refreshToken", refreshToken, COOKIE_OPTIONS);
+  res.cookie("accessToken", accessToken, COOKIE_OPTIONS);
 
   res.status(200).json({
     success: true,

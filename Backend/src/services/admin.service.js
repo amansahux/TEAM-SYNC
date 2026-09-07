@@ -14,3 +14,6 @@ export const addEmployeeService = async (employeeData) => {
     user: user.toSafeObject(),
   };
 };
+export const getAllEmployees = async () => {
+}
+

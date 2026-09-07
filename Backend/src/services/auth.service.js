@@ -35,8 +35,6 @@ export const loginService = async ({ email, password }) => {
   };
 };
 
-
-
 export const getCurrentUserService = async (userId) => {
   const user = await User.findById(userId);
   if (!user) {

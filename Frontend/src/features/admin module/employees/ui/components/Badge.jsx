@@ -1,9 +1,8 @@
 import React from 'react';
-import './Badge.css';
 
 const Badge = ({ children, variant = 'primary', className = '' }) => {
   return (
-    <span className={`custom-badge badge-${variant} ${className}`}>
+    <span className={`inline-flex items-center px-2 py-1 rounded-lg text-xs font-semibold leading-none badge-${variant} ${className}`}>
       {children}
     </span>
   );

@@ -161,3 +161,23 @@ select {
   font-family: inherit;
   -webkit-tap-highlight-color: transparent;
 }
+
+@layer components {
+  /* Badge Variants */
+  .badge-primary { @apply bg-[var(--primary-light)] text-[var(--primary)]; }
+  .badge-success { @apply bg-[rgba(34,197,94,0.2)] text-[var(--success)]; }
+  .badge-warning { @apply bg-[rgba(245,158,11,0.2)] text-[var(--warning)]; }
+  .badge-danger { @apply bg-[rgba(239,68,68,0.2)] text-[var(--danger)]; }
+  .badge-secondary { @apply bg-[var(--border)] text-[var(--text-secondary)]; }
+
+  /* Button Variants */
+  .btn-primary { @apply px-6 py-2 bg-[var(--primary)] text-[var(--primary-foreground)] shadow-[var(--shadow-sm)] hover:bg-[var(--primary-hover)] hover:opacity-90 active:scale-[0.98]; }
+  .btn-outline { @apply px-6 py-2 bg-[var(--card)] text-[var(--text-primary)] border border-solid border-[var(--border)] hover:bg-[var(--card-hover)]; }
+  .btn-icon { @apply p-2 bg-transparent text-[var(--text-secondary)] hover:bg-[var(--card-hover)]; }
+
+  /* Skeleton Variants */
+  .skeleton-base { @apply animate-pulse bg-[var(--border)]; }
+  .skeleton-circular { @apply w-10 h-10 rounded-full; }
+  .skeleton-text { @apply w-full h-4 rounded-lg; }
+  .skeleton-auto { @apply w-full h-auto rounded-lg; }
+}

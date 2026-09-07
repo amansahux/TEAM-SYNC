@@ -206,7 +206,7 @@ const Employee = () => {
         <div className="bg-[var(--card)] border border-[var(--border)] p-6 rounded-xl shadow-sm">
           <p className="text-xs font-semibold text-[var(--text-secondary)] mb-2 uppercase tracking-wider">Active Now</p>
           <div className="flex items-end gap-4">
-            <span className="text-3xl font-bold text-[var(--text-primary)]">{Math.floor(pagination.total * 0.9)}</span>
+            <span className="text-3xl font-bold text-[var(--text-primary)]">{Math.floor(pagination.total)}</span>
             <span className="w-2 h-2 rounded-full bg-[var(--success)] mb-2"></span>
           </div>
         </div>

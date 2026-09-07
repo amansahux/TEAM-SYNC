@@ -27,9 +27,9 @@ export const authenticate = asyncHandler(async (req, res, next) => {
     decoded = verifyAccessToken(token);
   } catch (error) {
     if (error.name === "TokenExpiredError") {
-      throw new AppError("Access token expired. Please refresh token.", 401);
+      throw new AppError("unauthorized", 401);
     }
-    throw new AppError("Invalid access token.", 401);
+    throw new AppError("unauthorized", 401);
   }
 
   const user = await User.findById(decoded.id);

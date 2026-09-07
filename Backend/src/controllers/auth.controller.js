@@ -57,13 +57,15 @@ export const getMe = asyncHandler(async (req, res) => {
 export const getAccessToken = asyncHandler(async (req, res) => {
   const providedRefreshToken =
     req.cookies?.refreshToken ||
-    req.headers["x-refresh-token"] ||
-    req.body?.refreshToken;
+    req.headers["x-refresh-token"]
+ 
 
   const { accessToken, refreshToken: newRefreshToken } =
     await refreshAccessTokenService(providedRefreshToken);
 
   res.cookie("refreshToken", newRefreshToken, COOKIE_OPTIONS);
+  res.cookie("accessToken", accessToken, COOKIE_OPTIONS);
+  
 
   res.status(200).json({
     success: true,
@@ -79,6 +81,7 @@ export const logout = asyncHandler(async (req, res) => {
   await logoutService(userId);
 
   res.clearCookie("refreshToken", COOKIE_OPTIONS);
+  res.clearCookie("accessToken", COOKIE_OPTIONS)
 
   res.status(200).json({
     success: true,

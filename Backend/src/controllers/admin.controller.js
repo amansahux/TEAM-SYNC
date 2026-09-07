@@ -17,7 +17,7 @@ export const getAllEmployee = asyncHandler(async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
 
-    const { employees, totalEmployees, totalPages, currentPage } = await getAllEmployeeService(page = 1, limit = 10)
+    const { employees, totalEmployees, totalPages, currentPage } = await getAllEmployeeService(page, limit);
 
     res.status(200).json({
         success: true,

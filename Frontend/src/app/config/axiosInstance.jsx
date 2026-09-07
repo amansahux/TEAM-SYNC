@@ -11,15 +11,19 @@ axiosInstance.interceptors.response.use(
   (res) => res,
   async (error) => {
     let orignalReq = error.config;
-    if (error.response.status === 401 && !orignalReq._retry) {
+    if (error?.response?.status === 401 && !orignalReq._retry && orignalReq.url !== "/auth/get-accessToken") {
       orignalReq._retry = true;
       try {
         await axiosInstance.get("/auth/get-accessToken");
         return axiosInstance(orignalReq);
-      } catch (error) {
-        window.location.href("/");
-        return Promise.reject(error);
+      } catch (retryError) {
+        if (window.location.pathname !== "/" && window.location.pathname !== "/register") {
+          window.location.href = "/";
+        }
+        return Promise.reject(retryError);
       }
     }
-  },
+    
+    return Promise.reject(error);
+  }
 );

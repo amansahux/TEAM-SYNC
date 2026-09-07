@@ -12,3 +12,7 @@ export const addEmployee = asyncHandler(async (req, res) => {
     },
   });
 });
+
+export const getAllEmployee = asyncHandler(async (req, res) => {
+    
+})

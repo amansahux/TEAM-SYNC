@@ -6,7 +6,12 @@ import User from "../models/user.model.js";
 export const authenticate = asyncHandler(async (req, res, next) => {
   let token;
 
-  if (
+  // 1. Try cookie first
+  if (req.cookies && req.cookies.accessToken) {
+    token = req.cookies.accessToken;
+  }
+  // 2. Fall back to Authorization header
+  else if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer ")
   ) {

@@ -7,6 +7,7 @@ import Pagination from '../components/Pagination';
 const Employee = () => {
   const [page, setPage] = useState(1);
   const { data, isPending, error } = useEmployees(page);
+  console.log(data)
 
   // Fallback pagination data if API doesn't provide it yet
   const pagination = data?.pagination || {

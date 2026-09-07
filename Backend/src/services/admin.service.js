@@ -14,6 +14,19 @@ export const addEmployeeService = async (employeeData) => {
     user: user.toSafeObject(),
   };
 };
-export const getAllEmployeeService = async () => {
-}
+export const getAllEmployeeService = async (page = 1, limit = 10) => {
+  const skip = (page - 1) * limit;
 
+  const employees = await User.find({ role: "employee" })
+    .skip(skip)
+    .limit(limit);
+
+  const totalEmployees = await User.countDocuments({ role: "employee" });
+
+  return {
+    employees,
+    totalEmployees,
+    totalPages: Math.ceil(totalEmployees / limit),
+    currentPage: page,
+  };
+};

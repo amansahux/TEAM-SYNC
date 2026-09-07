@@ -824,3 +824,10 @@ select:-webkit-autofill {
     animation-iteration-count: 1 !important;
   }
 }
+
+/* =========================================================
+   CUSTOM FONTS
+   ========================================================= */
+
+.font-garamond { font-family: 'Cormorant Garamond', serif; }
+.font-inter { font-family: 'Inter', sans-serif; }

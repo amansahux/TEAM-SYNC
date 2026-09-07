@@ -22,7 +22,7 @@ export const getAllEmployee = asyncHandler(async (req, res) => {
     res.status(200).json({
         success: true,
         message: "Employees fetched successfully",
-        data: employees,
-        pagination: { limit: limit, total: totalEmployees, totalPages: totalPages, page: currentPage }
+        data: { employees, pagination: { limit: limit, total: totalEmployees, totalPages: totalPages, page: currentPage } },
+
     });
 });

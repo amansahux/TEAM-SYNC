@@ -7,14 +7,13 @@ import Pagination from '../components/Pagination';
 const Employee = () => {
   const [page, setPage] = useState(1);
   const { data, isPending, error } = useEmployees(page);
-  console.log(data)
 
   // Fallback pagination data if API doesn't provide it yet
   const pagination = data?.pagination || {
     total: data?.length || 0,
     page: page,
-    limit: 20,
-    totalPages: Math.ceil((data?.length || 0) / 20) || 1
+    limit: 10,
+    totalPages: Math.ceil((data?.length || 0) / 10) || 1
   };
   
   const employees = data?.employees || data || [];

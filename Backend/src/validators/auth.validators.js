@@ -22,7 +22,7 @@ export const addEmployeeSchema = z.object({
   password: z
     .string({ required_error: "Password is required" })
     .min(6, "Password must be at least 6 characters long"),
-  department: z.enum(["developer","designer", "manager", "marketer", "common"]).default("common"),
+  department: z.enum(["developer","designer", "manager", "marketer", "common"]).default("common").optional(),
   role: z.enum(["admin", "employee"]).optional().default("employee"),
   status: z.enum(["active", "inactive"]).optional().default("active"),
   avatar: z.string().optional().default(""),

@@ -3,6 +3,8 @@ import { useEmployees } from '../../hooks/useEmployee';
 import Skeleton from '../components/Skeleton';
 import ErrorState from '../components/ErrorState';
 import Pagination from '../components/Pagination';
+import { User, UserRoundPlus } from 'lucide-react';
+import { Link } from 'react-router';
 
 const Employee = () => {
   const [page, setPage] = useState(1);
@@ -188,11 +190,12 @@ const Employee = () => {
             <span className="material-symbols-outlined text-[20px]">ios_share</span>
             Export
           </button>
-          <button className="flex items-center gap-2 px-6 py-2.5 bg-[var(--primary)] text-[var(--primary-foreground)] rounded-xl text-sm font-medium hover:bg-[var(--primary-hover)] active:scale-[0.98] transition-all shadow-md">
-            <span className="material-symbols-outlined text-[20px]">add</span>
+          <Link to={"/dashboard/add-employee"}className="flex items-center gap-2 px-6 py-2.5 bg-[var(--primary)] text-[var(--primary-foreground)] rounded-xl text-sm font-medium hover:bg-[var(--primary-hover)] active:scale-[0.98] transition-all shadow-md">
+          <UserRoundPlus size={20}/>
             Add Employee
-          </button>
+          </Link>
         </div>
+
       </div>
 
       {/* Stats Bar */}

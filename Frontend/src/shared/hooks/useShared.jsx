@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { commonNavigationItems, roleNavigationItems } from "../../app/constants/navigations";
+import { roleNavigationItems } from "../../app/constants/navigations";
 export const useShared = () => {
      const employee = useSelector((state) => state.auth.employee);
   const employeeRole =
@@ -9,8 +9,7 @@ export const useShared = () => {
     employee?.data?.user?.role;
 
   const navigationItems = [
-    ...commonNavigationItems,
-    ...(roleNavigationItems[employeeRole] || []),
+    ...roleNavigationItems[employeeRole] || [],
   ];
 
   return { navigationItems};

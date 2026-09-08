@@ -24,5 +24,6 @@ export const roleNavigationItems = {
     { label: "Employees", icon: Users, to: "/dashboard/employee" },
     { label: "Documents", icon: CheckSquare, to: "/dashboard/document" },
     { label: "Tasks", icon: CheckSquare, to: "/dashboard/task" },
+    { label: "Add Employees", icon: Users, to: "/dashboard/add-employee" },
   ],
 };

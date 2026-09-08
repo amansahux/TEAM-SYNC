@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useEmployees } from "../../hooks/useEmployee";
 import Skeleton from "../components/Skeleton";
 import ErrorState from "../components/ErrorState";
 import Pagination from "../components/Pagination";
-import { UserRoundPlus } from "lucide-react";
+import { UserRoundPlus, MoreVertical, Pencil, Trash2, UserCheck, UserX } from "lucide-react";
 import { Link } from "react-router";
 
 /* ── helpers ─────────────────────────────────────────────── */
@@ -129,6 +129,75 @@ const SkeletonTable = () => (
   </div>
 );
 
+/* ── action menu ──────────────────────────────────────────── */
+
+const ActionMenu = ({ emp }) => {
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) setOpen(false);
+    };
+    if (open) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [open]);
+
+  const isActive = emp.status === "active";
+
+  const menuItems = [
+    {
+      label: "Edit",
+      icon: Pencil,
+      onClick: () => console.log("Edit", emp._id),
+    },
+    {
+      label: "Delete",
+      icon: Trash2,
+      onClick: () => console.log("Delete", emp._id),
+      danger: true,
+    },
+    {
+      label: isActive ? "Mark Inactive" : "Mark Active",
+      icon: isActive ? UserX : UserCheck,
+      onClick: () => console.log("Toggle status", emp._id),
+    },
+  ];
+
+  return (
+    <div className="relative" ref={menuRef}>
+      <button
+        onClick={() => setOpen((prev) => !prev)}
+        className="p-2 rounded-lg text-[var(--text-secondary)] hover:bg-[var(--card-hover)] hover:text-[var(--text-primary)] transition-colors"
+      >
+        <MoreVertical size={18} />
+      </button>
+
+      {open && (
+        <div className="absolute right-0 top-full mt-1 w-44 rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-lg)] py-1 z-30 animate-in fade-in">
+          {menuItems.map(({ label, icon: Icon, onClick, danger }) => (
+            <button
+              key={label}
+              onClick={() => {
+                onClick();
+                setOpen(false);
+              }}
+              className={`flex w-full items-center gap-3 px-4 py-2.5 text-sm transition-colors ${
+                danger
+                  ? "text-[var(--danger)] hover:bg-[var(--danger-light)]"
+                  : "text-[var(--text-secondary)] hover:bg-[var(--card-hover)] hover:text-[var(--text-primary)]"
+              }`}
+            >
+              <Icon size={16} />
+              {label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 /* ── employee row ────────────────────────────────────────── */
 
 const EmployeeRow = ({ emp }) => (
@@ -160,7 +229,9 @@ const EmployeeRow = ({ emp }) => (
     <td className="px-6 py-4 text-sm text-[var(--text-secondary)] whitespace-nowrap">
       {formatDate(emp.createdAt)}
     </td>
-     <td className="px-6 py-4"></td>
+     <td className="px-6 py-4">
+       <ActionMenu emp={emp} />
+     </td>
   </tr>
 );
 

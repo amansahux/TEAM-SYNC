@@ -5,3 +5,11 @@ export const getAllEmployees = async (page = 1, limit = 20) => {
   );
   return response.data.data;
 };
+
+export const addEmployee = async (employeeData) => {
+  const response = await axiosInstance.post(
+    `/admin/add-employee`,
+    employeeData,
+  );
+  return response.data;
+}

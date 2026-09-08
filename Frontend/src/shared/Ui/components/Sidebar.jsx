@@ -66,12 +66,13 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
         </div>
 
         <nav aria-label="Main navigation" className="space-y-1">
-          {navigationItems.map(({ label, icon: Icon, to }) => (
+          {navigationItems.map(({ label, icon: Icon, to, alsoActiveFor }) => (
             <NavItem
               label={label}
               icon={Icon}
               to={to}
               key={label}
+              alsoActiveFor={alsoActiveFor}
               onClick={() => setIsSidebarOpen(false)}
             />
           ))}

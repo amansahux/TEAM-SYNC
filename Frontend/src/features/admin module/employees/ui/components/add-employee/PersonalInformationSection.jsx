@@ -1,7 +1,9 @@
-import React from "react";
-import { User } from "lucide-react";
+import React, { useState } from "react";
+import { User, Eye, EyeOff } from "lucide-react";
 
 const PersonalInformationSection = ({ register, errors }) => {
+  const [showPassword, setShowPassword] = useState(false);
+
   return (
     <section className="bg-[var(--card)] rounded-xl border border-[var(--border)] shadow-sm p-6 sm:p-8 transition-all">
       {/* Section Title & Icon */}
@@ -20,7 +22,7 @@ const PersonalInformationSection = ({ register, errors }) => {
       </div>
 
       {/* Fields Container */}
-      <div className="mt-7 grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+      <div className="mt-7 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
         {/* Full Name Field */}
         <div>
           <label
@@ -73,6 +75,42 @@ const PersonalInformationSection = ({ register, errors }) => {
           ) : (
             <p className="text-[11px] text-[var(--text-muted)] mt-1.5">
               Primary email address used for SSO access and notifications.
+            </p>
+          )}
+        </div>
+
+        {/* Password Field */}
+        <div>
+          <label
+            htmlFor="password"
+            className="block text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)] mb-2"
+          >
+            Password <span className="text-[var(--danger)]">*</span>
+          </label>
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              id="password"
+              {...register("password")}
+              placeholder="••••••••"
+              className={`w-full px-4 py-3 rounded-lg border ${
+                errors.password ? "border-[var(--danger)]" : "border-[var(--input-border)]"
+              } bg-[var(--input)] text-[var(--text-primary)] placeholder-[var(--text-muted)] text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20 focus:border-[var(--primary)] shadow-xs pr-11`}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer focus:outline-none"
+              title={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
+          {errors.password ? (
+            <p className="text-[11px] text-[var(--danger)] mt-1.5">{errors.password.message}</p>
+          ) : (
+            <p className="text-[11px] text-[var(--text-muted)] mt-1.5">
+              Temporary password for initial account authentication.
             </p>
           )}
         </div>

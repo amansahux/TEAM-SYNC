@@ -1,6 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { addEmployee, getAllEmployees } from "../apis/employees.api";
-import { toast } from "react-hot-toast"; // assuming react-hot-toast is used
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -19,10 +18,9 @@ export const useEmployees = (page = 1, limit = 10) => {
     mutationFn: addEmployee,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["employees", page] });
-      toast.success("Employee added successfully");
     },
     onError: (error) => {
-      toast.error(error?.response?.data?.message || "Failed to add employee");
+      console.error(error?.response?.data?.message || "Failed to add employee");
     },
   });
 
@@ -32,6 +30,7 @@ export const useEmployees = (page = 1, limit = 10) => {
 const addEmployeeSchema = z.object({
   name: z.string().min(2, "Full name is required").max(100),
   email: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
   department: z.enum(["developer", "designer", "manager", "marketer", "common"]),
   status: z.enum(["active", "inactive"]),
 });
@@ -43,11 +42,10 @@ export const useAddEmployeeForm = () => {
     mutationFn: addEmployee,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["employees"] });
-      toast.success("Employee added successfully");
       form.reset();
     },
     onError: (error) => {
-      toast.error(error?.response?.data?.message || "Failed to add employee");
+      console.error(error?.response?.data?.message || "Failed to add employee");
     },
   });
 
@@ -56,6 +54,7 @@ export const useAddEmployeeForm = () => {
     defaultValues: {
       name: "",
       email: "",
+      password: "",
       department: "common",
       status: "active",
       role: "employee", // sent but read-only

@@ -150,28 +150,21 @@ const Employee = () => {
         <StatCard label="Total Employees" value={pagination.total} />
         <StatCard
           label="Active Now"
-          value={Math.floor(pagination.total)}
+          value={Math.floor(pagination.activeEmployees)}
           trailing={
             <span className="size-2 rounded-full bg-[var(--success)] mb-2" />
           }
         />
         <StatCard
-          label="Open Positions"
-          value={24}
+          label="Inactive Now"
+          value={Math.floor(pagination.inactiveEmployees)}
           trailing={
-            <span className="text-sm font-medium text-[var(--warning)] mb-1">
-              Critical
-            </span>
+            <span className="size-2 rounded-full bg-red-600 mb-2" />
           }
         />
         <StatCard
           label="New Hires"
-          value={42}
-          trailing={
-            <span className="text-sm font-medium text-[var(--text-secondary)] mb-1">
-              Target: 50
-            </span>
-          }
+          value={Math.floor(pagination.newEmployees)}
         />
       </div>
 

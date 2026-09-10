@@ -60,15 +60,25 @@ export const getAllEmployeeService = async ({
   }
 
   const employees = await User.find(query)
-    .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit);
 
   const totalEmployees = await User.countDocuments(query);
+  const activeEmployees = await User.countDocuments({ role: "employee", status: "active" });
+  const inactiveEmployees = totalEmployees - activeEmployees
+  const twoWeeksAgo = new Date();
+  twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+  const newEmployees = await User.countDocuments({
+    role: "employee",
+    createdAt: { $gte: twoWeeksAgo },
+  });
 
   return {
     employees,
     totalEmployees,
+    activeEmployees,
+    inactiveEmployees,
+    newEmployees,
     totalPages: Math.ceil(totalEmployees / limit) || 1,
     currentPage: page,
   };

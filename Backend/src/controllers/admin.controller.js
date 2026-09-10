@@ -20,7 +20,7 @@ export const getAllEmployee = asyncHandler(async (req, res) => {
     const department = req.query.department || "";
     const status = req.query.status || "";
 
-    const { employees, totalEmployees, totalPages, currentPage } =
+    const { employees, totalEmployees, activeEmployees, inactiveEmployees, newEmployees, totalPages, currentPage } =
         await getAllEmployeeService({ page, limit, search, department, status });
 
     res.status(200).json({
@@ -28,7 +28,7 @@ export const getAllEmployee = asyncHandler(async (req, res) => {
         message: "Employees fetched successfully",
         data: {
             employees,
-            pagination: { limit: limit, total: totalEmployees, totalPages: totalPages, page: currentPage },
+            pagination: { limit: limit, total: totalEmployees, activeEmployees, inactiveEmployees, newEmployees, totalPages: totalPages, page: currentPage },
         },
     });
 });

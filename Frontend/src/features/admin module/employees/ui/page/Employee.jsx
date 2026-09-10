@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useEmployees } from "../../hooks/useEmployee";
 import SkeletonTable from "../components/employee/SkeletonTable";
 import ErrorState from "../components/employee/ErrorState";
@@ -38,10 +38,17 @@ const Employee = () => {
 
   const handlePageChange = (newPage) => setPage(newPage);
 
-  const handleFilterChange = (newFilters) => {
-    setFilters(newFilters);
-    setPage(1); // Reset to page 1 on filter change
-  };
+  const handleFilterChange = useCallback((newFilters) => {
+    setFilters((prev) => {
+      const changed =
+        prev.search !== newFilters.search ||
+        prev.department !== newFilters.department ||
+        prev.status !== newFilters.status;
+      if (!changed) return prev;
+      setPage(1);
+      return newFilters;
+    });
+  }, []);
 
   const renderContent = () => {
     return (

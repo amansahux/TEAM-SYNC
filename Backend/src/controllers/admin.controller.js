@@ -28,7 +28,7 @@ export const getAllEmployee = asyncHandler(async (req, res) => {
         message: "Employees fetched successfully",
         data: {
             employees,
-            pagination: { limit: limit, total: totalEmployees, activeEmployees, inactiveEmployees, newEmployees, totalPages: totalPages, page: currentPage },
+            pagination: { limit: limit, total: totalEmployees, activeEmployees, inactiveEmployees, totalPages: totalPages, page: currentPage },
         },
     });
 });
@@ -54,7 +54,7 @@ export const deleteEmployee = asyncHandler(async (req, res) => {
     });
 });
 
-export const MarkActiveInactive = asyncHandler(async (req, res) => {
+export const toggleEmployeeStatus = asyncHandler(async (req, res) => {
     const { user } = await MarkActiveInactiveService(req.params.id, req.body.status);
 
     res.status(200).json({

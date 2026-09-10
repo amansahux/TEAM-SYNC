@@ -24,3 +24,15 @@ export const addEmployee = async (employeeData) => {
   );
   return response.data;
 }
+export const updateEmployee  = async (employeeId , employeeData) => {
+  const response = await axiosInstance.put(`/admin/update-employee/${employeeId}`, employeeData);
+  return response.data;
+}
+export const deleteEmployee  = async (employeeId) => {
+  const response = await axiosInstance.delete(`/admin/delete-employee/${employeeId}`);
+  return response.data;
+}
+export const toggleEmployeeStatus = async (employeeId, status) => {
+  const response = await axiosInstance.put(`/admin/toggle-status/${employeeId}`, {status});
+  return response.data;
+}

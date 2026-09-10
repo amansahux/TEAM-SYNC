@@ -18,19 +18,24 @@ const EmployeeTableFilters = () => {
         <div className="flex-1 min-w-[180px]">
           <select className={selectClasses}>
             <option>All Departments</option>
-            <option>Product</option>
-            <option>Engineering</option>
-            <option>Operations</option>
+            <option>common</option>
+            <option>developer</option>
+            <option>designer</option>
+            <option>manager</option>
+            <option>marketer</option>
           </select>
         </div>
         <div className="flex-1 min-w-[180px]">
           <select className={selectClasses}>
             <option>Status: All</option>
-            <option>Status: Active</option>
-            <option>Status: Inactive</option>
+            <option>Active</option>
+            <option> Inactive</option>
           </select>
         </div>
-        <button type="button" className="btn-outline rounded-lg text-sm cursor-pointer">
+        <button
+          type="button"
+          className="btn-outline rounded-lg text-sm cursor-pointer"
+        >
           Clear Filters
         </button>
       </div>

@@ -98,3 +98,18 @@ export const deleteEmployeeService = async (employeeId) => {
 
   return true;
 };
+export const MarkActiveInactiveService = async (employeeId, status) => {
+  const existingEmployee = await User.findById(employeeId);
+  if (!existingEmployee) {
+    throw new AppError("Employee not found", 404);
+  }
+
+  const updatedEmployee = await User.findByIdAndUpdate(employeeId, { status }, {
+    new: true,
+    runValidators: true,
+  });
+
+  return {
+    employee: updatedEmployee.toSafeObject(),
+  };
+}

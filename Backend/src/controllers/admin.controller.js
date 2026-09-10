@@ -1,4 +1,4 @@
-import { addEmployeeService, deleteEmployeeService, editEmployeeService, getAllEmployeeService } from "../services/admin.service.js";
+import { addEmployeeService, deleteEmployeeService, editEmployeeService, getAllEmployeeService, MarkActiveInactiveService } from "../services/admin.service.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
 export const addEmployee = asyncHandler(async (req, res) => {
@@ -51,5 +51,17 @@ export const deleteEmployee = asyncHandler(async (req, res) => {
     res.status(200).json({
         success: true,
         message: "Employee deleted successfully",
+    });
+});
+
+export const MarkActiveInactive = asyncHandler(async (req, res) => {
+    const { user } = await MarkActiveInactiveService(req.params.id, req.body.status);
+
+    res.status(200).json({
+        success: true,
+        message: "Employee status updated successfully",
+        data: {
+            user,
+        },
     });
 });

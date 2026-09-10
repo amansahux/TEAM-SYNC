@@ -109,7 +109,7 @@ const Employee = () => {
           }
         />
         <StatCard
-          label="New Hires (MoM)"
+          label="New Hires"
           value={42}
           trailing={
             <span className="text-sm font-medium text-[var(--text-secondary)] mb-1">

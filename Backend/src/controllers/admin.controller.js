@@ -16,13 +16,19 @@ export const addEmployee = asyncHandler(async (req, res) => {
 export const getAllEmployee = asyncHandler(async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
+    const search = req.query.search || "";
+    const department = req.query.department || "";
+    const status = req.query.status || "";
 
-    const { employees, totalEmployees, totalPages, currentPage } = await getAllEmployeeService(page, limit);
+    const { employees, totalEmployees, totalPages, currentPage } =
+        await getAllEmployeeService({ page, limit, search, department, status });
 
     res.status(200).json({
         success: true,
         message: "Employees fetched successfully",
-        data: { employees, pagination: { limit: limit, total: totalEmployees, totalPages: totalPages, page: currentPage } },
-
+        data: {
+            employees,
+            pagination: { limit: limit, total: totalEmployees, totalPages: totalPages, page: currentPage },
+        },
     });
 });

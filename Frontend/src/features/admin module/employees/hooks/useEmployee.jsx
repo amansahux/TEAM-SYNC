@@ -1,5 +1,10 @@
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { addEmployee, getAllEmployees } from "../apis/employees.api";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { addEmployee, deleteEmployee, getAllEmployees, toggleEmployeeStatus, updateEmployee } from "../apis/employees.api";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -23,7 +28,7 @@ export const useEmployees = (
   limit = 10,
   search = "",
   department = "",
-  status = ""
+  status = "",
 ) => {
   const queryClient = useQueryClient();
 
@@ -63,7 +68,7 @@ export const useEmployees = (
       role: "employee", // enforce role
     });
   };
-    const handleExport = (employees) => {
+  const handleExport = (employees) => {
     if (!employees || employees.length === 0) {
       alert("No employee data to export.");
       return;
@@ -71,17 +76,55 @@ export const useEmployees = (
     const dataStr = JSON.stringify(employees, null, 2);
     const blob = new Blob([dataStr], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-    
+
     const link = document.createElement("a");
     link.href = url;
-    link.download = `employees_export_${new Date().toISOString().split('T')[0]}.json`;
+    link.download = `employees_export_${new Date().toISOString().split("T")[0]}.json`;
     document.body.appendChild(link);
     link.click();
-    
+
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   };
 
+  const updateStatusMutation = useMutation({
+    mutationFn: ({ employeeId, status }) => toggleEmployeeStatus(employeeId, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["employees"] });
+    },
+    onError: (error) => {
+      console.error(error?.response?.data?.message || "Failed to update status");
+    },
+  });
+  const updateEmployeeMutation = useMutation({
+    mutationFn: ({ employeeId, ...data }) => updateEmployee(employeeId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["employees"] });
+    },
+    onError: (error) => {
+      console.error(error?.response?.data?.message || "Failed to update employee");
+    },
+  })
+  const deleteEmployeeMutation = useMutation({
+    mutationFn: (employeeId) => deleteEmployee(employeeId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["employees"] });
+    },
+    onError: (error) => {
+      console.error(error?.response?.data?.message || "Failed to delete employee");
+    },
+  })
+  const updateEmployeeForm = useForm({
+    resolver: zodResolver(addEmployeeSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      department: "common",
+      status: "active",
+      role: "employee",
+    },
+  })
   return {
     data,
     isPending,
@@ -90,6 +133,10 @@ export const useEmployees = (
     handleCreatingEmployee,
     handleExport,
     form,
+    updateEmployeeMutation,
+    deleteEmployeeMutation,
+    updateEmployeeForm,
+    updateStatusMutation,
+    
   };
 };
-

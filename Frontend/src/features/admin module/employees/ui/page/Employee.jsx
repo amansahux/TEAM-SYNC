@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { useEmployees } from "../../hooks/useEmployee";
-import SkeletonTable from "../components/SkeletonTable";
-import ErrorState from "../components/ErrorState";
-import Pagination from "../components/Pagination";
-import StatCard from "../components/StatCard";
-import EmployeeDirectoryHeader from "../components/EmployeeDirectoryHeader";
-import EmployeeTableFilters from "../components/EmployeeTableFilters";
-import EmployeeRow from "../components/EmployeeRow";
+import SkeletonTable from "../components/employee/SkeletonTable";
+import ErrorState from "../components/employee/ErrorState";
+import Pagination from "../components/employee/Pagination";
+import StatCard from "../components/employee/StatCard";
+import EmployeeDirectoryHeader from "../components/employee/EmployeeDirectoryHeader";
+import EmployeeTableFilters from "../components/employee/EmployeeTableFilters";
+import EmployeeRow from "../components/employee/EmployeeRow";
 
 const thClasses =
   "px-6 py-4 text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider whitespace-nowrap";

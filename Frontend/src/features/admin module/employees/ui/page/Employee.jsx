@@ -44,58 +44,90 @@ const Employee = () => {
   };
 
   const renderContent = () => {
-    if (error)
-      return (
-        <ErrorState message={error.message || "Failed to load employees."} />
-      );
-    if (isPending) return <SkeletonTable />;
-
     return (
       <div className="card overflow-hidden">
-        {/* Filters */}
+        {/* Filters - ALWAYS mounted so input focus & state is never destroyed */}
         <EmployeeTableFilters onFilterChange={handleFilterChange} />
 
-        {/* Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-[700px]">
-            <thead className="bg-[var(--background-secondary)]">
-              <tr className="border-b border-[var(--border)]">
-                <th className={thClasses}>Employee</th>
-                <th className={thClasses}>Role</th>
-                <th className={thClasses}>Department</th>
-                <th className={thClasses}>Status</th>
-                <th className={thClasses}>Joined Date</th>
-                <th className={thClasses}>Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[var(--border)]">
-              {employees.length > 0 ? (
-                employees.map((emp) => (
-                  <EmployeeRow key={emp._id || emp.email} emp={emp} />
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan="6"
-                    className="px-6 py-12 text-center text-[var(--text-secondary)]"
-                  >
-                    No employees found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+        {error ? (
+          <div className="p-6">
+            <ErrorState message={error.message || "Failed to load employees."} />
+          </div>
+        ) : (
+          <>
+            {/* Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse min-w-[700px]">
+                <thead className="bg-[var(--background-secondary)]">
+                  <tr className="border-b border-[var(--border)]">
+                    <th className={thClasses}>Employee</th>
+                    <th className={thClasses}>Role</th>
+                    <th className={thClasses}>Department</th>
+                    <th className={thClasses}>Status</th>
+                    <th className={thClasses}>Joined Date</th>
+                    <th className={thClasses}>Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[var(--border)]">
+                  {isPending ? (
+                    // Row skeletons while loading initial data
+                    [1, 2, 3, 4, 5].map((i) => (
+                      <tr key={i} className="animate-pulse">
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-4">
+                            <div className="size-10 rounded-full bg-[var(--border)]" />
+                            <div className="space-y-2 flex-1">
+                              <div className="h-4 w-28 bg-[var(--border)] rounded" />
+                              <div className="h-3 w-40 bg-[var(--border)] rounded" />
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="h-5 w-16 bg-[var(--border)] rounded-lg" />
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="h-4 w-20 bg-[var(--border)] rounded" />
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="h-4 w-16 bg-[var(--border)] rounded" />
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="h-4 w-24 bg-[var(--border)] rounded" />
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="size-8 bg-[var(--border)] rounded-lg" />
+                        </td>
+                      </tr>
+                    ))
+                  ) : employees.length > 0 ? (
+                    employees.map((emp) => (
+                      <EmployeeRow key={emp._id || emp.email} emp={emp} />
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan="6"
+                        className="px-6 py-12 text-center text-[var(--text-secondary)]"
+                      >
+                        No employees found.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
 
-        {/* Pagination */}
-        {employees.length > 0 && (
-          <Pagination
-            total={pagination.total}
-            page={pagination.page}
-            limit={pagination.limit}
-            totalPages={pagination.totalPages}
-            onPageChange={handlePageChange}
-          />
+            {/* Pagination */}
+            {!isPending && employees.length > 0 && (
+              <Pagination
+                total={pagination.total}
+                page={pagination.page}
+                limit={pagination.limit}
+                totalPages={pagination.totalPages}
+                onPageChange={handlePageChange}
+              />
+            )}
+          </>
         )}
       </div>
     );

@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { addEmployee, getAllEmployees } from "../apis/employees.api";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -27,11 +27,11 @@ export const useEmployees = (
 ) => {
   const queryClient = useQueryClient();
 
-  const { data, isPending, error } = useQuery({
+  const { data, isPending, error, isFetching } = useQuery({
     queryKey: ["employees", page, limit, search, department, status],
     queryFn: () => getAllEmployees(page, limit, search, department, status),
     staleTime: 5 * 60 * 1000, // 5 minutes
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
   });
 
   const form = useForm({

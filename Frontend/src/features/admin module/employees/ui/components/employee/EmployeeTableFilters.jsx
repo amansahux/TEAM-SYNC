@@ -19,13 +19,17 @@ const EmployeeTableFilters = ({ onFilterChange }) => {
   const statusVal = watch("status");
 
   useEffect(() => {
-    if (onFilterChange) {
-      onFilterChange({
-        search: searchVal,
-        department: departmentVal === "all" ? "" : departmentVal,
-        status: statusVal === "all" ? "" : statusVal,
-      });
-    }
+    const timer = setTimeout(() => {
+      if (onFilterChange) {
+        onFilterChange({
+          search: searchVal,
+          department: departmentVal === "all" ? "" : departmentVal,
+          status: statusVal === "all" ? "" : statusVal,
+        });
+      }
+    }, 350);
+
+    return () => clearTimeout(timer);
   }, [searchVal, departmentVal, statusVal, onFilterChange]);
 
   const handleClearFilters = () => {

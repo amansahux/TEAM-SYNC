@@ -1,8 +1,11 @@
 import React from "react";
 import { Link } from "react-router";
-import { UserRoundPlus } from "lucide-react";
+import { Share, UserRoundPlus } from "lucide-react";
+import { useEmployees } from "../../../hooks/useEmployee";
 
-const EmployeeDirectoryHeader = () => {
+const EmployeeDirectoryHeader = ({ employees = [] }) => {
+  const { handleExport } = useEmployees();
+
   return (
     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
       <div>
@@ -15,10 +18,14 @@ const EmployeeDirectoryHeader = () => {
       </div>
 
       <div className="flex items-center gap-3 w-full sm:w-auto">
-        <button type="button" className="btn-outline rounded-xl text-sm gap-2 hidden sm:flex cursor-pointer">
-          <span className="material-symbols-outlined text-[20px]">
-            ios_share
-          </span>
+        <button
+          type="button"
+          onClick={() => {
+            handleExport(employees);
+          }}
+          className="btn-outline rounded-xl text-sm gap-2 hidden sm:flex cursor-pointer hover:bg-[var(--background-secondary)]"
+        >
+          <Share size={20} />
           Export
         </button>
         <Link

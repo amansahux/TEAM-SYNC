@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from "react";
 import { useEmployees } from "../../hooks/useEmployee";
-import SkeletonTable from "../components/employee/SkeletonTable";
 import ErrorState from "../components/employee/ErrorState";
 import Pagination from "../components/employee/Pagination";
 import StatCard from "../components/employee/StatCard";
@@ -143,7 +142,7 @@ const Employee = () => {
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-[1400px] mx-auto min-h-[calc(100vh-4rem)]">
       {/* Header */}
-      <EmployeeDirectoryHeader />
+      <EmployeeDirectoryHeader employees={employees} />
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">

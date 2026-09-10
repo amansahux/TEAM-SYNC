@@ -18,12 +18,18 @@ const addEmployeeSchema = z.object({
   status: z.enum(["active", "inactive"]),
 });
 
-export const useEmployees = (page = 1, limit = 10) => {
+export const useEmployees = (
+  page = 1,
+  limit = 10,
+  search = "",
+  department = "",
+  status = ""
+) => {
   const queryClient = useQueryClient();
 
   const { data, isPending, error } = useQuery({
-    queryKey: ["employees", page],
-    queryFn: () => getAllEmployees(page, limit),
+    queryKey: ["employees", page, limit, search, department, status],
+    queryFn: () => getAllEmployees(page, limit, search, department, status),
     staleTime: 5 * 60 * 1000, // 5 minutes
     keepPreviousData: true,
   });

@@ -13,7 +13,19 @@ const thClasses =
 
 const Employee = () => {
   const [page, setPage] = useState(1);
-  const { data, isPending, error } = useEmployees(page);
+  const [filters, setFilters] = useState({
+    search: "",
+    department: "",
+    status: "",
+  });
+
+  const { data, isPending, error } = useEmployees(
+    page,
+    10,
+    filters.search,
+    filters.department,
+    filters.status
+  );
 
   const pagination = data?.pagination || {
     total: data?.length || 0,
@@ -26,6 +38,11 @@ const Employee = () => {
 
   const handlePageChange = (newPage) => setPage(newPage);
 
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+    setPage(1); // Reset to page 1 on filter change
+  };
+
   const renderContent = () => {
     if (error)
       return (
@@ -36,7 +53,7 @@ const Employee = () => {
     return (
       <div className="card overflow-hidden">
         {/* Filters */}
-        <EmployeeTableFilters />
+        <EmployeeTableFilters onFilterChange={handleFilterChange} />
 
         {/* Table */}
         <div className="overflow-x-auto">

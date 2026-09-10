@@ -239,7 +239,7 @@ const EmployeeRow = ({ emp }) => (
 
 const Employee = () => {
   const [page, setPage] = useState(1);
-  const { data, isPending, error } = useEmployees(page);
+  const { data, isPending, error } = useEmployees(page, limit=10);
 
   const pagination = data?.pagination || {
     total: data?.length || 0,

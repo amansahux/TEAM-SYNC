@@ -1,14 +1,14 @@
 import React from "react";
 import { Link } from "react-router";
 import { UserPlus } from "lucide-react";
-import { useAddEmployeeForm } from "../../hooks/useEmployee";
+import { useEmployees } from "../../hooks/useEmployee";
 import PersonalInformationSection from "../components/add-employee/PersonalInformationSection";
 import EmploymentDetailsSection from "../components/add-employee/EmploymentDetailsSection";
 import AddEmployeeLoading from "../components/add-employee/AddEmployeeLoading";
 import AddEmployeeSuccess from "../components/add-employee/AddEmployeeSuccess";
 
 const AddEmployee = () => {
-  const { form, onSubmit, addEmployeeMutation } = useAddEmployeeForm();
+  const {form ,handleCreatingEmployee , addEmployeeMutation} = useEmployees()
   const {
     register,
     handleSubmit,
@@ -16,10 +16,6 @@ const AddEmployee = () => {
     setValue,
     formState: { errors },
   } = form;
-
-  const handleAddAnother = () => {
-    addEmployeeMutation.reset();
-  };
 
   return (
     <div className="flex-1 flex flex-col overflow-y-auto bg-[var(--background)]">
@@ -36,7 +32,9 @@ const AddEmployee = () => {
             Employees
           </Link>
           <span className="text-[var(--border)]">/</span>
-          <span className="text-[var(--text-primary)] font-medium">Add Employee</span>
+          <span className="text-[var(--text-primary)] font-medium">
+            Add Employee
+          </span>
         </nav>
 
         {/* Page Header */}
@@ -46,7 +44,8 @@ const AddEmployee = () => {
               Add Employee
             </h1>
             <p className="text-sm text-[var(--text-secondary)] mt-1 font-sans">
-              Create a new employee profile and configure enterprise workspace access.
+              Create a new employee profile and configure enterprise workspace
+              access.
             </p>
           </div>
 
@@ -58,9 +57,13 @@ const AddEmployee = () => {
 
         {/* Success View or Employee Creation Form */}
         {addEmployeeMutation.isSuccess ? (
-          <AddEmployeeSuccess onAddAnother={handleAddAnother} />
+          <AddEmployeeSuccess
+            onAddAnother={() => {
+              addEmployeeMutation.reset();
+            }}
+          />
         ) : (
-          <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-8">
+          <form onSubmit={handleSubmit(handleCreatingEmployee)} className="mt-8 space-y-8">
             <PersonalInformationSection register={register} errors={errors} />
 
             <EmploymentDetailsSection
@@ -88,7 +91,8 @@ const AddEmployee = () => {
                 <UserPlus
                   size={19}
                   className={`transition-transform ${
-                    !addEmployeeMutation.isPending && "group-hover:translate-x-0.5"
+                    !addEmployeeMutation.isPending &&
+                    "group-hover:translate-x-0.5"
                   }`}
                 />
                 <span>
@@ -107,10 +111,15 @@ const AddEmployee = () => {
             <span className="material-symbols-outlined text-[15px] text-[var(--secondary)]">
               verified
             </span>
-            <span>TEAM_SYNC Enterprise Protocol • ISO 27001 & SOC-2 Type II Validated</span>
+            <span>
+              TEAM_SYNC Enterprise Protocol • ISO 27001 & SOC-2 Type II
+              Validated
+            </span>
           </div>
           <div className="flex items-center space-x-4">
-            <span className="hover:underline cursor-pointer">Security & Compliance</span>
+            <span className="hover:underline cursor-pointer">
+              Security & Compliance
+            </span>
             <span className="hover:underline cursor-pointer">Audit Logs</span>
             <span className="hover:underline cursor-pointer">Sign In Help</span>
           </div>

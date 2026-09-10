@@ -23,7 +23,7 @@ const Employee = () => {
     10,
     filters.search,
     filters.department,
-    filters.status
+    filters.status,
   );
 
   const pagination = data?.pagination || {
@@ -31,8 +31,10 @@ const Employee = () => {
     page,
     limit: 10,
     totalPages: Math.ceil((data?.length || 0) / 10) || 1,
+    activeEmployees: data?.activeEmployees || 0,
+    inactiveEmployees: data?.inactiveEmployees || 0,
+    newEmployees: data?.newEmployees || 0,
   };
-
   const employees = data?.employees || data || [];
 
   const handlePageChange = (newPage) => setPage(newPage);
@@ -57,7 +59,9 @@ const Employee = () => {
 
         {error ? (
           <div className="p-6">
-            <ErrorState message={error.message || "Failed to load employees."} />
+            <ErrorState
+              message={error.message || "Failed to load employees."}
+            />
           </div>
         ) : (
           <>
@@ -157,9 +161,7 @@ const Employee = () => {
         <StatCard
           label="Inactive Now"
           value={Math.floor(pagination.inactiveEmployees)}
-          trailing={
-            <span className="size-2 rounded-full bg-red-600 mb-2" />
-          }
+          trailing={<span className="size-2 rounded-full bg-red-600 mb-2" />}
         />
         <StatCard
           label="New Hires"

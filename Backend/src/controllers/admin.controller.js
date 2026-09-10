@@ -28,7 +28,7 @@ export const getAllEmployee = asyncHandler(async (req, res) => {
         message: "Employees fetched successfully",
         data: {
             employees,
-            pagination: { limit: limit, total: totalEmployees, activeEmployees, inactiveEmployees, totalPages: totalPages, page: currentPage },
+            pagination: { limit: limit, total: totalEmployees, activeEmployees, inactiveEmployees, totalPages: totalPages, page: currentPage, newEmployees },
         },
     });
 });

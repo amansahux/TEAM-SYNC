@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { MoreVertical, Pencil, Trash2, UserCheck, UserX, Loader2 } from "lucide-react";
 import { useEmployees } from "../../../hooks/useEmployee";
+import UpdateEmployeeModal from "./UpdateEmployeeModal";
 
 const ActionMenu = ({ emp }) => {
   const [open, setOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -38,7 +40,7 @@ const ActionMenu = ({ emp }) => {
     {
       label: "Edit",
       icon: Pencil,
-      onClick: () => console.log("Edit", emp?._id),
+      onClick: () => setIsEditModalOpen(true),
       isLoading: false,
     },
     {
@@ -97,6 +99,13 @@ const ActionMenu = ({ emp }) => {
           ))}
         </div>
       )}
+
+      {/* Edit Modal */}
+      <UpdateEmployeeModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        emp={emp}
+      />
     </div>
   );
 };

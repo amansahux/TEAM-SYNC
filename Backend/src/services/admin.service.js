@@ -73,3 +73,28 @@ export const getAllEmployeeService = async ({
     currentPage: page,
   };
 };
+export const editEmployeeService = async (employeeId, employeeData) => {
+  const existingEmployee = await User.findById(employeeId);
+  if (!existingEmployee) {
+    throw new AppError("Employee not found", 404);
+  }
+
+  const updatedEmployee = await User.findByIdAndUpdate(employeeId, employeeData, {
+    new: true,
+    runValidators: true,
+  });
+
+  return {
+    employee: updatedEmployee.toSafeObject(),
+  };
+};
+export const deleteEmployeeService = async (employeeId) => {
+  const existingEmployee = await User.findById(employeeId);
+  if (!existingEmployee) {
+    throw new AppError("Employee not found", 404);
+  }
+
+  await User.findByIdAndDelete(employeeId);
+
+  return true;
+};

@@ -1,4 +1,4 @@
-import { addEmployeeService, getAllEmployeeService } from "../services/admin.service.js";
+import { addEmployeeService, deleteEmployeeService, editEmployeeService, getAllEmployeeService } from "../services/admin.service.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
 export const addEmployee = asyncHandler(async (req, res) => {
@@ -30,5 +30,26 @@ export const getAllEmployee = asyncHandler(async (req, res) => {
             employees,
             pagination: { limit: limit, total: totalEmployees, totalPages: totalPages, page: currentPage },
         },
+    });
+});
+
+export const editEmployee = asyncHandler(async (req, res) => {
+    const { user } = await editEmployeeService(req.params.id, req.body);
+
+    res.status(200).json({
+        success: true,
+        message: "Employee updated successfully",
+        data: {
+            user,
+        },
+    });
+});
+
+export const deleteEmployee = asyncHandler(async (req, res) => {
+    await deleteEmployeeService(req.params.id);
+
+    res.status(200).json({
+        success: true,
+        message: "Employee deleted successfully",
     });
 });

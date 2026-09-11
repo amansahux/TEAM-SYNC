@@ -1,46 +1,24 @@
-import { useEffect, useState } from "react";
-import socket from "../../socket/socket.jsx";
+import { useChat } from "../../hooks/useChat.jsx";
+
 
 const Chat = () => {
-  const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([]);
+  const {
+    messages,
+    messageInput,
+    setMessageInput,
+    handleSendMessage,
+  } = useChat();
 
-  useEffect(() => {
-    socket.connect();
-
-    const handleNewMessage = (newMessage) => {
-      setMessages((prev) => [
-        ...prev,
-        newMessage,
-      ]);
-    };
-
-    socket.on("message:new", handleNewMessage);
-
-    return () => {
-      socket.off("message:new", handleNewMessage);
-      socket.disconnect();
-    };
-  }, []);
-
-  const handleSendMessage = (e) => {
-    e.preventDefault();
-
-    if (!message.trim()) return;
-
-    socket.emit("message:send", {
-      content: message.trim(),
-    });
-
-    setMessage("");
-  };
+  // Extract the actual array of messages depending on the API response structure
+  const messageList = Array.isArray(messages) ? messages : (messages?.messages || messages?.data || []);
+  console.log(messageList)
 
   return (
     <div>
       <h1>Team Chat</h1>
 
       <div>
-        {messages.map((message, index) => (
+        {messageList.map((message, index) => (
           <div key={index}>
             {message.content}
           </div>
@@ -49,8 +27,8 @@ const Chat = () => {
 
       <form onSubmit={handleSendMessage}>
         <input
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          value={messageInput}
+          onChange={(e) => setMessageInput(e.target.value)}
           placeholder="Type a message..."
         />
 

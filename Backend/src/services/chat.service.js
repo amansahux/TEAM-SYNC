@@ -6,5 +6,5 @@ export const getMessagesService = async () => {
         .sort({ createdAt: -1 })
         .limit(50);
 
-    return messages.reverse()
+    return { messages: messages.reverse() }
 };

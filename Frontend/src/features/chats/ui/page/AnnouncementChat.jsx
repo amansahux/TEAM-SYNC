@@ -1,9 +1,8 @@
-import React from 'react'
+import React from "react";
+import ChatContainer from "../components/ChatContainer.jsx";
 
 const AnnouncementChat = () => {
-  return (
-    <div>AnnouncementChat</div>
-  )
-}
+  return <ChatContainer channelId="announcements" />;
+};
 
-export default AnnouncementChat 
+export default AnnouncementChat;

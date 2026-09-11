@@ -1,9 +1,8 @@
-import React from 'react'
+import React from "react";
+import ChatContainer from "../components/ChatContainer.jsx";
 
 const DesignerChat = () => {
-  return (
-    <div>DesignerChat</div>
-  )
-}
+  return <ChatContainer channelId="designers" />;
+};
 
-export default DesignerChat
+export default DesignerChat;

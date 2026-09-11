@@ -8,7 +8,10 @@ import { Server } from "socket.io";
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
     cors: {
-        origin: config.CLIENT_URL,
+        origin: (origin, callback) => {
+            callback(null, true);
+        },
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         credentials: true,
     },
 });

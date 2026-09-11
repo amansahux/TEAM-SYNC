@@ -3,12 +3,15 @@ import socket from "../../socket/socket";
 
 const Chat = () => {
   useEffect(() => {
-    socket.connect();
+    const res = socket.connect();
+    if (res.connected) {
+      console.log("Connected to socket", res.id);
+    }
 
     return () => {
       socket.disconnect();
     };
-  }, []);
+  }, [socket]);
   return <div>Chat Page</div>;
 };
 

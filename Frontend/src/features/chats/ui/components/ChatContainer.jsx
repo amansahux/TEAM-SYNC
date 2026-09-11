@@ -24,7 +24,10 @@ import {
   Megaphone,
 } from "lucide-react";
 import { useChat } from "../../hooks/useChat.jsx";
-import { CHAT_CHANNELS, canAccessChannel } from "../../constants/chatChannels.js";
+import {
+  CHAT_CHANNELS,
+  canAccessChannel,
+} from "../../constants/chatChannels.js";
 
 const getChannelIcon = (id) => {
   switch (id) {
@@ -67,12 +70,8 @@ const ChatContainer = ({ channelId = "general" }) => {
   const location = useLocation();
   const { employee } = useSelector((state) => state.auth);
 
-  const {
-    messages,
-    messageInput,
-    setMessageInput,
-    handleSendMessage,
-  } = useChat();
+  const { messages, messageInput, setMessageInput, handleSendMessage } =
+    useChat();
 
   const [isChannelsOpen, setIsChannelsOpen] = useState(false);
   const [isInfoOpen, setIsInfoOpen] = useState(false);
@@ -156,7 +155,9 @@ const ChatContainer = ({ channelId = "general" }) => {
                     <div className="flex items-center gap-2 min-w-0">
                       <Icon
                         className={`w-4 h-4 shrink-0 ${
-                          active ? "text-[var(--primary)]" : "text-[var(--text-muted)]"
+                          active
+                            ? "text-[var(--primary)]"
+                            : "text-[var(--text-muted)]"
                         }`}
                       />
                       <span className="truncate">{channel.name}</span>
@@ -264,7 +265,8 @@ const ChatContainer = ({ channelId = "general" }) => {
                 Welcome to #{currentChannel.name}!
               </p>
               <p className="text-xs text-[var(--text-secondary)] mt-1 max-w-sm">
-                This is the beginning of the #{currentChannel.name} channel. Send a message below to start the conversation.
+                This is the beginning of the #{currentChannel.name} channel.
+                Send a message below to start the conversation.
               </p>
             </div>
           ) : (
@@ -279,7 +281,9 @@ const ChatContainer = ({ channelId = "general" }) => {
                 <div className="flex flex-col flex-1 min-w-0">
                   <div className="flex items-baseline gap-2">
                     <span className="text-xs md:text-sm font-semibold text-[var(--text-primary)]">
-                      {message.sender?.name || message.sender?.email || "Team Member"}
+                      {message.sender?.name ||
+                        message.sender?.email ||
+                        "Team Member"}
                     </span>
                     <span className="text-[10px] md:text-[11px] text-[var(--text-muted)]">
                       {formatTimestamp(message.createdAt)}
@@ -357,7 +361,9 @@ const ChatContainer = ({ channelId = "general" }) => {
           </form>
 
           <div className="flex justify-between items-center mt-2 px-1 text-[10px] md:text-[11px] text-[var(--text-muted)]">
-            <span className="hidden sm:inline">Pro-tip: Press Enter to send, Shift + Enter for a new line.</span>
+            <span className="hidden sm:inline">
+              Pro-tip: Press Enter to send, Shift + Enter for a new line.
+            </span>
             <span className="flex items-center gap-1 ml-auto sm:ml-0">
               <ShieldCheck className="w-3.5 h-3.5 text-[var(--primary)]" />
               Encrypted Channel Stream
@@ -500,7 +506,9 @@ const ChatContainer = ({ channelId = "general" }) => {
                         <div className="flex items-center gap-2.5 min-w-0">
                           <Icon
                             className={`w-4.5 h-4.5 shrink-0 ${
-                              active ? "text-[var(--primary)]" : "text-[var(--text-muted)]"
+                              active
+                                ? "text-[var(--primary)]"
+                                : "text-[var(--text-muted)]"
                             }`}
                           />
                           <span className="truncate">{channel.name}</span>

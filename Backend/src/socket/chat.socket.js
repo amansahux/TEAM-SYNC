@@ -42,13 +42,31 @@ export const initChatSocket = (io) => {
     io.on("connection", (socket) => {
         console.log("User connected:", socket.id, "User Info:", socket.user.name || socket.user.email);
 
+        socket.on("join:channel", (channel) => {
+            if (channel) {
+                socket.join(channel);
+            }
+        });
+
+        socket.on("leave:channel", (channel) => {
+            if (channel) {
+                socket.leave(channel);
+            }
+        });
+
         socket.on("message:send", async (data) => {
-            const message = await Message.create({
-                content: data.content,
-                sender: socket.user._id,
-            });
-            await message.populate("sender", "name email");
-            io.emit("message:new", message);
+            try {
+                const channel = data.channel || "general";
+                const message = await Message.create({
+                    content: data.content,
+                    sender: socket.user._id,
+                    channel: channel,
+                });
+                await message.populate("sender", "name email");
+                io.emit("message:new", message);
+            } catch (error) {
+                console.error("Error creating chat message:", error);
+            }
         });
 
         socket.on("disconnect", () => {

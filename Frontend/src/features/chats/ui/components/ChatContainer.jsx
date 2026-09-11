@@ -70,17 +70,16 @@ const ChatContainer = ({ channelId = "general" }) => {
   const location = useLocation();
   const { employee } = useSelector((state) => state.auth);
 
-  const { messages, messageInput, setMessageInput, handleSendMessage } =
-    useChat();
-
-  const [isChannelsOpen, setIsChannelsOpen] = useState(false);
-  const [isInfoOpen, setIsInfoOpen] = useState(false);
-
-  const messagesEndRef = useRef(null);
-
   // Find current active channel config
   const currentChannel =
     CHAT_CHANNELS.find((c) => c.id === channelId) || CHAT_CHANNELS[0];
+
+  const { messages, messageInput, setMessageInput, handleSendMessage } =
+    useChat(currentChannel.id);
+
+  const [isChannelsOpen, setIsChannelsOpen] = useState(false);
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
+  const messagesEndRef = useRef(null);
 
   const ChannelIcon = getChannelIcon(currentChannel.id);
 

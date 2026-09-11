@@ -1,10 +1,11 @@
 import { Message } from "../models/message.model.js";
 
-export const getMessagesService = async () => {
-    const messages = await Message.find()
+export const getMessagesService = async (channel = "general") => {
+    const filter = channel ? { channel } : { channel: "general" };
+    const messages = await Message.find(filter)
         .populate("sender", "name email")
         .sort({ createdAt: -1 })
         .limit(50);
 
-    return { messages: messages.reverse() }
+    return { messages: messages.reverse() };
 };

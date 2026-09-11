@@ -13,6 +13,19 @@ const messageSchema = new mongoose.Schema(
             required: true,
             trim: true,
         },
+        channel: {
+            type: String,
+            enum: [
+                "general",
+                "announcements",
+                "designers",
+                "developers",
+                "marketers",
+                "managers",
+            ],
+            required: true,
+            index: true,
+        },
     },
     {
         timestamps: true,

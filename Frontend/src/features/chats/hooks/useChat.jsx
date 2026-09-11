@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getMessages } from "../apis/chat.api.jsx";
 import socket from "../socket/socket.jsx";
 
-export const useChat = () => {
+export const useChat = (channel = "general") => {
   const queryClient = useQueryClient();
   const [messageInput, setMessageInput] = useState("");
 
@@ -13,16 +13,23 @@ export const useChat = () => {
     isError,
     error,
   } = useQuery({
-    queryKey: ["messages"],
-    queryFn: () => getMessages(),
+    queryKey: ["messages", channel],
+    queryFn: () => getMessages(channel),
   });
 
   useEffect(() => {
-    socket.connect();
+    if (!socket.connected) {
+      socket.connect();
+    }
+
+    socket.emit("join:channel", channel);
 
     const handleNewMessage = (newMessage) => {
-      queryClient.setQueryData(["messages"], (oldData) => {
-        if (!oldData) return [newMessage];
+      // Only add to cache if the message belongs to this channel
+      if (newMessage.channel && newMessage.channel !== channel) return;
+
+      queryClient.setQueryData(["messages", channel], (oldData) => {
+        if (!oldData) return { messages: [newMessage] };
         if (Array.isArray(oldData)) return [...oldData, newMessage];
         if (oldData.messages && Array.isArray(oldData.messages)) {
           return { ...oldData, messages: [...oldData.messages, newMessage] };
@@ -37,10 +44,10 @@ export const useChat = () => {
     socket.on("message:new", handleNewMessage);
 
     return () => {
+      socket.emit("leave:channel", channel);
       socket.off("message:new", handleNewMessage);
-      socket.disconnect();
     };
-  }, [queryClient]);
+  }, [queryClient, channel]);
 
   const handleSendMessage = (e) => {
     e.preventDefault();
@@ -49,6 +56,7 @@ export const useChat = () => {
 
     socket.emit("message:send", {
       content: messageInput.trim(),
+      channel: channel,
     });
 
     setMessageInput("");

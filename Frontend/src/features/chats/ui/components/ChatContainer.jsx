@@ -281,9 +281,7 @@ const ChatContainer = ({ channelId = "general" }) => {
                 <div className="flex flex-col flex-1 min-w-0">
                   <div className="flex items-baseline gap-2">
                     <span className="text-xs md:text-sm font-semibold text-[var(--text-primary)]">
-                      {message.sender?.name ||
-                        message.sender?.email ||
-                        "Team Member"}
+                      {message.sender?.name || message.sender?.email}
                     </span>
                     <span className="text-[10px] md:text-[11px] text-[var(--text-muted)]">
                       {formatTimestamp(message.createdAt)}

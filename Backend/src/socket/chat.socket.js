@@ -47,6 +47,7 @@ export const initChatSocket = (io) => {
                 content: data.content,
                 sender: socket.user._id,
             });
+            await message.populate("sender", "name email");
             io.emit("message:new", message);
         });
 

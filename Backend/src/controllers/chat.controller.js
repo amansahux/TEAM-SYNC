@@ -1,4 +1,4 @@
-import { getMessagesService } from "../services/message.service";
+import { getMessagesService } from "../services/chat.service.js";
 import asyncHandler from "../utils/asyncHandler.js"
 
 export const getMessages = asyncHandler(async (req, res) => {

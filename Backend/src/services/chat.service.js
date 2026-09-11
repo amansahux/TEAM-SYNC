@@ -1,6 +1,6 @@
-import { Message } from "../models/message.model";
+import { Message } from "../models/message.model.js";
 
-const getMessagesService = async () => {
+export const getMessagesService = async () => {
     const messages = await Message.find()
         .populate("sender", "name email")
         .sort({ createdAt: -1 })

@@ -3,6 +3,7 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import authRoutes from "./routes/auth.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
+import chatRoutes from "./routes/chat.route.js";
 import errorHandler from "./middlewares/error.middleware.js";
 import cors from "cors"
 
@@ -24,6 +25,7 @@ app.use(cors({
 // API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes)
+app.use("/api/chat", chatRoutes)
 
 // Global Error Handler Middleware
 app.use(errorHandler);

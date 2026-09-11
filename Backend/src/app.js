@@ -3,7 +3,7 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import authRoutes from "./routes/auth.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
-import chatRoutes from "./routes/chat.route.js";
+import chatRoutes from "./routes/chat.routes.js";
 import errorHandler from "./middlewares/error.middleware.js";
 import cors from "cors"
 

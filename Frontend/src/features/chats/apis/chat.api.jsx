@@ -1,8 +1,9 @@
-import axiosInstance from "../../../app/config/axiosInstance"
+import axiosInstance from "../../../app/config/axiosInstance";
 export const getMessages = async () => {
-    try{
-        const messages = await axiosInstance.get
-    }catch(error){
-        console.log(error)
-    }
-}
+  try {
+    const response = await axiosInstance.get("/chat/get-messages");
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};

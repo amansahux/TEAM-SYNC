@@ -16,18 +16,10 @@ const io = new Server(httpServer, {
     },
 });
 
-io.on("connection", (socket) => {
-    console.log("User connected:", socket.id);
-    socket.on("message:send", (data) => {
-        console.log("Message received:", data);
+import { initChatSocket } from "./src/socket/chat.socket.js";
 
-        io.emit("message:new", data);
-    });
-
-    socket.on("disconnect", () => {
-        console.log("User disconnected:", socket.id);
-    });
-});
+// Initialize chat socket events
+initChatSocket(io);
 
 
 httpServer.listen(config.PORT, () => {

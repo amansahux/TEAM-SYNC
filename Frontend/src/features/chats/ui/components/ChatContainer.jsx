@@ -270,29 +270,72 @@ const ChatContainer = ({ channelId = "general" }) => {
               </p>
             </div>
           ) : (
-            messageList.map((message, index) => (
-              <div
-                key={message._id || index}
-                className="flex items-start gap-3 group hover:bg-[var(--card-hover)]/30 p-2 md:p-2.5 rounded-xl transition-colors"
-              >
-                <div className="w-8 h-8 md:w-9 md:h-9 rounded-full bg-[var(--primary-light)] text-[var(--primary)] flex items-center justify-center font-bold text-xs shrink-0 shadow-xs border border-[var(--primary)]/20">
-                  {getInitials(message.sender?.name || message.sender?.email)}
-                </div>
-                <div className="flex flex-col flex-1 min-w-0">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-xs md:text-sm font-semibold text-[var(--text-primary)]">
-                      {message.sender?.name || message.sender?.email}
-                    </span>
-                    <span className="text-[10px] md:text-[11px] text-[var(--text-muted)]">
-                      {formatTimestamp(message.createdAt)}
-                    </span>
+            messageList.map((message, index) => {
+              const userObj =
+                employee?.user ||
+                employee?.data?.user ||
+                employee?.employee?.user ||
+                employee ||
+                {};
+              const currentUserId = String(userObj?._id || userObj?.id || "");
+              const currentUserEmail = (userObj?.email || "").toLowerCase();
+
+              const senderId = String(
+                message.sender?._id ||
+                  (typeof message.sender === "string" ? message.sender : "") ||
+                  ""
+              );
+              const senderEmail = (message.sender?.email || "").toLowerCase();
+
+              const isOwn =
+                (currentUserId && senderId && currentUserId === senderId) ||
+                (currentUserEmail && senderEmail && currentUserEmail === senderEmail);
+
+              return (
+                <div
+                  key={message._id || index}
+                  className={`flex items-start gap-3 p-2.5 md:p-3 rounded-xl transition-all ${
+                    isOwn
+                      ? "bg-[var(--primary)]/10 border border-[var(--primary)]/25 shadow-xs"
+                      : "group hover:bg-[var(--card-hover)]/30 border border-transparent"
+                  }`}
+                >
+                  <div
+                    className={`w-8 h-8 md:w-9 md:h-9 rounded-full flex items-center justify-center font-bold text-xs shrink-0 shadow-xs border ${
+                      isOwn
+                        ? "bg-[var(--primary)] text-[var(--primary-foreground)] border-[var(--primary)] ring-2 ring-[var(--primary)]/20"
+                        : "bg-[var(--primary-light)] text-[var(--primary)] border-[var(--primary)]/20"
+                    }`}
+                  >
+                    {getInitials(message.sender?.name || message.sender?.email)}
                   </div>
-                  <p className="text-xs md:text-sm text-[var(--text-secondary)] mt-1 whitespace-pre-wrap leading-relaxed">
-                    {message.content}
-                  </p>
+                  <div className="flex flex-col flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`text-xs md:text-sm font-semibold truncate ${
+                          isOwn
+                            ? "text-[var(--primary)] font-bold"
+                            : "text-[var(--text-primary)]"
+                        }`}
+                      >
+                        {message.sender?.name || message.sender?.email}
+                      </span>
+                      {isOwn && (
+                        <span className="text-[10px] px-1.5 py-0.2 rounded font-semibold bg-[var(--primary)] text-[var(--primary-foreground)] shadow-xs">
+                          You
+                        </span>
+                      )}
+                      <span className="text-[10px] md:text-[11px] text-[var(--text-muted)] ml-auto sm:ml-0">
+                        {formatTimestamp(message.createdAt)}
+                      </span>
+                    </div>
+                    <p className="text-xs md:text-sm text-[var(--text-secondary)] mt-1 whitespace-pre-wrap leading-relaxed">
+                      {message.content}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
           <div ref={messagesEndRef} />
         </div>

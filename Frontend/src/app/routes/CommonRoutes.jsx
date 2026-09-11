@@ -1,4 +1,5 @@
-import Chat from "../../features/chats/ui/page/Chat";
+
+import GenralChat from "../../features/chats/ui/page/GenralChat";
 import Home from "../../features/dashboard/ui/pages/Home";
 import Setting from "../../features/settings/ui/page/Setting";
 
@@ -9,7 +10,7 @@ export const commonRoutes = [
     },
     {
         path:"chat",
-        element:<Chat/>
+        element:<GenralChat/>
     },
     {
         path:"setting",

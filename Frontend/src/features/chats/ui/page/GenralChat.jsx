@@ -55,7 +55,7 @@ const formatTimestamp = (dateStr) => {
   }
 };
 
-const Chat = () => {
+const GenralChat = () => {
   const {
     messages,
     messageInput,
@@ -541,4 +541,4 @@ const Chat = () => {
   );
 };
 
-export default Chat;
+export default GenralChat;

@@ -70,9 +70,20 @@ const ChatContainer = ({ channelId = "general" }) => {
   const location = useLocation();
   const { employee } = useSelector((state) => state.auth);
 
+  const userObj =
+    employee?.user ||
+    employee?.data?.user ||
+    employee?.employee?.user ||
+    employee ||
+    {};
+  const currentUserRole = (userObj?.role || "").toLowerCase();
+
   // Find current active channel config
   const currentChannel =
     CHAT_CHANNELS.find((c) => c.id === channelId) || CHAT_CHANNELS[0];
+
+  const isAnnouncementChannel = currentChannel.id === "announcements";
+  const canPostMessages = !isAnnouncementChannel || currentUserRole === "admin";
 
   const { messages, messageInput, setMessageInput, handleSendMessage } =
     useChat(currentChannel.id);
@@ -270,12 +281,6 @@ const ChatContainer = ({ channelId = "general" }) => {
             </div>
           ) : (
             messageList.map((message, index) => {
-              const userObj =
-                employee?.user ||
-                employee?.data?.user ||
-                employee?.employee?.user ||
-                employee ||
-                {};
               const currentUserId = String(userObj?._id || userObj?.id || "");
               const currentUserEmail = (userObj?.email || "").toLowerCase();
 
@@ -289,6 +294,9 @@ const ChatContainer = ({ channelId = "general" }) => {
               const isOwn =
                 (currentUserId && senderId && currentUserId === senderId) ||
                 (currentUserEmail && senderEmail && currentUserEmail === senderEmail);
+
+              const senderRole = (message.sender?.role || "").toLowerCase();
+              const senderDept = (message.sender?.department || "").toLowerCase();
 
               return (
                 <div
@@ -309,7 +317,7 @@ const ChatContainer = ({ channelId = "general" }) => {
                     {getInitials(message.sender?.name || message.sender?.email)}
                   </div>
                   <div className="flex flex-col flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <span
                         className={`text-xs md:text-sm font-semibold truncate ${
                           isOwn
@@ -319,12 +327,25 @@ const ChatContainer = ({ channelId = "general" }) => {
                       >
                         {message.sender?.name || message.sender?.email}
                       </span>
+
+                      {/* Department / Role Identification Badge */}
+                      {senderRole === "admin" ? (
+                        <span className="text-[10px] px-1.5 py-0.5 rounded font-semibold bg-[var(--accent)]/15 text-[var(--accent)] border border-[var(--accent)]/20">
+                          Admin
+                        </span>
+                      ) : senderDept && senderDept !== "common" ? (
+                        <span className="text-[10px] px-1.5 py-0.5 rounded font-medium bg-[var(--card-hover)] text-[var(--text-secondary)] border border-[var(--border)] capitalize">
+                          {senderDept}
+                        </span>
+                      ) : null}
+
                       {isOwn && (
                         <span className="text-[10px] px-1.5 py-0.2 rounded font-semibold bg-[var(--primary)] text-[var(--primary-foreground)] shadow-xs">
                           You
                         </span>
                       )}
-                      <span className="text-[10px] md:text-[11px] text-[var(--text-muted)] ml-auto sm:ml-0">
+
+                      <span className="text-[10px] md:text-[11px] text-[var(--text-muted)] ml-auto">
                         {formatTimestamp(message.createdAt)}
                       </span>
                     </div>
@@ -341,10 +362,18 @@ const ChatContainer = ({ channelId = "general" }) => {
 
         {/* Message Input Box */}
         <div className="p-3 md:p-4 pt-0 bg-[var(--background)]">
-          <form
-            onSubmit={handleSendMessage}
-            className="bg-[var(--surface)] rounded-xl border border-[var(--border)] focus-within:border-[var(--primary)] transition-all p-2.5 md:p-3 flex flex-col gap-2 shadow-xs"
-          >
+          {!canPostMessages ? (
+            <div className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-4 flex items-center justify-center gap-2.5 text-center shadow-xs">
+              <Lock className="w-4 h-4 text-[var(--text-muted)] shrink-0" />
+              <p className="text-xs text-[var(--text-muted)] font-medium">
+                Announcements channel is read-only. Only administrators can broadcast messages.
+              </p>
+            </div>
+          ) : (
+            <form
+              onSubmit={handleSendMessage}
+              className="bg-[var(--surface)] rounded-xl border border-[var(--border)] focus-within:border-[var(--primary)] transition-all p-2.5 md:p-3 flex flex-col gap-2 shadow-xs"
+            >
             <textarea
               rows={2}
               value={messageInput}
@@ -399,6 +428,7 @@ const ChatContainer = ({ channelId = "general" }) => {
               </button>
             </div>
           </form>
+          )}
 
           <div className="flex justify-between items-center mt-2 px-1 text-[10px] md:text-[11px] text-[var(--text-muted)]">
             <span className="hidden sm:inline">

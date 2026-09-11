@@ -57,12 +57,21 @@ export const initChatSocket = (io) => {
         socket.on("message:send", async (data) => {
             try {
                 const channel = data.channel || "general";
+
+                // Announcements channel is restricted: only admins can send messages
+                if (channel === "announcements" && socket.user.role !== "admin") {
+                    socket.emit("message:error", {
+                        message: "Only administrators are allowed to post in announcements.",
+                    });
+                    return;
+                }
+
                 const message = await Message.create({
                     content: data.content,
                     sender: socket.user._id,
                     channel: channel,
                 });
-                await message.populate("sender", "name email");
+                await message.populate("sender", "name email department role avatar");
                 io.emit("message:new", message);
             } catch (error) {
                 console.error("Error creating chat message:", error);

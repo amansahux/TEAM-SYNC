@@ -7,7 +7,8 @@ const requiredEnvVariables = [
   "PORT",
   "JWT_ACCESS_SECRET",
   "JWT_REFRESH_SECRET",
-  "NODE_ENV"
+  "NODE_ENV",
+  "CLIENT_URL"
 ];
 
 const missingVariables = requiredEnvVariables.filter(
@@ -30,7 +31,8 @@ const config = {
 
   JWT_ACCESS_EXPIRES_IN: process.env.JWT_ACCESS_EXPIRES_IN || "15m",
   JWT_REFRESH_EXPIRES_IN: process.env.JWT_REFRESH_EXPIRES_IN || "7d",
-  NODE_ENV:process.env.NODE_ENV
+  NODE_ENV: process.env.NODE_ENV,
+  CLIENT_URL: process.env.CLIENT_URL
 };
 
 export default config;

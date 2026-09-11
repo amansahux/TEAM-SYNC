@@ -3,7 +3,6 @@ const ThemeSlice = createSlice({
   name: "theme",
   initialState: {
     mode: localStorage.getItem("theme") || "dark",
-    
   },
   reducers: {
     toggleTheme: (state) => {

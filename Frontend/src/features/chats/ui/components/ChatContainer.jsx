@@ -5,7 +5,6 @@ import {
   Hash,
   Plus,
   Paperclip,
-  Smile,
   Bold,
   AtSign,
   Send,
@@ -22,6 +21,9 @@ import {
   Palette,
   Briefcase,
   Megaphone,
+  Image as ImageIcon,
+  FileText,
+  Music,
 } from "lucide-react";
 import { useChat } from "../../hooks/useChat.jsx";
 import {
@@ -106,8 +108,35 @@ const ChatContainer = ({ channelId = "general" }) => {
 
   const [isChannelsOpen, setIsChannelsOpen] = useState(false);
   const [isInfoOpen, setIsInfoOpen] = useState(false);
+  const [isAttachmentMenuOpen, setIsAttachmentMenuOpen] = useState(false);
+  
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
+  const attachmentMenuRef = useRef(null);
+  const imageInputRef = useRef(null);
+  const documentInputRef = useRef(null);
+  const audioInputRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (attachmentMenuRef.current && !attachmentMenuRef.current.contains(event.target)) {
+        setIsAttachmentMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleFileSelect = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      console.log("File selected:", file);
+      // Handle file upload logic here
+    }
+    setIsAttachmentMenuOpen(false);
+    // Reset input value to allow selecting the same file again
+    e.target.value = null;
+  };
 
   const handleFormatBold = () => {
     document.execCommand("bold", false, null);
@@ -448,13 +477,56 @@ const ChatContainer = ({ channelId = "general" }) => {
             />
             <div className="flex items-center justify-between pt-2 border-t border-[var(--border)]">
               <div className="flex items-center gap-0.5 sm:gap-1 text-[var(--text-secondary)]">
-                <button
-                  type="button"
-                  className="p-1.5 rounded-md hover:bg-[var(--card-hover)] transition-colors cursor-pointer"
-                  title="Attach file"
-                >
-                  <Paperclip className="w-4 h-4" />
-                </button>
+                <div className="relative" ref={attachmentMenuRef}>
+                  <button
+                    type="button"
+                    onClick={() => setIsAttachmentMenuOpen(!isAttachmentMenuOpen)}
+                    className={`p-1.5 rounded-md transition-colors cursor-pointer ${isAttachmentMenuOpen ? "bg-[var(--card-hover)] text-[var(--text-primary)]" : "hover:bg-[var(--card-hover)]"}`}
+                    title="Attach file"
+                  >
+                    <Paperclip className="w-4 h-4" />
+                  </button>
+
+                  {isAttachmentMenuOpen && (
+                    <div className="absolute bottom-full left-0 mb-2 w-48 bg-[var(--surface)] border border-[var(--border)] rounded-xl shadow-lg p-1.5 z-50 flex flex-col gap-0.5 animate-in slide-in-from-bottom-2 fade-in duration-200">
+                      <button 
+                        type="button"
+                        onClick={() => imageInputRef.current?.click()}
+                        className="flex items-center gap-2.5 px-2.5 py-2 text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--card-hover)] rounded-lg transition-colors cursor-pointer text-left"
+                      >
+                        <div className="p-1.5 rounded-md bg-[var(--primary)]/10 text-[var(--primary)]">
+                          <ImageIcon className="w-4 h-4" />
+                        </div>
+                        <span>Image</span>
+                      </button>
+                      <button 
+                        type="button"
+                        onClick={() => documentInputRef.current?.click()}
+                        className="flex items-center gap-2.5 px-2.5 py-2 text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--card-hover)] rounded-lg transition-colors cursor-pointer text-left"
+                      >
+                        <div className="p-1.5 rounded-md bg-[var(--accent)]/10 text-[var(--accent)]">
+                          <FileText className="w-4 h-4" />
+                        </div>
+                        <span>Document</span>
+                      </button>
+                      <button 
+                        type="button"
+                        onClick={() => audioInputRef.current?.click()}
+                        className="flex items-center gap-2.5 px-2.5 py-2 text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--card-hover)] rounded-lg transition-colors cursor-pointer text-left"
+                      >
+                        <div className="p-1.5 rounded-md bg-emerald-500/10 text-emerald-500">
+                          <Music className="w-4 h-4" />
+                        </div>
+                        <span>Audio file</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Hidden inputs */}
+                  <input type="file" ref={imageInputRef} accept="image/*" className="hidden" onChange={handleFileSelect} />
+                  <input type="file" ref={documentInputRef} accept=".pdf,.doc,.docx,.txt" className="hidden" onChange={handleFileSelect} />
+                  <input type="file" ref={audioInputRef} accept="audio/*" className="hidden" onChange={handleFileSelect} />
+                </div>
                 <button
                   type="button"
                   onClick={handleFormatBold}

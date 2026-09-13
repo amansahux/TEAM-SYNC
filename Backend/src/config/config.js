@@ -8,7 +8,10 @@ const requiredEnvVariables = [
   "JWT_ACCESS_SECRET",
   "JWT_REFRESH_SECRET",
   "NODE_ENV",
-  "CLIENT_URL"
+  "CLIENT_URL",
+  "IMAGEKIT_PUBLIC_KEY",
+  "IMAGEKIT_PRIVATE_KEY",
+  "IMAGEKIT_URL_ENDPOINT"
 ];
 
 const missingVariables = requiredEnvVariables.filter(
@@ -32,7 +35,11 @@ const config = {
   JWT_ACCESS_EXPIRES_IN: process.env.JWT_ACCESS_EXPIRES_IN || "15m",
   JWT_REFRESH_EXPIRES_IN: process.env.JWT_REFRESH_EXPIRES_IN || "7d",
   NODE_ENV: process.env.NODE_ENV,
-  CLIENT_URL: process.env.CLIENT_URL
+  CLIENT_URL: process.env.CLIENT_URL,
+
+  IMAGEKIT_PUBLIC_KEY: process.env.IMAGEKIT_PUBLIC_KEY,
+  IMAGEKIT_PRIVATE_KEY: process.env.IMAGEKIT_PRIVATE_KEY,
+  IMAGEKIT_URL_ENDPOINT: process.env.IMAGEKIT_URL_ENDPOINT
 };
 
 export default config;

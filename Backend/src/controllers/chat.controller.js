@@ -9,3 +9,7 @@ export const getMessages = asyncHandler(async (req, res) => {
         messages,
     });
 });
+
+export const sendMessages = asyncHandler(async (req, res) => {
+    
+})

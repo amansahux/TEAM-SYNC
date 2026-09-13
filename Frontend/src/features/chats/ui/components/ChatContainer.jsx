@@ -37,12 +37,6 @@ import {
 
 // ─── Helpers ─────────────────────────────────────────────────────────
 
-const getInitials = (name) => {
-  if (!name) return "U";
-  const parts = name.trim().split(" ");
-  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
-  return name.slice(0, 2).toUpperCase();
-};
 
 const formatTimestamp = (dateStr) => {
   if (!dateStr) return "";
@@ -578,6 +572,7 @@ const ChatContainer = ({ channelId = "general" }) => {
     stopRecording,
     cancelRecording,
     discardAudioBlob,
+    getInitials
   } = useChat(currentChannel.id);
 
   const [isChannelsOpen, setIsChannelsOpen] = useState(false);

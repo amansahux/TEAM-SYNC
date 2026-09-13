@@ -9,3 +9,7 @@ export const getMessagesService = async (channel = "general") => {
 
     return { messages: messages.reverse() };
 };
+export const deleteMessageService = async (id) => {
+    const message = await Message.findByIdAndDelete(id);
+    return message;
+}

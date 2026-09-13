@@ -1,7 +1,9 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { getMessages, uploadFile } from "../apis/chat.api.jsx";
 import socket from "../socket/socket.jsx";
+import { CHAT_CHANNELS } from "../constants/chatChannels.js";
+import { getDateLabel } from "../utils/chat.utils.js";
 import {
   Hash,
   Radio,
@@ -11,13 +13,40 @@ import {
   Megaphone,
 } from "lucide-react";
 
-export const useChat = (channel = "general") => {
+export const useChat = () => {
   const queryClient = useQueryClient();
-  const [messageInput, setMessageInput] = useState("");
+
+  // ─── Channel State ─────────────────────────────────────────────────
+  const [activeChannelId, setActiveChannelId] = useState("general");
+
+  const currentChannel = useMemo(
+    () => CHAT_CHANNELS.find((c) => c.id === activeChannelId) || CHAT_CHANNELS[0],
+    [activeChannelId]
+  );
+
+  const isChannelActive = useCallback(
+    (channel) => channel.id === activeChannelId,
+    [activeChannelId]
+  );
+
+  const handleChannelClick = useCallback((channel) => {
+    setActiveChannelId(channel.id);
+    setIsChannelsOpen(false);
+  }, []);
+
+  // ─── UI State ──────────────────────────────────────────────────────
+  const [isChannelsOpen, setIsChannelsOpen] = useState(false);
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
+  const [lightboxImage, setLightboxImage] = useState(null);
+  const [newMessage, setNewMessage] = useState("");
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [uploadError, setUploadError] = useState(null);
 
-  // Voice recording state
+  // ─── Refs ──────────────────────────────────────────────────────────
+  const messagesEndRef = useRef(null);
+  const fileInputRef = useRef(null);
+
+  // ─── Voice Recording State ─────────────────────────────────────────
   const [isRecording, setIsRecording] = useState(false);
   const [recordingDuration, setRecordingDuration] = useState(0);
   const [audioBlob, setAudioBlob] = useState(null);
@@ -26,28 +55,75 @@ export const useChat = (channel = "general") => {
   const recordingTimerRef = useRef(null);
   const streamRef = useRef(null);
 
+  // ─── Fetch Messages ────────────────────────────────────────────────
   const {
     isLoading,
-    data: messages,
+    data: messagesData,
     isError,
     error,
   } = useQuery({
-    queryKey: ["messages", channel],
-    queryFn: () => getMessages(channel),
-    staleTime: 5 * 60 * 1000, // Data is fresh for 5 minutes, prevents refetch on every switch
+    queryKey: ["messages", activeChannelId],
+    queryFn: () => getMessages(activeChannelId),
+    staleTime: 5 * 60 * 1000,
   });
 
+  // Derive message list from query data
+  const messageList = useMemo(() => {
+    if (!messagesData) return [];
+    if (Array.isArray(messagesData)) return messagesData;
+    if (messagesData.messages && Array.isArray(messagesData.messages))
+      return messagesData.messages;
+    if (messagesData.data && Array.isArray(messagesData.data))
+      return messagesData.data;
+    return [];
+  }, [messagesData]);
+
+  // Derive messages with date separators
+  const messagesWithSeparators = useMemo(() => {
+    const result = [];
+    let lastDateLabel = null;
+
+    messageList.forEach((msg, index) => {
+      const dateLabel = getDateLabel(msg.createdAt);
+      if (dateLabel && dateLabel !== lastDateLabel) {
+        result.push({
+          type: "separator",
+          key: `sep-${index}-${dateLabel}`,
+          label: dateLabel,
+        });
+        lastDateLabel = dateLabel;
+      }
+      result.push({
+        type: "message",
+        key: msg._id || `msg-${index}`,
+        data: msg,
+      });
+    });
+
+    return result;
+  }, [messageList]);
+
+  // Auto-scroll to bottom on new messages
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messageList]);
+
+  // ─── Upload Mutation ───────────────────────────────────────────────
   const uploadFileMutation = useMutation({
     mutationFn: ({ files, channel }) => uploadFile(files, channel),
     onError: (err) => {
       setUploadError(
-        err?.message || "Failed to upload files. Please try again.",
+        err?.message || "Failed to upload files. Please try again."
       );
     },
     onSuccess: () => {
       setUploadError(null);
     },
   });
+
+  const isUploading = uploadFileMutation.isPending;
 
   const clearUploadError = useCallback(() => {
     setUploadError(null);
@@ -58,9 +134,15 @@ export const useChat = (channel = "general") => {
     if (!files.length) return;
     setSelectedFiles((prev) => [...prev, ...files]);
     clearUploadError();
+    // Reset file input so same file can be re-selected
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  // ─── Voice Recording ───────────────────────────────────────────────
+  const removeFile = useCallback((index) => {
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
+  }, []);
+
+  // ─── Voice Recording ──────────────────────────────────────────────
 
   const startRecording = useCallback(async () => {
     try {
@@ -84,26 +166,24 @@ export const useChat = (channel = "general") => {
       mediaRecorder.onstop = () => {
         const blob = new Blob(audioChunksRef.current, { type: "audio/webm" });
         setAudioBlob(blob);
-        // Stop all tracks
         if (streamRef.current) {
           streamRef.current.getTracks().forEach((t) => t.stop());
           streamRef.current = null;
         }
       };
 
-      mediaRecorder.start(100); // collect data every 100ms
+      mediaRecorder.start(100);
       setIsRecording(true);
       setRecordingDuration(0);
       setAudioBlob(null);
 
-      // Start timer
       recordingTimerRef.current = setInterval(() => {
         setRecordingDuration((prev) => prev + 1);
       }, 1000);
     } catch (err) {
       console.error("Microphone access denied:", err);
       setUploadError(
-        "Microphone access denied. Please allow microphone permissions.",
+        "Microphone access denied. Please allow microphone permissions."
       );
     }
   }, []);
@@ -143,7 +223,7 @@ export const useChat = (channel = "general") => {
     }
   }, []);
 
-  const discardAudioBlob = useCallback(() => {
+  const discardRecording = useCallback(() => {
     setAudioBlob(null);
     setRecordingDuration(0);
   }, []);
@@ -165,20 +245,19 @@ export const useChat = (channel = "general") => {
       socket.connect();
     }
 
-    socket.emit("join:channel", channel);
+    socket.emit("join:channel", activeChannelId);
 
-    const handleNewMessage = (newMessage) => {
-      // Only add to cache if the message belongs to this channel
-      if (newMessage.channel && newMessage.channel !== channel) return;
+    const handleNewMessage = (incomingMessage) => {
+      if (incomingMessage.channel && incomingMessage.channel !== activeChannelId) return;
 
-      queryClient.setQueryData(["messages", channel], (oldData) => {
-        if (!oldData) return { messages: [newMessage] };
-        if (Array.isArray(oldData)) return [...oldData, newMessage];
+      queryClient.setQueryData(["messages", activeChannelId], (oldData) => {
+        if (!oldData) return { messages: [incomingMessage] };
+        if (Array.isArray(oldData)) return [...oldData, incomingMessage];
         if (oldData.messages && Array.isArray(oldData.messages)) {
-          return { ...oldData, messages: [...oldData.messages, newMessage] };
+          return { ...oldData, messages: [...oldData.messages, incomingMessage] };
         }
         if (oldData.data && Array.isArray(oldData.data)) {
-          return { ...oldData, data: [...oldData.data, newMessage] };
+          return { ...oldData, data: [...oldData.data, incomingMessage] };
         }
         return oldData;
       });
@@ -187,32 +266,30 @@ export const useChat = (channel = "general") => {
     socket.on("message:new", handleNewMessage);
 
     return () => {
-      socket.emit("leave:channel", channel);
+      socket.emit("leave:channel", activeChannelId);
       socket.off("message:new", handleNewMessage);
     };
-  }, [queryClient, channel]);
+  }, [queryClient, activeChannelId]);
 
-  // ─── Send Message ──────────────────────────────────────────────────
+  // ─── Send Message ─────────────────────────────────────────────────
 
   const handleSendMessage = async (e, contentOverride) => {
     if (e && e.preventDefault) e.preventDefault();
 
     const finalContent = (
-      contentOverride !== undefined ? contentOverride : messageInput
+      contentOverride !== undefined ? contentOverride : newMessage
     ).trim();
 
-    // Gather all files to upload (selected files + voice blob)
     const filesToUpload = [...selectedFiles];
     if (audioBlob) {
       const voiceFile = new File(
         [audioBlob],
         `voice_message_${Date.now()}.webm`,
-        { type: "audio/webm" },
+        { type: "audio/webm" }
       );
       filesToUpload.push(voiceFile);
     }
 
-    // Nothing to send
     if (!finalContent && filesToUpload.length === 0) {
       return;
     }
@@ -223,7 +300,7 @@ export const useChat = (channel = "general") => {
       if (filesToUpload.length > 0) {
         const response = await uploadFileMutation.mutateAsync({
           files: filesToUpload,
-          channel,
+          channel: activeChannelId,
         });
 
         attachments = response.files || [];
@@ -231,12 +308,12 @@ export const useChat = (channel = "general") => {
 
       socket.emit("message:send", {
         content: finalContent,
-        channel,
+        channel: activeChannelId,
         attachments,
       });
 
       // Reset
-      setMessageInput("");
+      setNewMessage("");
       setSelectedFiles([]);
       setAudioBlob(null);
       setRecordingDuration(0);
@@ -245,9 +322,15 @@ export const useChat = (channel = "general") => {
     }
   };
 
-  // ─── Channel Icon ──────────────────────────────────────────────────
+  // Send voice recording as a message (no text)
+  const sendRecording = useCallback(async () => {
+    if (!audioBlob) return;
+    await handleSendMessage(null, "");
+  }, [audioBlob, handleSendMessage]);
 
-  const getChannelIcon = (id) => {
+  // ─── Channel Icon ─────────────────────────────────────────────────
+
+  const getChannelIcon = useCallback((id) => {
     switch (id) {
       case "general":
         return Hash;
@@ -264,102 +347,53 @@ export const useChat = (channel = "general") => {
       default:
         return Hash;
     }
-  };
-  const getInitials = (name) => {
-    if (!name) return "U";
-    const parts = name.trim().split(" ");
-    if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
-    return name.slice(0, 2).toUpperCase();
-  };
+  }, []);
 
-  const formatTimestamp = (dateStr) => {
-    if (!dateStr) return "";
-    try {
-      const date = new Date(dateStr);
-      return date.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-    } catch {
-      return "";
-    }
-  };
-  const getDateLabel = (dateStr) => {
-  if (!dateStr) return "";
-  try {
-    const msgDate = new Date(dateStr);
-    const today = new Date();
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
+  const ChannelIcon = useMemo(
+    () => getChannelIcon(activeChannelId),
+    [activeChannelId, getChannelIcon]
+  );
 
-    const isSameDay = (a, b) =>
-      a.getFullYear() === b.getFullYear() &&
-      a.getMonth() === b.getMonth() &&
-      a.getDate() === b.getDate();
-
-    if (isSameDay(msgDate, today)) return "Today";
-    if (isSameDay(msgDate, yesterday)) return "Yesterday";
-    return msgDate.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  } catch {
-    return "";
-  }
-};
-const formatFileSize = (bytes) => {
-  if (!bytes || bytes === 0) return "0 B";
-  const k = 1024;
-  const sizes = ["B", "KB", "MB", "GB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
-};
-const formatDuration = (seconds) => {
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  return `${m}:${s.toString().padStart(2, "0")}`;
-};
-const getFileExtension = (name) => {
-  if (!name) return "";
-  return name.split(".").pop().toLowerCase();
-};
-const getDocIconColor = (ext) => {
-  switch (ext) {
-    case "pdf":
-      return "text-red-500 bg-red-500/10";
-    case "doc":
-    case "docx":
-      return "text-blue-500 bg-blue-500/10";
-    case "txt":
-      return "text-gray-500 bg-gray-500/10";
-    case "xls":
-    case "xlsx":
-      return "text-emerald-500 bg-emerald-500/10";
-    case "ppt":
-    case "pptx":
-      return "text-orange-500 bg-orange-500/10";
-    default:
-      return "text-[var(--text-muted)] bg-[var(--card-hover)]";
-  }
-};
-
+  // ─── Return ────────────────────────────────────────────────────────
 
   return {
+    // Channel
+    currentChannel,
+    isChannelActive,
+    handleChannelClick,
+    getChannelIcon,
+    ChannelIcon,
+
+    // UI state
+    isChannelsOpen,
+    setIsChannelsOpen,
+    isInfoOpen,
+    setIsInfoOpen,
+    lightboxImage,
+    setLightboxImage,
+
+    // Messages
     isLoading,
-    messages,
     isError,
     error,
-    messageInput,
-    setMessageInput,
+    messageList,
+    messagesWithSeparators,
+    messagesEndRef,
+
+    // Input
+    newMessage,
+    setNewMessage,
     handleSendMessage,
-    getChannelIcon,
-    selectedFiles,
-    setSelectedFiles,
+
+    // Files
+    fileInputRef,
     handleFileSelect,
-    uploadFileMutation,
+    selectedFiles,
+    removeFile,
+    isUploading,
     uploadError,
     clearUploadError,
+
     // Voice recording
     isRecording,
     recordingDuration,
@@ -367,14 +401,7 @@ const getDocIconColor = (ext) => {
     startRecording,
     stopRecording,
     cancelRecording,
-    discardAudioBlob,
-    getInitials,
-    formatTimestamp,
-    getDateLabel,
-    formatFileSize,
-    formatDuration,
-    getFileExtension,
-    getDocIconColor
-    
+    discardRecording,
+    sendRecording,
   };
 };

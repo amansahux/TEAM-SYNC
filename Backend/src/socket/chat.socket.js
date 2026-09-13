@@ -73,9 +73,55 @@ export const initChatSocket = (io) => {
                     attachments: data.attachments || [],
                 });
                 await message.populate("sender", "name email department role avatar");
-               io.to(channel).emit("message:new", message);
+                io.to(channel).emit("message:new", message);
             } catch (error) {
                 console.error("Error creating chat message:", error);
+            }
+        });
+        socket.on("message:delete", async (messageId) => {
+            try {
+                const message = await Message.findById(messageId);
+
+                if (!message) {
+                    socket.emit("message:error", {
+                        message: "Message not found",
+                    });
+                    return;
+                }
+
+                const isSender =
+                    message.sender.toString() === socket.user._id.toString();
+
+                const isAdmin = socket.user.role === "admin";
+
+                if (!isSender && !isAdmin) {
+                    socket.emit("message:error", {
+                        message: "You are not allowed to delete this message.",
+                    });
+                    return;
+                }
+
+                message.isDeleted = true;
+                message.deletedAt = new Date();
+                message.deletedBy = socket.user._id;
+
+                // Remove sensitive content/file references
+                message.content = "";
+                message.attachments = [];
+
+                await message.save();
+
+                io.to(message.channel).emit("message:deleted", {
+                    messageId: message._id,
+                    channel: message.channel,
+                });
+
+            } catch (error) {
+                console.error("Error deleting message:", error);
+
+                socket.emit("message:error", {
+                    message: "Failed to delete message.",
+                });
             }
         });
 

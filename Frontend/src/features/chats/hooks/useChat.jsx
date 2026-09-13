@@ -34,6 +34,8 @@ export const useChat = (channel = "general") => {
   } = useQuery({
     queryKey: ["messages", channel],
     queryFn: () => getMessages(channel),
+    staleTime: 5 * 60 * 1000, // Data is fresh for 5 minutes, prevents refetch on every switch
+    
   });
 
   const uploadFileMutation = useMutation({

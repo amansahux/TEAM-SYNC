@@ -70,9 +70,10 @@ export const initChatSocket = (io) => {
                     content: data.content,
                     sender: socket.user._id,
                     channel: channel,
+                    attachments: data.attachments || [],
                 });
                 await message.populate("sender", "name email department role avatar");
-                io.emit("message:new", message);
+               io.to(channel).emit("message:new", message);
             } catch (error) {
                 console.error("Error creating chat message:", error);
             }

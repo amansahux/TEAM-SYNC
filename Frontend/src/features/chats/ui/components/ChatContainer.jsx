@@ -327,7 +327,7 @@ const AudioPlayer = ({ src, name }) => {
 
 // ─── File Preview Card (Input Area) ──────────────────────────────────
 
-const FilePreviewCard = ({ file, onRemove }) => {
+const FilePreviewCard = ({ file, onRemove, onPreviewImage }) => {
   const [previewUrl, setPreviewUrl] = useState(null);
 
   useEffect(() => {
@@ -349,14 +349,16 @@ const FilePreviewCard = ({ file, onRemove }) => {
 
   if (file.type?.startsWith("image/") && previewUrl) {
     return (
-      <div className="relative group w-16 h-16 rounded-lg overflow-hidden border border-[var(--border)] shrink-0 hover:border-[var(--primary)]/30 transition-all">
+      <div 
+        className="relative group w-16 h-16 rounded-lg border border-[var(--border)] shrink-0 hover:border-[var(--primary)]/30 transition-all cursor-pointer"
+        onClick={() => onPreviewImage({ url: previewUrl, name: file.name })}
+      >
         <img
           src={previewUrl}
           alt={file.name}
-          className="w-full h-full object-cover cursor-pointer"
-          onClick={openFile}
+          className="w-full h-full object-cover rounded-lg"
         />
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center rounded-lg">
           <Eye className="w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>
         <button
@@ -365,7 +367,7 @@ const FilePreviewCard = ({ file, onRemove }) => {
             e.stopPropagation();
             onRemove();
           }}
-          className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer shadow-sm"
+          className="absolute -top-1.5 -right-1.5 z-10 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer shadow-sm"
         >
           <X className="w-3 h-3" />
         </button>
@@ -707,13 +709,6 @@ const ChatContainer = ({ channelId = "general" }) => {
           <h2 className="font-display text-base font-bold text-[var(--text-primary)]">
             Workspace Channels
           </h2>
-          <button
-            type="button"
-            className="p-1 rounded-md hover:bg-[var(--card-hover)] text-[var(--text-secondary)] transition-colors"
-            title="Channel directory"
-          >
-            <Plus className="w-4 h-4" />
-          </button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-3 space-y-4">
@@ -1079,6 +1074,7 @@ const ChatContainer = ({ channelId = "general" }) => {
                             prev.filter((_, idx) => idx !== i)
                           )
                         }
+                        onPreviewImage={(img) => setLightboxImage(img)}
                       />
                     ))}
                   </div>
@@ -1204,32 +1200,34 @@ const ChatContainer = ({ channelId = "general" }) => {
                     >
                       <AtSign className="w-4 h-4" />
                     </button>
+                  </div>
 
+                  <div className="flex items-center gap-1.5">
                     {/* Mic Button */}
                     <button
                       type="button"
                       onClick={startRecording}
-                      className="p-1.5 rounded-md hover:bg-[var(--card-hover)] transition-colors cursor-pointer"
+                      className="p-1.5 rounded-md hover:bg-[var(--card-hover)] text-[var(--text-secondary)] hover:text-red-500 transition-colors cursor-pointer"
                       title="Record voice message"
                     >
-                      <Mic className="w-4 h-4" />
+                      <Mic className="w-4.5 h-4.5" />
+                    </button>
+
+                    <button
+                      type="submit"
+                      disabled={isSending}
+                      className="bg-[var(--primary)] hover:bg-[var(--primary-hover)] disabled:opacity-50 text-[var(--primary-foreground)] px-3.5 py-1.5 md:px-4 md:py-2 rounded-lg flex items-center gap-1.5 text-xs font-semibold transition-all shadow-xs cursor-pointer active:scale-95"
+                    >
+                      <span>
+                        {isSending ? "Sending..." : "Send"}
+                      </span>
+                      {isSending ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        <Send className="w-3.5 h-3.5" />
+                      )}
                     </button>
                   </div>
-
-                  <button
-                    type="submit"
-                    disabled={isSending}
-                    className="bg-[var(--primary)] hover:bg-[var(--primary-hover)] disabled:opacity-50 text-[var(--primary-foreground)] px-3.5 py-1.5 md:px-4 md:py-2 rounded-lg flex items-center gap-1.5 text-xs font-semibold transition-all shadow-xs cursor-pointer active:scale-95"
-                  >
-                    <span>
-                      {isSending ? "Sending..." : "Send"}
-                    </span>
-                    {isSending ? (
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    ) : (
-                      <Send className="w-3.5 h-3.5" />
-                    )}
-                  </button>
                 </div>
               </form>
             </div>

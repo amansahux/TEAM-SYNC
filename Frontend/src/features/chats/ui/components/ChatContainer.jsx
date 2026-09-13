@@ -145,28 +145,10 @@ const ChatContainer = ({ channelId = "general" }) => {
     return txt.value;
   };
 
-  const handleSubmitForm = async (e) => {
+  const handleSubmitForm = (e) => {
     if (e) e.preventDefault();
     const markdownContent = processHTMLToMarkdown(textareaRef.current?.innerHTML || "");
-    
-    let uploadedFiles = [];
-    if (selectedFiles.length > 0) {
-      try {
-        const response = await uploadFileMutation.mutateAsync({ 
-          files: selectedFiles, 
-          channel: currentChannel.id 
-        });
-        if (response?.files) {
-          uploadedFiles = response.files;
-        }
-      } catch (err) {
-        console.error("Upload failed", err);
-        return; // Optionally show a toast error here
-      }
-    }
-    
-    handleSendMessage({ attachments: uploadedFiles }, markdownContent);
-    setSelectedFiles([]); // Clear selected files
+    handleSendMessage(e, markdownContent);
   };
 
   // Clear contentEditable when messageInput is cleared (e.g., after send)

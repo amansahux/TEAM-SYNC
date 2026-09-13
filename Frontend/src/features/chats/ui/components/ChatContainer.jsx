@@ -215,7 +215,7 @@ const DocumentCard = ({ file }) => {
           )}
         </div>
       </div>
-      <Download className="w-4 h-4 text-[var(--text-muted)] group-hover:text-[var(--primary)] transition-colors shrink-0 opacity-0 group-hover:opacity-100" />
+     
     </a>
   );
 };

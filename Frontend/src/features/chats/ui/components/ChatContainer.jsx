@@ -391,28 +391,21 @@ const ChatContainer = ({ channelId = "general" }) => {
               <div className="flex items-center gap-0.5 sm:gap-1 text-[var(--text-secondary)]">
                 <button
                   type="button"
-                  className="p-1.5 rounded-md hover:bg-[var(--card-hover)] transition-colors"
+                  className="p-1.5 rounded-md hover:bg-[var(--card-hover)] transition-colors cursor-pointer"
                   title="Attach file"
                 >
                   <Paperclip className="w-4 h-4" />
                 </button>
                 <button
                   type="button"
-                  className="p-1.5 rounded-md hover:bg-[var(--card-hover)] transition-colors"
-                  title="Insert emoji"
-                >
-                  <Smile className="w-4 h-4" />
-                </button>
-                <button
-                  type="button"
-                  className="p-1.5 rounded-md hover:bg-[var(--card-hover)] transition-colors hidden sm:block"
+                  className="p-1.5 rounded-md hover:bg-[var(--card-hover)] transition-colors hidden sm:block cursor-pointer"
                   title="Formatting"
                 >
                   <Bold className="w-4 h-4" />
                 </button>
                 <button
                   type="button"
-                  className="p-1.5 rounded-md hover:bg-[var(--card-hover)] transition-colors hidden sm:block"
+                  className="p-1.5 rounded-md hover:bg-[var(--card-hover)] transition-colors hidden sm:block cursor-pointer"
                   title="Mention"
                 >
                   <AtSign className="w-4 h-4" />

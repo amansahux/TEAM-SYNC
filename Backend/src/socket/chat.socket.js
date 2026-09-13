@@ -124,6 +124,66 @@ export const initChatSocket = (io) => {
                 });
             }
         });
+        socket.on("message:edit", async ({ messageId, content }) => {
+            try {
+                if (!messageId || !content?.trim()) {
+                    socket.emit("message:error", {
+                        message: "Message content cannot be empty.",
+                    });
+                    return;
+                }
+
+                const message = await Message.findById(messageId);
+
+                if (!message) {
+                    socket.emit("message:error", {
+                        message: "Message not found.",
+                    });
+                    return;
+                }
+
+                // Deleted message cannot be edited
+                if (message.isDeleted) {
+                    socket.emit("message:error", {
+                        message: "Deleted message cannot be edited.",
+                    });
+                    return;
+                }
+
+                const isSender =
+                    message.sender.toString() === socket.user._id.toString();
+
+                const isAdmin = socket.user.role === "admin";
+
+                // Only sender or admin
+                if (!isSender && !isAdmin) {
+                    socket.emit("message:error", {
+                        message: "You are not allowed to edit this message.",
+                    });
+                    return;
+                }
+
+                message.content = content.trim();
+                message.isEdited = true;
+                message.editedAt = new Date();
+
+                await message.save();
+
+                await message.populate(
+                    "sender",
+                    "name email department role avatar"
+                );
+
+                io.to(message.channel).emit("message:edited", message);
+
+            } catch (error) {
+                console.error("Error editing message:", error);
+
+                socket.emit("message:error", {
+                    message: "Failed to edit message.",
+                });
+            }
+        });
 
         socket.on("disconnect", () => {
             console.log("User disconnected:", socket.id);

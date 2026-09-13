@@ -49,13 +49,14 @@ export const useChat = (channel = "general") => {
     };
   }, [queryClient, channel]);
 
-  const handleSendMessage = (e) => {
-    e.preventDefault();
+  const handleSendMessage = (e, contentOverride) => {
+    if (e && e.preventDefault) e.preventDefault();
 
-    if (!messageInput.trim()) return;
+    const finalContent = (contentOverride !== undefined ? contentOverride : messageInput).trim();
+    if (!finalContent) return;
 
     socket.emit("message:send", {
-      content: messageInput.trim(),
+      content: finalContent,
       channel: channel,
     });
 

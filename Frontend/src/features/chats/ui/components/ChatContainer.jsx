@@ -65,6 +65,22 @@ const formatTimestamp = (dateStr) => {
   }
 };
 
+const renderMessageContent = (content) => {
+  if (!content) return null;
+  // Match text wrapped in **, e.g., **bold text**
+  const parts = content.split(/(\*\*.*?\*\*)/g);
+  return parts.map((part, index) => {
+    if (part.startsWith("**") && part.endsWith("**") && part.length > 4) {
+      return (
+        <strong key={index} className="font-bold text-[var(--text-primary)]">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+    return <React.Fragment key={index}>{part}</React.Fragment>;
+  });
+};
+
 const ChatContainer = ({ channelId = "general" }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -91,6 +107,45 @@ const ChatContainer = ({ channelId = "general" }) => {
   const [isChannelsOpen, setIsChannelsOpen] = useState(false);
   const [isInfoOpen, setIsInfoOpen] = useState(false);
   const messagesEndRef = useRef(null);
+  const textareaRef = useRef(null);
+
+  const handleFormatBold = () => {
+    document.execCommand("bold", false, null);
+    if (textareaRef.current) {
+      textareaRef.current.focus();
+      setMessageInput(textareaRef.current.innerHTML);
+    }
+  };
+
+  const processHTMLToMarkdown = (html) => {
+    if (!html) return "";
+    let text = html;
+    // Convert bold tags to ** markdown
+    text = text.replace(/<(b|strong)[^>]*>(.*?)<\/\1>/gi, "**$2**");
+    // Convert line breaks and blocks
+    text = text.replace(/<br\s*[\/]?>/gi, "\n");
+    text = text.replace(/<div[^>]*>/gi, "\n").replace(/<\/div>/gi, "");
+    text = text.replace(/<p[^>]*>/gi, "\n").replace(/<\/p>/gi, "");
+    // Strip remaining html
+    text = text.replace(/<[^>]*>?/gm, "");
+    // Decode HTML entities
+    const txt = document.createElement("textarea");
+    txt.innerHTML = text;
+    return txt.value;
+  };
+
+  const handleSubmitForm = (e) => {
+    if (e) e.preventDefault();
+    const markdownContent = processHTMLToMarkdown(textareaRef.current?.innerHTML || "");
+    handleSendMessage(e, markdownContent);
+  };
+
+  // Clear contentEditable when messageInput is cleared (e.g., after send)
+  useEffect(() => {
+    if (textareaRef.current && messageInput === "") {
+      textareaRef.current.innerHTML = "";
+    }
+  }, [messageInput]);
 
   const ChannelIcon = getChannelIcon(currentChannel.id);
 
@@ -350,7 +405,7 @@ const ChatContainer = ({ channelId = "general" }) => {
                       </span>
                     </div>
                     <p className="text-xs md:text-sm text-[var(--text-secondary)] mt-1 whitespace-pre-wrap leading-relaxed">
-                      {message.content}
+                      {renderMessageContent(message.content)}
                     </p>
                   </div>
                 </div>
@@ -371,21 +426,25 @@ const ChatContainer = ({ channelId = "general" }) => {
             </div>
           ) : (
             <form
-              onSubmit={handleSendMessage}
+              onSubmit={handleSubmitForm}
               className="bg-[var(--surface)] rounded-xl border border-[var(--border)] focus-within:border-[var(--primary)] transition-all p-2.5 md:p-3 flex flex-col gap-2 shadow-xs"
             >
-            <textarea
-              rows={2}
-              value={messageInput}
-              onChange={(e) => setMessageInput(e.target.value)}
+            <div
+              ref={textareaRef}
+              contentEditable
+              suppressContentEditableWarning
+              onInput={(e) => setMessageInput(e.currentTarget.innerHTML)}
               onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
+                if (e.key === "b" && (e.ctrlKey || e.metaKey)) {
                   e.preventDefault();
-                  handleSendMessage(e);
+                  handleFormatBold();
+                } else if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSubmitForm(e);
                 }
               }}
-              placeholder={`Message #${currentChannel.name}...`}
-              className="w-full bg-transparent border-none focus:outline-none text-[var(--text-primary)] placeholder:text-[var(--text-muted)] resize-none text-xs md:text-sm leading-relaxed"
+              data-placeholder={`Message #${currentChannel.name}...`}
+              className="w-full bg-transparent border-none focus:outline-none text-[var(--text-primary)] min-h-[40px] max-h-[120px] overflow-y-auto outline-none text-xs md:text-sm leading-relaxed empty:before:content-[attr(data-placeholder)] empty:before:text-[var(--text-muted)] cursor-text"
             />
             <div className="flex items-center justify-between pt-2 border-t border-[var(--border)]">
               <div className="flex items-center gap-0.5 sm:gap-1 text-[var(--text-secondary)]">
@@ -398,6 +457,7 @@ const ChatContainer = ({ channelId = "general" }) => {
                 </button>
                 <button
                   type="button"
+                  onClick={handleFormatBold}
                   className="p-1.5 rounded-md hover:bg-[var(--card-hover)] transition-colors hidden sm:block cursor-pointer"
                   title="Formatting"
                 >

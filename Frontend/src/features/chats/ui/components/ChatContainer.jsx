@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router";
 import {
-  Hash,
   Plus,
   Paperclip,
   Bold,
@@ -16,11 +15,6 @@ import {
   Menu,
   X,
   Lock,
-  Radio,
-  Code2,
-  Palette,
-  Briefcase,
-  Megaphone,
   Image as ImageIcon,
   FileText,
   Music,
@@ -31,24 +25,7 @@ import {
   canAccessChannel,
 } from "../../constants/chatChannels.js";
 
-const getChannelIcon = (id) => {
-  switch (id) {
-    case "general":
-      return Hash;
-    case "announcements":
-      return Radio;
-    case "developers":
-      return Code2;
-    case "designers":
-      return Palette;
-    case "managers":
-      return Briefcase;
-    case "marketers":
-      return Megaphone;
-    default:
-      return Hash;
-  }
-};
+
 
 const getInitials = (name) => {
   if (!name) return "U";
@@ -83,6 +60,7 @@ const renderMessageContent = (content) => {
   });
 };
 
+
 const ChatContainer = ({ channelId = "general" }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -103,8 +81,17 @@ const ChatContainer = ({ channelId = "general" }) => {
   const isAnnouncementChannel = currentChannel.id === "announcements";
   const canPostMessages = !isAnnouncementChannel || currentUserRole === "admin";
 
-  const { messages, messageInput, setMessageInput, handleSendMessage } =
-    useChat(currentChannel.id);
+  const { 
+    messages, 
+    messageInput, 
+    setMessageInput, 
+    handleSendMessage, 
+    getChannelIcon,
+    selectedFiles,
+    setSelectedFiles,
+    handleFileSelect,
+    uploadFileMutation 
+  } = useChat(currentChannel.id);
 
   const [isChannelsOpen, setIsChannelsOpen] = useState(false);
   const [isInfoOpen, setIsInfoOpen] = useState(false);
@@ -127,15 +114,10 @@ const ChatContainer = ({ channelId = "general" }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleFileSelect = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      console.log("File selected:", file);
-      // Handle file upload logic here
-    }
+  const onFileSelect = (e) => {
+    handleFileSelect(e);
     setIsAttachmentMenuOpen(false);
-    // Reset input value to allow selecting the same file again
-    e.target.value = null;
+    if(e.target) e.target.value = null;
   };
 
   const handleFormatBold = () => {
@@ -163,10 +145,28 @@ const ChatContainer = ({ channelId = "general" }) => {
     return txt.value;
   };
 
-  const handleSubmitForm = (e) => {
+  const handleSubmitForm = async (e) => {
     if (e) e.preventDefault();
     const markdownContent = processHTMLToMarkdown(textareaRef.current?.innerHTML || "");
-    handleSendMessage(e, markdownContent);
+    
+    let uploadedFiles = [];
+    if (selectedFiles.length > 0) {
+      try {
+        const response = await uploadFileMutation.mutateAsync({ 
+          files: selectedFiles, 
+          channel: currentChannel.id 
+        });
+        if (response?.files) {
+          uploadedFiles = response.files;
+        }
+      } catch (err) {
+        console.error("Upload failed", err);
+        return; // Optionally show a toast error here
+      }
+    }
+    
+    handleSendMessage({ attachments: uploadedFiles }, markdownContent);
+    setSelectedFiles([]); // Clear selected files
   };
 
   // Clear contentEditable when messageInput is cleared (e.g., after send)
@@ -436,6 +436,24 @@ const ChatContainer = ({ channelId = "general" }) => {
                     <p className="text-xs md:text-sm text-[var(--text-secondary)] mt-1 whitespace-pre-wrap leading-relaxed">
                       {renderMessageContent(message.content)}
                     </p>
+                    
+                    {/* Render Attachments */}
+                    {message.attachments && message.attachments.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {message.attachments.map((file, i) => (
+                           file.type?.startsWith("image/") ? (
+                             <img key={i} src={file.url} alt={file.name} className="max-w-[200px] max-h-[200px] object-cover rounded-md border border-[var(--border)]" />
+                           ) : file.type?.startsWith("audio/") ? (
+                             <audio key={i} src={file.url} controls className="h-8 max-w-[200px]" />
+                           ) : (
+                             <a key={i} href={file.url} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 p-2 rounded-md bg-[var(--surface)] border border-[var(--border)] text-xs text-[var(--text-primary)] hover:text-[var(--primary)] transition-colors">
+                               <FileText className="w-4 h-4" />
+                               <span className="truncate max-w-[150px]">{file.name}</span>
+                             </a>
+                           )
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               );
@@ -458,6 +476,21 @@ const ChatContainer = ({ channelId = "general" }) => {
               onSubmit={handleSubmitForm}
               className="bg-[var(--surface)] rounded-xl border border-[var(--border)] focus-within:border-[var(--primary)] transition-all p-2.5 md:p-3 flex flex-col gap-2 shadow-xs"
             >
+            
+            {/* Show Selected Files before uploading */}
+            {selectedFiles.length > 0 && (
+              <div className="flex flex-wrap gap-2 px-1 pb-2">
+                {selectedFiles.map((file, i) => (
+                  <div key={i} className="flex items-center gap-1.5 bg-[var(--background)] px-2 py-1 rounded-md border border-[var(--border)] text-xs">
+                    <span className="truncate max-w-[120px] text-[var(--text-secondary)]">{file.name}</span>
+                    <button type="button" onClick={() => setSelectedFiles(files => files.filter((_, idx) => idx !== i))} className="text-[var(--text-muted)] hover:text-red-500">
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
             <div
               ref={textareaRef}
               contentEditable
@@ -523,9 +556,9 @@ const ChatContainer = ({ channelId = "general" }) => {
                   )}
 
                   {/* Hidden inputs */}
-                  <input type="file" ref={imageInputRef} accept="image/*" className="hidden" onChange={handleFileSelect} />
-                  <input type="file" ref={documentInputRef} accept=".pdf,.doc,.docx,.txt" className="hidden" onChange={handleFileSelect} />
-                  <input type="file" ref={audioInputRef} accept="audio/*" className="hidden" onChange={handleFileSelect} />
+                  <input type="file" ref={imageInputRef} accept="image/*" className="hidden" onChange={onFileSelect} multiple />
+                  <input type="file" ref={documentInputRef} accept=".pdf,.doc,.docx,.txt" className="hidden" onChange={onFileSelect} multiple />
+                  <input type="file" ref={audioInputRef} accept="audio/*" className="hidden" onChange={onFileSelect} multiple />
                 </div>
                 <button
                   type="button"
@@ -546,9 +579,10 @@ const ChatContainer = ({ channelId = "general" }) => {
 
               <button
                 type="submit"
-                className="bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-[var(--primary-foreground)] px-3.5 py-1.5 md:px-4 md:py-2 rounded-lg flex items-center gap-1.5 text-xs font-semibold transition-all shadow-xs cursor-pointer active:scale-95"
+                disabled={uploadFileMutation.isPending}
+                className="bg-[var(--primary)] hover:bg-[var(--primary-hover)] disabled:opacity-50 text-[var(--primary-foreground)] px-3.5 py-1.5 md:px-4 md:py-2 rounded-lg flex items-center gap-1.5 text-xs font-semibold transition-all shadow-xs cursor-pointer active:scale-95"
               >
-                <span>Send</span>
+                <span>{uploadFileMutation.isPending ? "Sending..." : "Send"}</span>
                 <Send className="w-3.5 h-3.5" />
               </button>
             </div>

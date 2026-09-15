@@ -77,3 +77,13 @@ export const logout = asyncHandler(async (req, res) => {
     message: "Logged out successfully",
   });
 });
+
+export const resetPassword = asyncHandler(async (req, res) => {
+  const { currentPassword, newPassword, confirmNewPassword } = req.body;
+  const userId = req.user._id;
+  await resetPasswordService({userId, currentPassword, newPassword, confirmNewPassword});
+  res.status(200).json({
+    success: true,
+    message: "Password reset successfully",
+  });
+});

@@ -94,3 +94,33 @@ export const logoutService = async (userId) => {
   }
   return true;
 };
+
+
+export const resetPasswordService = async ({userId, currentPassword, newPassword, confirmNewPassword}) => {
+  
+  const user = await User.findById(userId).select("+password");
+  if (!user) {
+    throw new AppError("User not found", 404);
+  }
+
+  const isPasswordValid = await user.comparePassword(currentPassword);
+  if (!isPasswordValid) {
+    throw new AppError("Invalid current password", 401);
+  }
+
+  if (newPassword !== confirmNewPassword) {
+    throw new AppError("New passwords do not match", 400);
+  }
+
+  if(currentPassword === newPassword){
+    throw new AppError("New password must be different from current password", 400);
+  }
+
+  user.password = newPassword;
+  await user.save();
+
+  return {
+    message: "Password reset successfully",
+  };
+};
+  

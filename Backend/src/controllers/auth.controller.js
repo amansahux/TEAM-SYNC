@@ -4,8 +4,9 @@ import {
   getCurrentUserService,
   refreshAccessTokenService,
   logoutService,
-  updateProfileService,
   resetPasswordService,
+  uploadAvtarService,
+  updateNameService,
 } from "../services/auth.service.js";
 
 const COOKIE_OPTIONS = {

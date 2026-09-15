@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { Check, Lock, ShieldCheck, User } from "lucide-react";
+import { Check, Lock, ShieldCheck, User, AlertCircle, Loader2 } from "lucide-react";
 import ProfileAvatar from "./ProfileAvatar.jsx";
 
-const ProfileSettings = ({ employeeData }) => {
+const ProfileSettings = ({
+  employeeData,
+  updateNameMutation,
+  uploadAvtarMutation,
+}) => {
   const user = employeeData?.data?.user || employeeData?.user || {};
 
   const defaultName = user.name || "Alex Morgan";
@@ -19,11 +23,13 @@ const ProfileSettings = ({ employeeData }) => {
     .slice(0, 2)
     .toUpperCase();
 
-  const [saveStatus, setSaveStatus] = useState("idle"); // 'idle' | 'saving' | 'saved'
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isDirty },
   } = useForm({
     defaultValues: {
@@ -31,12 +37,46 @@ const ProfileSettings = ({ employeeData }) => {
     },
   });
 
+  useEffect(() => {
+    if (user.name) {
+      setValue("fullName", user.name);
+    }
+  }, [user.name, setValue]);
+
+  const isSavingName = updateNameMutation?.isPending;
+  const isUploadingAvatar = uploadAvtarMutation?.isPending;
+
+  const handleAvatarChange = (file) => {
+    if (!file) return;
+    setErrorMessage(null);
+    if (uploadAvtarMutation) {
+      uploadAvtarMutation.mutate(file, {
+        onSuccess: () => {
+          setSaveSuccess(true);
+          setTimeout(() => setSaveSuccess(false), 2500);
+        },
+        onError: (err) => {
+          setErrorMessage(err?.response?.data?.message || err?.message || "Failed to upload avatar.");
+        },
+      });
+    }
+  };
+
   const onSubmit = (data) => {
-    setSaveStatus("saving");
-    setTimeout(() => {
-      setSaveStatus("saved");
-      setTimeout(() => setSaveStatus("idle"), 2500);
-    }, 600);
+    setErrorMessage(null);
+    setSaveSuccess(false);
+
+    if (updateNameMutation) {
+      updateNameMutation.mutate(data.fullName.trim(), {
+        onSuccess: () => {
+          setSaveSuccess(true);
+          setTimeout(() => setSaveSuccess(false), 2500);
+        },
+        onError: (err) => {
+          setErrorMessage(err?.response?.data?.message || err?.message || "Failed to update name.");
+        },
+      });
+    }
   };
 
   return (
@@ -53,14 +93,30 @@ const ProfileSettings = ({ employeeData }) => {
 
       {/* Main Profile Card */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 md:p-7 shadow-xs space-y-7">
+        {/* Error Alert */}
+        {errorMessage && (
+          <div className="flex items-center gap-2 text-xs text-red-400 bg-red-500/10 border border-red-500/20 px-4 py-3 rounded-xl animate-in fade-in duration-150">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            <span>{errorMessage}</span>
+          </div>
+        )}
+
+        {/* Success Alert */}
+        {saveSuccess && (
+          <div className="flex items-center gap-2 text-xs text-[var(--primary)] bg-[var(--primary)]/10 border border-[var(--primary)]/20 px-4 py-3 rounded-xl animate-in fade-in duration-150">
+            <Check className="w-4 h-4 shrink-0" />
+            <span>Profile changes updated successfully!</span>
+          </div>
+        )}
+
         {/* 1. Profile Avatar */}
         <ProfileAvatar
           name={defaultName}
           initials={initials}
           currentAvatar={user.avatar?.url || user.avatar || null}
-          onAvatarChange={(file) => {
-            // Frontend-only handler ready for future API integration
-          }}
+          isUploading={isUploadingAvatar}
+          uploadError={uploadAvtarMutation?.error?.response?.data?.message || uploadAvtarMutation?.error?.message}
+          onAvatarChange={handleAvatarChange}
         />
 
         {/* 2. Form Fields */}
@@ -77,6 +133,7 @@ const ProfileSettings = ({ employeeData }) => {
               <input
                 id="fullName"
                 type="text"
+                disabled={isSavingName}
                 {...register("fullName", {
                   required: "Full name is required",
                   minLength: {
@@ -184,15 +241,15 @@ const ProfileSettings = ({ employeeData }) => {
           <div className="pt-4 border-t border-[var(--border)] flex items-center justify-end gap-3">
             <button
               type="submit"
-              disabled={saveStatus === "saving"}
+              disabled={isSavingName}
               className="px-5 py-2.5 rounded-xl text-xs md:text-sm font-semibold bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90 disabled:opacity-50 transition-all flex items-center gap-2 shadow-xs cursor-pointer"
             >
-              {saveStatus === "saving" ? (
+              {isSavingName ? (
                 <>
-                  <div className="w-3.5 h-3.5 border-2 border-[var(--primary-foreground)] border-t-transparent rounded-full animate-spin" />
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
                   Saving...
                 </>
-              ) : saveStatus === "saved" ? (
+              ) : saveSuccess ? (
                 <>
                   <Check className="w-4 h-4" />
                   Saved Changes

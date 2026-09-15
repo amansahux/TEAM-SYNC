@@ -126,32 +126,30 @@ export const resetPasswordService = async ({ userId, currentPassword, newPasswor
 };
 
 export const uploadAvtarService = async ({ userId, file }) => {
-  try {
-    if (!file) {
-      throw new AppError("File is required", 400);
-    }
-
-    const user = await User.findById(userId);
-    if (!user) {
-      throw new AppError("User not found", 404);
-    }
-
-    // Remove existing avatar if any
-    if (user.avatar) {
-      await removeFile(user.avatar);
-    }
-
-    // Upload new avatar
-    const uploaded = await uploadFile(file, 'avatar', "TEAM_SYNC/avatars");
-    user.avatar = uploaded.url;
-    await user.save();
-
-    return { avatar: uploaded.url };
-
-  } catch (error) {
-    throw error;
+  if (!file || !file.buffer) {
+    throw new AppError("File is required", 400);
   }
-}
+
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new AppError("User not found", 404);
+  }
+
+  // Upload new avatar to ImageKit
+  const uploaded = await uploadFile({
+    buffer: file.buffer,
+    fileName: `avatar_${userId}_${Date.now()}_${file.originalname || "avatar.jpg"}`,
+    folder: "TEAM_SYNC/avatars",
+  });
+
+  user.avatar = uploaded.url;
+  await user.save();
+
+  return {
+    avatar: uploaded.url,
+    user: user.toSafeObject(),
+  };
+};
 export const updateNameService = async ({ userId, name }) => {
   try {
     const user = await User.findById(userId);

@@ -5,7 +5,7 @@ export const updatePassword = async (
   newPassword,
   confirmNewPassword,
 ) => {
-  const response = await axiosInstance.put("/api/auth/reset-password", {
+  const response = await axiosInstance.put("/auth/reset-password", {
     currentPassword,
     newPassword,
     confirmNewPassword,
@@ -13,10 +13,11 @@ export const updatePassword = async (
   return response.data;
 };
 
-export const uploadAvtar = async () => {
-    const file = new FormData();
-    file.append("avatar", file);
-  const response = await axiosInstance.put("/api/auth/upload-avatar", file, {
+export const uploadAvtar = async (file) => {
+  const formData = new FormData();
+  formData.append("avatar", file);
+
+  const response = await axiosInstance.put("/auth/upload-avtar", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
@@ -25,6 +26,6 @@ export const uploadAvtar = async () => {
 };
 
 export const updateName = async (name) => {
-  const response = await axiosInstance.put("/api/auth/update-name", { name });
+  const response = await axiosInstance.put("/auth/update-name", { name });
   return response.data;
 };

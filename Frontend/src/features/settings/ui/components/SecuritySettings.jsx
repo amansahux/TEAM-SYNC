@@ -4,14 +4,16 @@ import {
   Check,
   CheckCircle2,
   AlertTriangle,
+  AlertCircle,
   LogOut,
   Laptop,
   KeyRound,
+  Loader2,
 } from "lucide-react";
 import PasswordField from "./PasswordField.jsx";
 import { useDashboard } from "../../../dashboard/hooks/useDashboard";
 
-const SecuritySettings = () => {
+const SecuritySettings = ({ changePasswordMutation }) => {
   const { handleLogout, isLoggingOut } = useDashboard();
 
   // Form State
@@ -20,7 +22,8 @@ const SecuritySettings = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const [errors, setErrors] = useState({});
-  const [updateStatus, setUpdateStatus] = useState("idle"); // 'idle' | 'updating' | 'updated'
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [serverError, setServerError] = useState(null);
 
   // Password Requirements Evaluation
   const passwordRequirements = useMemo(() => {
@@ -55,8 +58,12 @@ const SecuritySettings = () => {
     }
   }, [strengthScore]);
 
+  const isUpdatingPassword = changePasswordMutation?.isPending;
+
   const handlePasswordSubmit = (e) => {
     e.preventDefault();
+    setServerError(null);
+    setSuccessMessage(null);
     const newErrors = {};
 
     if (!currentPassword) {
@@ -75,20 +82,40 @@ const SecuritySettings = () => {
       newErrors.confirmPassword = "Passwords do not match";
     }
 
+    if (currentPassword && newPassword && currentPassword === newPassword) {
+      newErrors.newPassword = "New password must be different from current password";
+    }
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
     setErrors({});
-    setUpdateStatus("updating");
-    setTimeout(() => {
-      setUpdateStatus("updated");
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
-      setTimeout(() => setUpdateStatus("idle"), 3000);
-    }, 600);
+
+    if (changePasswordMutation) {
+      changePasswordMutation.mutate(
+        {
+          currentPassword,
+          newPassword,
+          confirmNewPassword: confirmPassword,
+        },
+        {
+          onSuccess: (data) => {
+            setSuccessMessage(data?.message || "Password updated successfully!");
+            setCurrentPassword("");
+            setNewPassword("");
+            setConfirmPassword("");
+            setTimeout(() => setSuccessMessage(null), 4000);
+          },
+          onError: (err) => {
+            setServerError(
+              err?.response?.data?.message || err?.message || "Failed to update password."
+            );
+          },
+        }
+      );
+    }
   };
 
   return (
@@ -119,11 +146,28 @@ const SecuritySettings = () => {
           </div>
         </div>
 
+        {/* Error Alert */}
+        {serverError && (
+          <div className="flex items-center gap-2 text-xs text-red-400 bg-red-500/10 border border-red-500/20 px-4 py-3 rounded-xl animate-in fade-in duration-150">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            <span>{serverError}</span>
+          </div>
+        )}
+
+        {/* Success Alert */}
+        {successMessage && (
+          <div className="flex items-center gap-2 text-xs text-[var(--primary)] bg-[var(--primary)]/10 border border-[var(--primary)]/20 px-4 py-3 rounded-xl animate-in fade-in duration-150">
+            <Check className="w-4 h-4 shrink-0" />
+            <span>{successMessage}</span>
+          </div>
+        )}
+
         <form onSubmit={handlePasswordSubmit} className="space-y-5">
           {/* Current Password */}
           <PasswordField
             id="currentPassword"
             label="Current Password"
+            disabled={isUpdatingPassword}
             value={currentPassword}
             onChange={(e) => {
               setCurrentPassword(e.target.value);
@@ -139,6 +183,7 @@ const SecuritySettings = () => {
           <PasswordField
             id="newPassword"
             label="New Password"
+            disabled={isUpdatingPassword}
             value={newPassword}
             onChange={(e) => {
               setNewPassword(e.target.value);
@@ -196,6 +241,7 @@ const SecuritySettings = () => {
           <PasswordField
             id="confirmPassword"
             label="Confirm New Password"
+            disabled={isUpdatingPassword}
             value={confirmPassword}
             onChange={(e) => {
               setConfirmPassword(e.target.value);
@@ -211,15 +257,15 @@ const SecuritySettings = () => {
           <div className="pt-4 border-t border-[var(--border)] flex items-center justify-end gap-3">
             <button
               type="submit"
-              disabled={updateStatus === "updating"}
+              disabled={isUpdatingPassword}
               className="px-5 py-2.5 rounded-xl text-xs md:text-sm font-semibold bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90 disabled:opacity-50 transition-all flex items-center gap-2 shadow-xs cursor-pointer"
             >
-              {updateStatus === "updating" ? (
+              {isUpdatingPassword ? (
                 <>
-                  <div className="w-3.5 h-3.5 border-2 border-[var(--primary-foreground)] border-t-transparent rounded-full animate-spin" />
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
                   Updating...
                 </>
-              ) : updateStatus === "updated" ? (
+              ) : successMessage ? (
                 <>
                   <Check className="w-4 h-4" />
                   Password Updated

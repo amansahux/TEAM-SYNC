@@ -17,6 +17,9 @@ const authSlice = createSlice({
     removeEmployee: (state) => {
       state.employee = null;
     },
+    clearError: (state) => {
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -34,16 +37,16 @@ const authSlice = createSlice({
       })
       .addCase(getCurrentEmployee.pending, (state) => {
         state.isHydrating = true;
-        state.error = null;
+        // Don't clear error here — let login errors persist until user retries
       })
       .addCase(getCurrentEmployee.fulfilled, (state, action) => {
         state.isHydrating = false;
         state.employee = action.payload;
       })
-      .addCase(getCurrentEmployee.rejected, (state, action) => {
+      .addCase(getCurrentEmployee.rejected, (state) => {
         state.isHydrating = false;
         state.employee = null;
-        state.error = action.payload || action.error.message;
+        // Don't set error — session expiry is a normal flow, not a user-facing error
       })
       .addCase(LogoutEmployee.pending, (state) => {
         state.isLoggingOut = true;
@@ -60,4 +63,5 @@ const authSlice = createSlice({
   },
 });
 export default authSlice.reducer;
-export const { addEmployee, removeEmployee } = authSlice.actions;
+export const { addEmployee, removeEmployee, clearError } = authSlice.actions;
+

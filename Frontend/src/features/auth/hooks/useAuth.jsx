@@ -14,7 +14,7 @@ export const loginSchema = z.object({
 
 const useAuth = (schema) => {
     const [showPassword, setShowPassword] = useState(false);
-  const { isLoggingIn } = useSelector((state) => state.auth);
+  const { isLoggingIn, error: authError } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const {
     register,
@@ -36,6 +36,7 @@ const useAuth = (schema) => {
     handleLogin,
     errors,
     isLoggingIn,
+    authError,
     showPassword,
     setShowPassword
   };

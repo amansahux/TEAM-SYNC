@@ -2,10 +2,27 @@ import { Link } from "react-router";
 import useAuth, { loginSchema } from "../hooks/useAuth";
 import AuthLoader from "../components/AuthLoader";
 import { Eye, EyeOff, ShieldCheck, ArrowRight } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { clearError } from "../state/auth/AuthSlice";
 
 export default function Login() {
-  const { handleSubmit, register, handleLogin, errors, isLoggingIn , showPassword , setShowPassword } = useAuth(loginSchema);
+  const dispatch = useDispatch();
+  const {
+    handleSubmit,
+    register,
+    handleLogin,
+    errors,
+    isLoggingIn,
+    authError,
+    showPassword,
+    setShowPassword,
+  } = useAuth(loginSchema);
+
+  // Clear any stale errors from session expiry redirects
+  useEffect(() => {
+    dispatch(clearError());
+  }, [dispatch]);
 
 
   return (
@@ -66,7 +83,7 @@ export default function Login() {
           
           {/* Top Header/Logo area for mobile & desktop consistency */}
           <div className="flex items-center gap-3 mb-6 lg:mb-auto">
-            <div className="w-8 h-8 rounded bg-[#5D866C] flex items-center justify-center text-white font-inter text-xl font-bold">
+            <div className="w-8 h-8 rounded bg-[#5D866C] flex items-center justify-center text-white font-inter text-xl font-bold relative">
               <div className="absolute inset-2 rounded-lg border border-[#5D866C]/30"></div>
                   <div className="w-4 h-4 bg-[#5D866C] rounded-md transform rotate-45 group-hover:rotate-90 transition-transform duration-500"></div>
             </div>
@@ -90,7 +107,13 @@ export default function Login() {
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit(handleLogin)} className="space-y-8" noValidate>
+              {authError && (
+                <div className="mb-6 p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 text-xs font-medium text-center animate-in fade-in">
+                  {typeof authError === "string" ? authError : "Unable to sign in. Please check your credentials."}
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit(handleLogin)} className="space-y-6" noValidate>
                 
                 {/* Email */}
                 <div className="space-y-1.5">
@@ -130,7 +153,7 @@ export default function Login() {
                     <button 
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1"
+                      className="absolute cursor-pointer right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1"
                     >
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
@@ -156,7 +179,7 @@ export default function Login() {
                 <button
                   type="submit"
                   disabled={isLoggingIn}
-                  className="w-full mt-3 bg-[#5D866C] text-white py-3 px-6 rounded-xl text-base font-semibold tracking-wide hover:bg-[#4a6b56] active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2.5 shadow-md disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="w-full mt-3 bg-[#5D866C] text-white py-3 px-6 rounded-xl text-base font-semibold tracking-wide hover:bg-[#4a6b56] active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2.5 shadow-md disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
                 >
                   <span>{isLoggingIn ? "Signing in..." : "Sign In"}</span>
                   {!isLoggingIn && <ArrowRight size={18} />}

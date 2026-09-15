@@ -60,7 +60,7 @@ export const refreshAccessTokenService = async (providedRefreshToken) => {
   try {
     decoded = verifyRefreshToken(providedRefreshToken);
   } catch (error) {
-    throw new AppError("Invalid or expired refresh token", 400);
+    throw new AppError("Invalid or expired refresh token", 401);
   }
 
   const user = await User.findById(decoded.id).select("+refreshToken");

@@ -245,7 +245,7 @@ const ChatMessageList = ({
             >
               {/* Avatar */}
               <div
-                className={`w-8 h-8 md:w-9 md:h-9 rounded-full flex items-center justify-center font-bold text-xs shrink-0 shadow-xs border ${
+                className={`w-8 h-8 md:w-9 md:h-9 rounded-full flex items-center justify-center font-bold text-xs shrink-0 shadow-xs border overflow-hidden ${
                   isDeleted
                     ? "bg-[var(--surface)] text-[var(--text-muted)] border-[var(--border)]"
                     : isOwn
@@ -253,7 +253,21 @@ const ChatMessageList = ({
                     : "bg-[var(--primary-light)] text-[var(--primary)] border-[var(--primary)]/20"
                 }`}
               >
-                {isDeleted ? <Ban className="w-4 h-4 text-[var(--text-muted)]" /> : getInitials(message.sender?.name || message.sender?.email)}
+                {isDeleted ? (
+                  <Ban className="w-4 h-4 text-[var(--text-muted)]" />
+                ) : message.sender?.avatar ? (
+                  <img
+                    src={
+                      typeof message.sender.avatar === "string"
+                        ? message.sender.avatar
+                        : message.sender.avatar?.url || ""
+                    }
+                    alt={message.sender?.name || "Avatar"}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  getInitials(message.sender?.name || message.sender?.email)
+                )}
               </div>
 
               {/* Body */}

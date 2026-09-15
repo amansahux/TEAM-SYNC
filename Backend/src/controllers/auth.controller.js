@@ -4,6 +4,7 @@ import {
   getCurrentUserService,
   refreshAccessTokenService,
   logoutService,
+  updateProfileService,
 } from "../services/auth.service.js";
 
 const COOKIE_OPTIONS = {
@@ -85,5 +86,37 @@ export const resetPassword = asyncHandler(async (req, res) => {
   res.status(200).json({
     success: true,
     message: "Password reset successfully",
+  });
+});
+
+export const updateProfile = asyncHandler(async (req, res) => {
+  let employeeData = req.body.employeeData || {};
+  if (typeof employeeData === "string") {
+    try {
+      employeeData = JSON.parse(employeeData);
+    } catch {
+      employeeData = { name: employeeData };
+    }
+  }
+
+  // Also support direct body fields (e.g. if sent directly as formData fields: name)
+  if (req.body.name && !employeeData.name) {
+    employeeData.name = req.body.name;
+  }
+  if (req.body.avatar !== undefined && employeeData.avatar === undefined) {
+    employeeData.avatar = req.body.avatar;
+  }
+  
+  const userId = req.user._id;
+  const result = await updateProfileService({
+    userId,
+    employeeData,
+    file: req.file,
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "Profile updated successfully",
+    data: result,
   });
 });

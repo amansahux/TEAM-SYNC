@@ -1,5 +1,6 @@
 import User from "../models/user.model.js";
 import AppError from "../utils/AppError.js";
+import uploadFile from "../config/storage.js";
 import {
   generateAccessToken,
   generateRefreshToken,
@@ -123,4 +124,33 @@ export const resetPasswordService = async ({userId, currentPassword, newPassword
     message: "Password reset successfully",
   };
 };
-  
+
+export const updateProfileService = async ({ userId, employeeData = {}, file }) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new AppError("User not found", 404);
+  }
+
+  if (employeeData.name) {
+    user.name = employeeData.name.trim();
+  }
+
+  // If a file is uploaded, convert buffer and upload to ImageKit
+  if (file && file.buffer) {
+    const uploadedFile = await uploadFile({
+      buffer: file.buffer,
+      fileName: `avatar_${userId}_${Date.now()}_${file.originalname || "avatar.jpg"}`,
+      folder: "TEAM_SYNC/avatars",
+    });
+
+    user.avatar = uploadedFile.url;
+  } else if (employeeData.avatar !== undefined) {
+    user.avatar = employeeData.avatar;
+  }
+
+  await user.save();
+
+  return {
+    user: user.toSafeObject(),
+  };
+};

@@ -50,6 +50,8 @@ const ChatContainer = () => {
     cancelRecording,
     discardRecording,
     sendRecording,
+    handleEditMessage,
+    handleDeleteMessage,
   } = useChat();
 
   return (
@@ -104,6 +106,8 @@ const ChatContainer = () => {
               ChannelIcon={ChannelIcon}
               setLightboxImage={setLightboxImage}
               messagesEndRef={messagesEndRef}
+              onEditMessage={handleEditMessage}
+              onDeleteMessage={handleDeleteMessage}
             />
           </div>
 

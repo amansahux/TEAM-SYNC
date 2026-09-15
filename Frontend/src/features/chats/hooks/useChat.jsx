@@ -263,13 +263,78 @@ export const useChat = () => {
       });
     };
 
+    const handleMessageEdited = (updatedMessage) => {
+      if (updatedMessage.channel && updatedMessage.channel !== activeChannelId) return;
+
+      queryClient.setQueryData(["messages", activeChannelId], (oldData) => {
+        const updateItem = (item) => (item._id === updatedMessage._id ? { ...item, ...updatedMessage } : item);
+        if (!oldData) return oldData;
+        if (Array.isArray(oldData)) return oldData.map(updateItem);
+        if (oldData.messages && Array.isArray(oldData.messages)) {
+          return { ...oldData, messages: oldData.messages.map(updateItem) };
+        }
+        if (oldData.data && Array.isArray(oldData.data)) {
+          return { ...oldData, data: oldData.data.map(updateItem) };
+        }
+        return oldData;
+      });
+    };
+
+    const handleMessageDeleted = (payload) => {
+      const { messageId, message: updatedMessage } = payload || {};
+      queryClient.setQueryData(["messages", activeChannelId], (oldData) => {
+        const updateItem = (item) => {
+          if (item._id === messageId) {
+            if (updatedMessage) {
+              return { ...item, ...updatedMessage };
+            }
+            return {
+              ...item,
+              isDeleted: true,
+              content: "",
+              attachments: [],
+            };
+          }
+          return item;
+        };
+
+        if (!oldData) return oldData;
+        if (Array.isArray(oldData)) return oldData.map(updateItem);
+        if (oldData.messages && Array.isArray(oldData.messages)) {
+          return { ...oldData, messages: oldData.messages.map(updateItem) };
+        }
+        if (oldData.data && Array.isArray(oldData.data)) {
+          return { ...oldData, data: oldData.data.map(updateItem) };
+        }
+        return oldData;
+      });
+    };
+
     socket.on("message:new", handleNewMessage);
+    socket.on("message:edited", handleMessageEdited);
+    socket.on("message:deleted", handleMessageDeleted);
 
     return () => {
       socket.emit("leave:channel", activeChannelId);
       socket.off("message:new", handleNewMessage);
+      socket.off("message:edited", handleMessageEdited);
+      socket.off("message:deleted", handleMessageDeleted);
     };
   }, [queryClient, activeChannelId]);
+
+  // ─── Edit & Delete Message Handlers ────────────────────────────────
+  const handleEditMessage = useCallback((messageId, newContent) => {
+    if (!messageId || !newContent?.trim()) return;
+    socket.emit("message:edit", {
+      messageId,
+      content: newContent.trim(),
+    });
+  }, []);
+
+  const handleDeleteMessage = useCallback((messageId) => {
+    if (!messageId) return;
+    socket.emit("message:delete", messageId);
+  }, []);
 
   // ─── Send Message ─────────────────────────────────────────────────
 
@@ -403,5 +468,9 @@ export const useChat = () => {
     cancelRecording,
     discardRecording,
     sendRecording,
+
+    // Edit & Delete
+    handleEditMessage,
+    handleDeleteMessage,
   };
 };

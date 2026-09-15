@@ -4,6 +4,7 @@ export const getMessagesService = async (channel = "general") => {
     const filter = channel ? { channel } : { channel: "general" };
     const messages = await Message.find(filter)
         .populate("sender", "name email department role avatar")
+        .populate("deletedBy", "name email role")
         .sort({ createdAt: -1 })
         .limit(50);
 

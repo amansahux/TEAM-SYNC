@@ -111,9 +111,13 @@ export const initChatSocket = (io) => {
 
                 await message.save();
 
+                await message.populate("sender", "name email department role avatar");
+                await message.populate("deletedBy", "name email role");
+
                 io.to(message.channel).emit("message:deleted", {
                     messageId: message._id,
                     channel: message.channel,
+                    message: message,
                 });
 
             } catch (error) {

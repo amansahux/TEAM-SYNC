@@ -1,8 +1,8 @@
 import { getMessagesService, deleteMessageService } from "../services/chat.service.js";
 import asyncHandler from "../utils/asyncHandler.js";
-import uploadFile from "../config/Storage.js";
 import { Message } from "../models/message.model.js";
 import AppError from "../utils/AppError.js";
+import uploadFile from "../config/storage.js";
 
 export const getMessages = asyncHandler(async (req, res) => {
     const channel = req.query.channel || req.params.channel || "general";

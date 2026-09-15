@@ -5,6 +5,7 @@ import {
   refreshAccessTokenService,
   logoutService,
   updateProfileService,
+  resetPasswordService,
 } from "../services/auth.service.js";
 
 const COOKIE_OPTIONS = {
@@ -89,34 +90,23 @@ export const resetPassword = asyncHandler(async (req, res) => {
   });
 });
 
-export const updateProfile = asyncHandler(async (req, res) => {
-  let employeeData = req.body.employeeData || {};
-  if (typeof employeeData === "string") {
-    try {
-      employeeData = JSON.parse(employeeData);
-    } catch {
-      employeeData = { name: employeeData };
-    }
-  }
-
-  // Also support direct body fields (e.g. if sent directly as formData fields: name)
-  if (req.body.name && !employeeData.name) {
-    employeeData.name = req.body.name;
-  }
-  if (req.body.avatar !== undefined && employeeData.avatar === undefined) {
-    employeeData.avatar = req.body.avatar;
-  }
-  
+export const uploadAvtar = asyncHandler(async (req, res) => {
   const userId = req.user._id;
-  const result = await updateProfileService({
-    userId,
-    employeeData,
-    file: req.file,
-  });
-
+  const result = await uploadAvtarService({userId, file: req.file});
   res.status(200).json({
     success: true,
-    message: "Profile updated successfully",
+    message: "Avatar uploaded successfully",
     data: result,
   });
 });
+
+export const updateName = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+  const { name } = req.body;
+  const result = await updateNameService({userId, name});
+  res.status(200).json({
+    success: true,
+    message: "Name updated successfully",
+    data: result,
+  });
+})

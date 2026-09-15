@@ -97,8 +97,8 @@ export const logoutService = async (userId) => {
 };
 
 
-export const resetPasswordService = async ({userId, currentPassword, newPassword, confirmNewPassword}) => {
-  
+export const resetPasswordService = async ({ userId, currentPassword, newPassword, confirmNewPassword }) => {
+
   const user = await User.findById(userId).select("+password");
   if (!user) {
     throw new AppError("User not found", 404);
@@ -113,7 +113,7 @@ export const resetPasswordService = async ({userId, currentPassword, newPassword
     throw new AppError("New passwords do not match", 400);
   }
 
-  if(currentPassword === newPassword){
+  if (currentPassword === newPassword) {
     throw new AppError("New password must be different from current password", 400);
   }
 
@@ -125,32 +125,46 @@ export const resetPasswordService = async ({userId, currentPassword, newPassword
   };
 };
 
-export const updateProfileService = async ({ userId, employeeData = {}, file }) => {
-  const user = await User.findById(userId);
-  if (!user) {
-    throw new AppError("User not found", 404);
+export const uploadAvtarService = async ({ userId, file }) => {
+  try {
+    if (!file) {
+      throw new AppError("File is required", 400);
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
+
+    // Remove existing avatar if any
+    if (user.avatar) {
+      await removeFile(user.avatar);
+    }
+
+    // Upload new avatar
+    const uploaded = await uploadFile(file, 'avatar', "TEAM_SYNC/avatars");
+    user.avatar = uploaded.url;
+    await user.save();
+
+    return { avatar: uploaded.url };
+
+  } catch (error) {
+    throw error;
   }
-
-  if (employeeData.name) {
-    user.name = employeeData.name.trim();
+}
+export const updateNameService = async ({ userId, name }) => {
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
+    if (!name) {
+      throw new AppError("Name is required", 400);
+    }
+    user.name = name;
+    await user.save();
+    return { user: user.toSafeObject() };
+  } catch (error) {
+    throw error;
   }
-
-  // If a file is uploaded, convert buffer and upload to ImageKit
-  if (file && file.buffer) {
-    const uploadedFile = await uploadFile({
-      buffer: file.buffer,
-      fileName: `avatar_${userId}_${Date.now()}_${file.originalname || "avatar.jpg"}`,
-      folder: "TEAM_SYNC/avatars",
-    });
-
-    user.avatar = uploadedFile.url;
-  } else if (employeeData.avatar !== undefined) {
-    user.avatar = employeeData.avatar;
-  }
-
-  await user.save();
-
-  return {
-    user: user.toSafeObject(),
-  };
-};
+}

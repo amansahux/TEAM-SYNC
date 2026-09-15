@@ -6,6 +6,8 @@ import {
   logout,
   updateProfile,
   resetPassword,
+  uploadAvtar,
+  updateName,
 } from "../controllers/auth.controller.js";
 import validate from "../middlewares/validate.middleware.js";
 import { authenticate } from "../middlewares/auth.middleware.js";
@@ -22,7 +24,8 @@ router.post("/login", validate(loginSchema), login);
 router.get("/me", authenticate, getMe);
 router.get("/get-accessToken", getAccessToken);
 router.post("/logout", authenticate, logout);
-router.put("/update-profile", authenticate, upload.single("avatar"), updateProfile);
 router.put("/reset-password", authenticate, resetPassword);
+router.put("/upload-avtar", authenticate, upload.single("avatar"), uploadAvtar);
+router.put("/update-name", authenticate, updateName);
 
 export default router;

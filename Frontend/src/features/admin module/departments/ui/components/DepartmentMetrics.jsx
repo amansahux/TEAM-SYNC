@@ -1,5 +1,5 @@
 import React from "react";
-import { ShieldCheck, BarChart3, Users, Activity } from "lucide-react";
+import { ShieldCheck, BarChart2 } from "lucide-react";
 
 const DepartmentMetrics = ({ metrics }) => {
   const {
@@ -12,81 +12,79 @@ const DepartmentMetrics = ({ metrics }) => {
   } = metrics || {};
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
       {/* 1. Total Employees */}
-      <div className="card p-5 relative overflow-hidden transition-all duration-300 hover:border-[var(--border-strong)]">
-        <div className="flex items-center justify-between gap-2 mb-3">
-          <span className="text-xs font-semibold tracking-wider text-[var(--text-muted)] uppercase">
+      <div className="bg-[var(--card)] rounded-xl p-4 md:p-5 border border-[var(--border)] shadow-[var(--shadow-sm)] hover:border-[var(--border-light)] transition-all duration-200">
+        <div className="flex items-center justify-between text-[var(--text-muted)] mb-1.5">
+          <span className="text-[11px] font-semibold uppercase tracking-wider">
             Total Employees
           </span>
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-[var(--primary-light)] text-[var(--primary)]">
+          <span className="text-[11px] font-medium text-[var(--primary)] bg-[var(--primary-light)] px-1.5 py-0.5 rounded">
             +{newThisMonth} this month
           </span>
         </div>
         <div className="flex items-baseline gap-2">
-          <span className="text-3xl font-bold text-[var(--text-primary)] tracking-tight">
+          <span className="text-2xl sm:text-3xl font-bold font-display text-[var(--text-primary)] tracking-tight">
             {totalEmployees}
           </span>
-          <span className="text-xs font-medium text-[var(--text-secondary)]">
-            Verified
-          </span>
+          <span className="text-xs text-[var(--text-secondary)]">Verified</span>
         </div>
       </div>
 
       {/* 2. Active Now */}
-      <div className="card p-5 relative overflow-hidden transition-all duration-300 hover:border-[var(--border-strong)]">
-        <div className="flex items-center justify-between gap-2 mb-3">
-          <span className="text-xs font-semibold tracking-wider text-[var(--text-muted)] uppercase">
+      <div className="bg-[var(--card)] rounded-xl p-4 md:p-5 border border-[var(--border)] shadow-[var(--shadow-sm)] hover:border-[var(--border-light)] transition-all duration-200">
+        <div className="flex items-center justify-between text-[var(--text-muted)] mb-1.5">
+          <span className="text-[11px] font-semibold uppercase tracking-wider">
             Active Now
           </span>
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]" />
+          <span className="w-2 h-2 rounded-full bg-[var(--primary)] shadow-[0_0_6px_rgba(52,211,153,0.6)]" />
         </div>
         <div className="flex items-baseline gap-2">
-          <span className="text-3xl font-bold text-[var(--text-primary)] tracking-tight">
+          <span className="text-2xl sm:text-3xl font-bold font-display text-[var(--text-primary)] tracking-tight">
             {activeEmployees}
           </span>
-          <span className="text-xs font-medium text-[var(--text-secondary)]">
+          <span className="text-xs text-[var(--text-secondary)]">
             Active ({activeRate})
           </span>
         </div>
       </div>
 
       {/* 3. Configured Units */}
-      <div className="card p-5 relative overflow-hidden transition-all duration-300 hover:border-[var(--border-strong)]">
-        <div className="flex items-center justify-between gap-2 mb-3">
-          <span className="text-xs font-semibold tracking-wider text-[var(--text-muted)] uppercase">
+      <div className="bg-[var(--card)] rounded-xl p-4 md:p-5 border border-[var(--border)] shadow-[var(--shadow-sm)] hover:border-[var(--border-light)] transition-all duration-200">
+        <div className="flex items-center justify-between text-[var(--text-muted)] mb-1.5">
+          <span className="text-[11px] font-semibold uppercase tracking-wider">
             Configured Units
           </span>
           <ShieldCheck className="w-4 h-4 text-[var(--text-muted)]" />
         </div>
         <div className="flex items-baseline gap-2">
-          <span className="text-3xl font-bold text-[var(--text-primary)] tracking-tight">
+          <span className="text-2xl sm:text-3xl font-bold font-display text-[var(--text-primary)] tracking-tight">
             {configuredUnits}
           </span>
-          <span className="text-xs font-medium text-[var(--text-secondary)]">
+          <span className="text-xs text-[var(--text-secondary)]">
             Fully Operational
           </span>
         </div>
       </div>
 
       {/* 4. Average Team Size */}
-      <div className="card p-5 relative overflow-hidden transition-all duration-300 hover:border-[var(--border-strong)]">
-        <div className="flex items-center justify-between gap-2 mb-3">
-          <span className="text-xs font-semibold tracking-wider text-[var(--text-muted)] uppercase">
+      <div className="bg-[var(--card)] rounded-xl p-4 md:p-5 border border-[var(--border)] shadow-[var(--shadow-sm)] hover:border-[var(--border-light)] transition-all duration-200">
+        <div className="flex items-center justify-between text-[var(--text-muted)] mb-1.5">
+          <span className="text-[11px] font-semibold uppercase tracking-wider">
             Average Team Size
           </span>
-          <BarChart3 className="w-4 h-4 text-[var(--text-muted)]" />
+          <BarChart2 className="w-4 h-4 text-[var(--text-muted)]" />
         </div>
         <div className="flex items-baseline gap-2">
-          <span className="text-3xl font-bold text-[var(--text-primary)] tracking-tight">
+          <span className="text-2xl sm:text-3xl font-bold font-display text-[var(--text-primary)] tracking-tight">
             {averageTeamSize}
           </span>
-          <span className="text-xs font-medium text-[var(--text-secondary)]">
+          <span className="text-xs text-[var(--text-secondary)]">
             Members / Unit
           </span>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

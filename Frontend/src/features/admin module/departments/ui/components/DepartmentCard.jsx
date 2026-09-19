@@ -11,7 +11,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 
-const getIcon = (id) => {
+const getDepartmentIcon = (id) => {
   switch (id) {
     case "common":
       return Network;
@@ -28,132 +28,99 @@ const getIcon = (id) => {
   }
 };
 
-const getThemeClasses = (id) => {
-  switch (id) {
-    case "common":
-      return {
-        iconBg: "bg-slate-500/10 text-slate-400 border-slate-500/20",
-        progressFill: "bg-slate-400",
-        accentBorder: "hover:border-slate-400/40",
-      };
-    case "developer":
-      return {
-        iconBg: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-        progressFill: "bg-emerald-500",
-        accentBorder: "hover:border-emerald-500/40",
-      };
-    case "designer":
-      return {
-        iconBg: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-        progressFill: "bg-amber-500",
-        accentBorder: "hover:border-amber-500/40",
-      };
-    case "manager":
-      return {
-        iconBg: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-        progressFill: "bg-blue-500",
-        accentBorder: "hover:border-blue-500/40",
-      };
-    case "marketer":
-      return {
-        iconBg: "bg-orange-500/10 text-orange-400 border-orange-500/20",
-        progressFill: "bg-orange-500",
-        accentBorder: "hover:border-orange-500/40",
-      };
-    default:
-      return {
-        iconBg: "bg-[var(--primary-light)] text-[var(--primary)] border-[var(--primary)]/20",
-        progressFill: "bg-[var(--primary)]",
-        accentBorder: "hover:border-[var(--primary)]/40",
-      };
-  }
-};
-
 const DepartmentCard = ({ dept }) => {
-  const IconComponent = getIcon(dept.id);
-  const theme = getThemeClasses(dept.id);
-  const total = dept.membersCount || 0;
-  const active = dept.activeCount || 0;
-  const percentage = total > 0 ? Math.min(100, Math.round((active / total) * 100)) : 0;
+  const IconComponent = getDepartmentIcon(dept.id);
+  const theme = dept.theme || {};
 
   return (
     <div
-      className={`card p-6 flex flex-col justify-between transition-all duration-300 ${theme.accentBorder} group shadow-sm hover:shadow-md`}
+      className={`group bg-[var(--card)] rounded-xl p-5 md:p-6 border border-[var(--border)] shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] ${theme.hoverBorder} transition-all duration-200 flex flex-col justify-between relative overflow-hidden`}
     >
+      {/* Subtle accent hairline top edge */}
+      <div
+        className={`absolute top-0 left-0 right-0 h-[2.5px] ${theme.hairlineClass || "bg-[var(--primary)]"}`}
+      />
+
       <div>
-        {/* Top Header */}
+        {/* Top Row: Icon + Title + Path + Active badge */}
         <div className="flex items-start justify-between gap-3 mb-4">
           <div className="flex items-center gap-3">
             <div
-              className={`w-11 h-11 rounded-lg border flex items-center justify-center shrink-0 ${theme.iconBg}`}
+              className={`w-11 h-11 rounded-lg border flex items-center justify-center shrink-0 transition-colors ${
+                theme.iconBgClass || "bg-[var(--primary-light)] text-[var(--primary)] border-[var(--primary)]/20"
+              }`}
             >
               <IconComponent className="w-5 h-5" />
             </div>
+
             <div>
-              <h3 className="text-xl font-serif font-bold text-[var(--text-primary)] leading-tight">
+              <h3 className="font-display text-xl sm:text-2xl font-semibold text-[var(--text-primary)] tracking-tight group-hover:text-[var(--primary)] transition-colors">
                 {dept.name}
               </h3>
-              <p className="text-[11px] font-mono font-medium text-[var(--text-muted)] tracking-wider">
-                {dept.path || `/DEPARTMENTS/${dept.id.toUpperCase()}`}
-              </p>
+              <span className="text-[11px] font-mono uppercase tracking-wider text-[var(--text-muted)] block">
+                {dept.path || `/departments/${dept.id}`}
+              </span>
             </div>
           </div>
 
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-[var(--surface-hover)] border border-[var(--border-subtle)] text-[var(--text-secondary)]">
-            <span className="w-2 h-2 rounded-full bg-emerald-400" />
-            <span>{active} Active</span>
-          </span>
+          <div
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--surface)] border border-[var(--border-subtle)] shrink-0"
+            title={`${dept.activeCount} Active`}
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--primary)] shadow-[0_0_6px_rgba(52,211,153,0.7)]" />
+            <span className="text-[11px] font-semibold text-[var(--text-secondary)]">
+              {dept.activeCount} Active
+            </span>
+          </div>
         </div>
 
-        {/* Description */}
-        <p className="text-sm text-[var(--text-secondary)] leading-relaxed mb-6">
+        {/* Middle: Description */}
+        <p className="text-sm text-[var(--text-secondary)] mb-5 leading-relaxed">
           {dept.description}
         </p>
 
-        {/* Badges Row */}
+        {/* Metadata pills */}
         <div className="flex flex-wrap items-center gap-2 mb-6">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium bg-[var(--surface-hover)] text-[var(--text-primary)] border border-[var(--border-subtle)]">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[var(--surface)] border border-[var(--border-subtle)] text-xs font-medium text-[var(--text-primary)]">
             <Users className="w-3.5 h-3.5 text-[var(--text-muted)]" />
-            {total} Members
+            <span>{dept.membersCount} Members</span>
           </span>
 
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium bg-[var(--surface-hover)] text-[var(--text-primary)] border border-[var(--border-subtle)]">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-            {dept.onlineRatio || "0%"} Online Ratio
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[var(--surface)] border border-[var(--border-subtle)] text-xs font-medium text-[var(--text-primary)]">
+            <CheckCircle2 className="w-3.5 h-3.5 text-[var(--primary)]" />
+            <span>{dept.onlineRatio} Online Ratio</span>
           </span>
         </div>
       </div>
 
-      {/* Footer Area */}
-      <div>
-        {/* Staff Allocation Progress */}
-        <div className="mb-5">
-          <div className="flex items-center justify-between text-xs font-semibold text-[var(--text-secondary)] mb-1.5">
-            <span>Staff Allocation Ratio</span>
-            <span className="font-mono text-[var(--text-primary)]">
-              {active} / {total}
-            </span>
-          </div>
-          <div className="w-full h-1.5 rounded-full bg-[var(--background-muted)] overflow-hidden">
-            <div
-              className={`h-full rounded-full transition-all duration-500 ${theme.progressFill}`}
-              style={{ width: `${percentage}%` }}
-            />
-          </div>
+      {/* Bottom Row: Staff Allocation Progress bar & Action */}
+      <div className="pt-4 border-t border-[var(--border-subtle)]">
+        <div className="flex justify-between items-center text-xs text-[var(--text-muted)] mb-1.5 font-medium">
+          <span>Staff Allocation Ratio</span>
+          <span className="font-mono text-[var(--text-primary)] font-semibold">
+            {dept.staffAllocationRatio}
+          </span>
         </div>
 
-        {/* Action Link & Node label */}
-        <div className="flex items-center justify-between pt-4 border-t border-[var(--border-subtle)] text-xs font-semibold">
-          <span className="text-[11px] tracking-wider text-[var(--text-muted)] uppercase">
-            {dept.cluster || "ORGANIZATION NODE"}
+        {/* Ratio Bar */}
+        <div className="w-full h-1.5 rounded-full bg-[var(--background-muted)] overflow-hidden mb-4">
+          <div
+            className={`h-full rounded-full transition-all duration-500 ${theme.progressBarClass || "bg-[var(--primary)]"}`}
+            style={{ width: `${dept.percentage}%` }}
+          />
+        </div>
+
+        <div className="flex items-center justify-between pt-1">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+            {dept.cluster}
           </span>
 
           <Link
-            to={`/dashboard/employees?department=${dept.id}`}
-            className="inline-flex items-center gap-1 text-[var(--text-primary)] hover:text-[var(--primary)] transition-colors group/link"
+            to={`/dashboard/employee?department=${dept.id}`}
+            className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--text-primary)] hover:text-[var(--primary)] transition-colors group/link"
           >
             <span>View Department</span>
-            <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover/link:translate-x-1" />
+            <ArrowRight className="w-3.5 h-3.5 transition-transform duration-150 group-hover/link:translate-x-1 text-[var(--primary)]" />
           </Link>
         </div>
       </div>

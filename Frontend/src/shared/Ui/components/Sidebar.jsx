@@ -80,12 +80,6 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
 
         <div className="mt-auto space-y-3 border-t border-[var(--border)] pt-4">
           <Button
-            icon={Plus}
-            className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-[var(--primary-foreground)] shadow-[var(--glow-primary)] transition-colors hover:bg-[var(--primary-hover)]"
-          >
-            New Task
-          </Button>
-          <Button
             icon={LogOut}
             onClick={handleLogout}
             disabled={isLoggingOut}

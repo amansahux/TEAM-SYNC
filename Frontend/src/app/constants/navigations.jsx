@@ -11,9 +11,7 @@ export const roleNavigationItems = {
   employee: [
     { label: "Dashboard", icon: Grid2X2, to: "/dashboard" },
     { label: "Chat", icon: MessageSquare, to: "/dashboard/chat", alsoActiveFor: ["/dashboard/chat"] },
-    { label: "Attendance", icon: Book, to: "/dashboard/attendance" },
     { label: "My Tasks", icon: CheckSquare, to: "/dashboard/my-task" },
-    { label: "Profile", icon: Users, to: "/dashboard/profile" },
     { label: "Settings", icon: Settings, to: "/dashboard/setting" },
   ],
   admin: [

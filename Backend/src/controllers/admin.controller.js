@@ -1,4 +1,11 @@
-import { addEmployeeService, deleteEmployeeService, editEmployeeService, getAllEmployeeService, MarkActiveInactiveService } from "../services/admin.service.js";
+import {
+  addEmployeeService,
+  deleteEmployeeService,
+  editEmployeeService,
+  getAllEmployeeService,
+  getDepartmentService,
+  MarkActiveInactiveService,
+} from "../services/admin.service.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
 export const addEmployee = asyncHandler(async (req, res) => {
@@ -63,5 +70,15 @@ export const toggleEmployeeStatus = asyncHandler(async (req, res) => {
         data: {
             user,
         },
+    });
+});
+
+export const getDepartment = asyncHandler(async (req, res) => {
+    const result = await getDepartmentService();
+
+    res.status(200).json({
+        success: true,
+        message: "Departments fetched successfully",
+        data: result,
     });
 });

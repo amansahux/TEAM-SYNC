@@ -16,10 +16,6 @@ export const adminRoutes = [
     {
         path:"employee",
         element:<Employee/>
-    },
-    {   
-        path:"document",
-        element:<Document/>
     },{
         path:"task",
         element:<Task/>

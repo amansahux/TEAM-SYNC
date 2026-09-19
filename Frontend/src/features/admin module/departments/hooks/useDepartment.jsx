@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getDepartments } from "../apis/departments.api";
 
@@ -47,8 +47,6 @@ const DEPARTMENT_THEMES = {
 };
 
 export const useDepartments = () => {
-  const [viewMode, setViewMode] = useState("live"); // 'live' | 'skeleton' | 'error'
-
   const { data, isLoading, isFetching, isError, error, refetch } = useQuery({
     queryKey: ["admin", "departments"],
     queryFn: getDepartments,
@@ -110,12 +108,7 @@ export const useDepartments = () => {
     }, [data]);
 
   const handleRetry = () => {
-    setViewMode("live");
     refetch();
-  };
-
-  const handleSwitchMode = (mode) => {
-    setViewMode(mode);
   };
 
   return {
@@ -124,7 +117,6 @@ export const useDepartments = () => {
     departments,
     totalDepartmentsCount,
     totalEmployeesCount,
-    viewMode,
     isLoading,
     isFetching,
     isError,
@@ -132,7 +124,6 @@ export const useDepartments = () => {
 
     // Actions & Handlers
     handleRetry,
-    handleSwitchMode,
     refetch,
   };
 };

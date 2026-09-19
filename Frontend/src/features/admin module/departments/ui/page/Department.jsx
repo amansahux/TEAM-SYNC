@@ -13,21 +13,16 @@ const Department = () => {
     departments,
     totalDepartmentsCount,
     totalEmployeesCount,
-    viewMode,
     isLoading,
     isFetching,
     isError,
     error,
     handleRetry,
-    handleSwitchMode,
   } = useDepartments();
 
   // Partition departments into Row 1 (first 3: Common, Developer, Designer) and Row 2 (Manager, Marketer)
   const firstRowDepartments = departments.slice(0, 3);
   const secondRowDepartments = departments.slice(3);
-
-  const isShowingSkeleton = viewMode === "skeleton" || (isLoading && viewMode === "live");
-  const isShowingError = viewMode === "error" || (isError && viewMode === "live");
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
@@ -38,7 +33,7 @@ const Department = () => {
       />
 
       {/* Top Compact Overview Stats */}
-      {isShowingSkeleton ? (
+      {isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 animate-pulse">
           {[1, 2, 3, 4].map((i) => (
             <div
@@ -51,55 +46,16 @@ const Department = () => {
         <DepartmentMetrics metrics={metrics} />
       )}
 
-      {/* Interactive State Switcher / Section Header */}
-      <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1">
-        <div className="flex items-center gap-2 text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
-          <GitFork className="w-4 h-4 text-[var(--primary)]" />
-          <span>Department Directory Nodes ({totalDepartmentsCount})</span>
-        </div>
-
-        {/* Executive preview toggle bar */}
-        <div className="inline-flex p-1 bg-[var(--surface)] rounded-xl border border-[var(--border)] text-xs font-medium self-start sm:self-auto shadow-[var(--shadow-sm)]">
-          <button
-            type="button"
-            onClick={() => handleSwitchMode("live")}
-            className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
-              viewMode === "live"
-                ? "bg-[var(--card)] text-[var(--text-primary)] font-semibold shadow-[var(--shadow-sm)] border border-[var(--border-subtle)]"
-                : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-            }`}
-          >
-            Live Overview ({totalDepartmentsCount})
-          </button>
-          <button
-            type="button"
-            onClick={() => handleSwitchMode("skeleton")}
-            className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
-              viewMode === "skeleton"
-                ? "bg-[var(--card)] text-[var(--text-primary)] font-semibold shadow-[var(--shadow-sm)] border border-[var(--border-subtle)]"
-                : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-            }`}
-          >
-            Loading Skeleton
-          </button>
-          <button
-            type="button"
-            onClick={() => handleSwitchMode("error")}
-            className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
-              viewMode === "error"
-                ? "bg-[var(--card)] text-[var(--text-primary)] font-semibold shadow-[var(--shadow-sm)] border border-[var(--border-subtle)]"
-                : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-            }`}
-          >
-            Error State
-          </button>
-        </div>
+      {/* Section Header */}
+      <div className="pt-2 flex items-center gap-2 text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider pb-1">
+        <GitFork className="w-4 h-4 text-[var(--primary)]" />
+        <span>Department Directory Nodes ({totalDepartmentsCount})</span>
       </div>
 
       {/* Main State Canvas */}
-      {isShowingSkeleton ? (
+      {isLoading ? (
         <DepartmentSkeleton />
-      ) : isShowingError ? (
+      ) : isError ? (
         <DepartmentError
           error={error}
           onRetry={handleRetry}
@@ -129,3 +85,4 @@ const Department = () => {
 };
 
 export default Department;
+

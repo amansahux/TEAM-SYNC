@@ -255,3 +255,24 @@ export const getDepartmentService = async () => {
     departments,
   };
 };
+
+export const GetDepartmentDetailService = async (department) => {
+  const employees = await User.find({ department: department });
+  const totalEmployees = employees.length;
+  const activeEmployees = employees.filter((employee) =>   employee.status === "active").length;
+  const inactiveEmployees = employees.filter((employee) => employee.status === "inactive").length;
+  const activeRate = totalEmployees > 0 ? ((activeEmployees / totalEmployees) * 100).toFixed(1) : "0.0";
+  const configuredUnits = employees.length;
+  const averageTeamSize = configuredUnits > 0 ? (totalEmployees / configuredUnits).toFixed(1) : "0.0";
+  return {
+    metrics: {
+      totalEmployees,
+      activeEmployees,
+      inactiveEmployees,
+      activeRate,
+      configuredUnits,
+      averageTeamSize,
+    },
+    employees,
+  };
+};

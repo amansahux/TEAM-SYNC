@@ -8,6 +8,7 @@ import {
   editEmployee,
   getAllEmployee,
   getDepartment,
+  getDepartmentDetail,
   toggleEmployeeStatus,
 } from "../controllers/admin.controller.js";
 
@@ -21,5 +22,7 @@ router.put("/toggle-status/:id", authenticate, authorizeRoles("admin"), toggleEm
 router.delete("/delete-employee/:id", authenticate, authorizeRoles("admin"), deleteEmployee);
 
 router.get("/department", authenticate, authorizeRoles("admin"), getDepartment);
+
+router.get("/department/:department", authenticate, authorizeRoles("admin"), getDepartmentDetail);
 
 export default router;

@@ -1,10 +1,11 @@
 import {
-  addEmployeeService,
-  deleteEmployeeService,
-  editEmployeeService,
-  getAllEmployeeService,
-  getDepartmentService,
-  MarkActiveInactiveService,
+    addEmployeeService,
+    deleteEmployeeService,
+    editEmployeeService,
+    getAllEmployeeService,
+    GetDepartmentDetailService,
+    getDepartmentService,
+    MarkActiveInactiveService,
 } from "../services/admin.service.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
@@ -79,6 +80,14 @@ export const getDepartment = asyncHandler(async (req, res) => {
     res.status(200).json({
         success: true,
         message: "Departments fetched successfully",
+        data: result,
+    });
+});
+export const getDepartmentDetail = asyncHandler(async (req, res) => {
+    const result = await GetDepartmentDetailService(req.params.department);
+    res.status(200).json({
+        success: true,
+        message: "Department detail fetched successfully",
         data: result,
     });
 });

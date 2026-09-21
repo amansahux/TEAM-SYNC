@@ -1,6 +1,7 @@
-import { useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMemo, useState, useCallback } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getDepartments, getDepartmentDetail } from "../apis/departments.api";
+import { toggleEmployeeStatus, deleteEmployee, updateEmployee } from "../../employees/apis/employees.api";
 
 // Department specific theme presets aligned with design tokens
 export const DEPARTMENT_THEMES = {
@@ -11,6 +12,8 @@ export const DEPARTMENT_THEMES = {
     progressBarClass: "bg-[#6B7280]",
     hoverBorder: "hover:border-[#6B7280]/40",
     clusterLabel: "Cluster Alpha",
+    icon: "Network",
+    description: "General enterprise pool, shared operations, and unassigned personnel.",
   },
   developer: {
     accentColor: "var(--primary)",
@@ -19,6 +22,8 @@ export const DEPARTMENT_THEMES = {
     progressBarClass: "bg-[var(--primary)]",
     hoverBorder: "hover:border-[var(--primary)]/40",
     clusterLabel: "Primary Engineering",
+    icon: "Terminal",
+    description: "Manage and view employees in the Developer department.",
   },
   designer: {
     accentColor: "var(--secondary)",
@@ -27,6 +32,8 @@ export const DEPARTMENT_THEMES = {
     progressBarClass: "bg-[var(--secondary)]",
     hoverBorder: "hover:border-[var(--secondary)]/40",
     clusterLabel: "Creative Suite",
+    icon: "Palette",
+    description: "Creative systems, UI/UX architecture and visual experience design.",
   },
   manager: {
     accentColor: "#4B6B94",
@@ -35,6 +42,8 @@ export const DEPARTMENT_THEMES = {
     progressBarClass: "bg-[#4B6B94]",
     hoverBorder: "hover:border-[#4B6B94]/40",
     clusterLabel: "Leadership Node",
+    icon: "Building2",
+    description: "Resource governance, sprint alignment, and cross-functional leadership.",
   },
   marketer: {
     accentColor: "#B46E46",
@@ -43,8 +52,12 @@ export const DEPARTMENT_THEMES = {
     progressBarClass: "bg-[#B46E46]",
     hoverBorder: "hover:border-[#B46E46]/40",
     clusterLabel: "Outreach Division",
+    icon: "Megaphone",
+    description: "Growth strategy, product positioning, and institutional communications.",
   },
 };
+
+export const DEPARTMENT_LIST = ["developer", "designer", "manager", "marketer", "common"];
 
 /**
  * Hook to fetch and compute aggregate data for all departments
@@ -134,10 +147,19 @@ export const useDepartments = () => {
 
 /**
  * Hook to fetch detailed data, metrics, and member lists for a specific department
+ * Includes mutations for employee actions (edit, delete, toggle status)
  */
 export const useDepartmentDetail = (department) => {
   const normalizedDept = department?.toLowerCase();
+  const queryClient = useQueryClient();
 
+  // --- Local UI State ---
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("ALL");
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editingEmployee, setEditingEmployee] = useState(null);
+
+  // --- Core Query ---
   const {
     data,
     isLoading,
@@ -155,6 +177,7 @@ export const useDepartmentDetail = (department) => {
 
   const theme = DEPARTMENT_THEMES[normalizedDept] || DEPARTMENT_THEMES.common;
 
+  // --- Computed Data ---
   const {
     metrics,
     employees,
@@ -195,6 +218,86 @@ export const useDepartmentDetail = (department) => {
     };
   }, [data]);
 
+  // --- Filtered Employees (search + status filter) ---
+  const filteredEmployees = useMemo(() => {
+    let result = employees;
+
+    if (statusFilter !== "ALL") {
+      result = result.filter(
+        (emp) => emp.status?.toLowerCase() === statusFilter.toLowerCase()
+      );
+    }
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      result = result.filter(
+        (emp) =>
+          emp.name?.toLowerCase().includes(q) ||
+          emp.email?.toLowerCase().includes(q)
+      );
+    }
+
+    return result;
+  }, [employees, searchQuery, statusFilter]);
+
+  // --- Invalidation helper ---
+  const invalidateDeptQueries = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ["admin", "department", normalizedDept] });
+    queryClient.invalidateQueries({ queryKey: ["admin", "departments"] });
+    queryClient.invalidateQueries({ queryKey: ["employees"] });
+  }, [queryClient, normalizedDept]);
+
+  // --- Mutations ---
+  const toggleStatusMutation = useMutation({
+    mutationFn: ({ employeeId, status }) => toggleEmployeeStatus(employeeId, status),
+    onSuccess: invalidateDeptQueries,
+    onError: (err) => {
+      console.error(err?.response?.data?.message || "Failed to toggle status");
+    },
+  });
+
+  const deleteEmployeeMutation = useMutation({
+    mutationFn: (employeeId) => deleteEmployee(employeeId),
+    onSuccess: invalidateDeptQueries,
+    onError: (err) => {
+      console.error(err?.response?.data?.message || "Failed to delete employee");
+    },
+  });
+
+  const updateEmployeeMutation = useMutation({
+    mutationFn: ({ employeeId, ...data }) => updateEmployee(employeeId, data),
+    onSuccess: () => {
+      invalidateDeptQueries();
+      setEditModalOpen(false);
+      setEditingEmployee(null);
+    },
+    onError: (err) => {
+      console.error(err?.response?.data?.message || "Failed to update employee");
+    },
+  });
+
+  // --- Action Handlers ---
+  const handleToggleStatus = useCallback((emp) => {
+    const newStatus = emp.status === "active" ? "inactive" : "active";
+    toggleStatusMutation.mutate({ employeeId: emp._id, status: newStatus });
+  }, [toggleStatusMutation]);
+
+  const handleDeleteEmployee = useCallback((emp) => {
+    if (window.confirm(`Are you sure you want to delete ${emp.name}?`)) {
+      deleteEmployeeMutation.mutate(emp._id);
+    }
+  }, [deleteEmployeeMutation]);
+
+  const handleOpenEditModal = useCallback((emp) => {
+    setEditingEmployee(emp);
+    setEditModalOpen(true);
+  }, []);
+
+  const handleCloseEditModal = useCallback(() => {
+    setEditModalOpen(false);
+    setEditingEmployee(null);
+  }, []);
+
   const handleRetry = () => {
     refetch();
   };
@@ -218,20 +321,53 @@ export const useDepartmentDetail = (department) => {
     URL.revokeObjectURL(url);
   };
 
+  const handleClearFilters = useCallback(() => {
+    setSearchQuery("");
+    setStatusFilter("ALL");
+  }, []);
+
   return {
+    // Data
     data,
     metrics,
     employees,
+    filteredEmployees,
     activeEmployees,
     inactiveEmployees,
     totalEmployeesCount,
     activeEmployeesCount,
     theme,
+
+    // Query states
     isLoading,
     isPending,
     isFetching,
     isError,
     error,
+
+    // Filters
+    searchQuery,
+    setSearchQuery,
+    statusFilter,
+    setStatusFilter,
+    handleClearFilters,
+
+    // Edit modal state
+    editModalOpen,
+    editingEmployee,
+    handleOpenEditModal,
+    handleCloseEditModal,
+
+    // Mutations
+    toggleStatusMutation,
+    deleteEmployeeMutation,
+    updateEmployeeMutation,
+
+    // Action handlers
+    handleToggleStatus,
+    handleDeleteEmployee,
+
+    // Utility
     handleRetry,
     refetch,
     handleExport,

@@ -69,7 +69,7 @@ const ActionMenu = ({ emp }) => {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-1 w-44 rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-lg)] py-1 z-30 animate-in fade-in">
+        <div className="absolute right-0 top-full mt-1 w-44 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated,var(--card))] shadow-xl py-1 z-50 animate-in fade-in">
           {menuItems.map(({ label, icon: Icon, onClick, danger, isLoading }) => (
             <button
               key={label}

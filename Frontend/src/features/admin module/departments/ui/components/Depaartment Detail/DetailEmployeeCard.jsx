@@ -31,7 +31,7 @@ const DetailEmployeeCard = ({ employee, onEdit, onToggleStatus, onDelete }) => {
   };
 
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 transition-all duration-300 hover:border-[var(--primary)]/40 hover:shadow-xl hover:shadow-[var(--primary)]/5 hover:-translate-y-0.5 flex flex-col justify-between">
+    <div className="group relative rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 transition-all duration-300 hover:border-[var(--primary)]/40 hover:shadow-xl hover:shadow-[var(--primary)]/5 hover:-translate-y-0.5 flex flex-col justify-between">
       <div>
         {/* Top Header Row */}
         <div className="flex items-start justify-between gap-3">

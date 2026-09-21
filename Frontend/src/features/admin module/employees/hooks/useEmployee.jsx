@@ -55,6 +55,7 @@ export const useEmployees = (
     mutationFn: addEmployee,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["employees"] });
+      queryClient.invalidateQueries({ queryKey: ["admin"] });
       form.reset();
     },
     onError: (error) => {
@@ -91,6 +92,7 @@ export const useEmployees = (
     mutationFn: ({ employeeId, status }) => toggleEmployeeStatus(employeeId, status),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["employees"] });
+      queryClient.invalidateQueries({ queryKey: ["admin"] });
     },
     onError: (error) => {
       console.error(error?.response?.data?.message || "Failed to update status");
@@ -100,6 +102,7 @@ export const useEmployees = (
     mutationFn: ({ employeeId, ...data }) => updateEmployee(employeeId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["employees"] });
+      queryClient.invalidateQueries({ queryKey: ["admin"] });
     },
     onError: (error) => {
       console.error(error?.response?.data?.message || "Failed to update employee");
@@ -109,6 +112,7 @@ export const useEmployees = (
     mutationFn: (employeeId) => deleteEmployee(employeeId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["employees"] });
+      queryClient.invalidateQueries({ queryKey: ["admin"] });
     },
     onError: (error) => {
       console.error(error?.response?.data?.message || "Failed to delete employee");

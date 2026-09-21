@@ -36,7 +36,7 @@ const DepartmentDetail = () => {
   } = useDepartmentDetail(activeDeptName);
 
   return (
-    <div className="min-h-screen space-y-6 pb-12 animate-in fade-in duration-300">
+    <div className="min-h-screen space-y-6 pb-12 animate-in fade-in duration-300 lg:px-14 px-4">
       {/* 1. Breadcrumb navigation */}
       <DetailBreadcrumb departmentName={activeDeptName} />
 

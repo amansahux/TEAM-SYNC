@@ -1,5 +1,5 @@
 import React from "react";
-import DetailEmployeeCard from "./DetailEmployeeCard";
+import DetailEmployeeCard from "./DetailEmployeeCard.jsx";
 import { Users, UserPlus, AlertCircle, RefreshCw } from "lucide-react";
 import { useNavigate } from "react-router";
 

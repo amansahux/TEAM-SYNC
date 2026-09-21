@@ -1,6 +1,6 @@
 import React from "react";
 import { Mail, Shield, Calendar, Sparkles } from "lucide-react";
-import ActionMenu from "../../../employees/ui/components/employee/ActionMenu";
+import ActionMenu from "../../../../employees/ui/components/employee/ActionMenu";
 
 const DetailEmployeeCard = ({ employee, onEdit, onToggleStatus, onDelete }) => {
   const isActive = employee?.status === "active";

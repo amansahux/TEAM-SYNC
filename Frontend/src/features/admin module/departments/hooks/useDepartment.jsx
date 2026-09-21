@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getDepartments } from "../apis/departments.api";
+import { getDepartments, getDepartmentDetail } from "../apis/departments.api";
 
-// Department specific theme presets aligned with Stitch design tokens
-const DEPARTMENT_THEMES = {
+// Department specific theme presets aligned with design tokens
+export const DEPARTMENT_THEMES = {
   common: {
     accentColor: "#6B7280",
     hairlineClass: "bg-[#6B7280]",
@@ -46,8 +46,11 @@ const DEPARTMENT_THEMES = {
   },
 };
 
+/**
+ * Hook to fetch and compute aggregate data for all departments
+ */
 export const useDepartments = () => {
-  const { data, isLoading, isFetching, isError, error, refetch } = useQuery({
+  const { data, isLoading, isPending, isFetching, isError, error, refetch } = useQuery({
     queryKey: ["admin", "departments"],
     queryFn: getDepartments,
     staleTime: 60 * 1000,
@@ -118,6 +121,7 @@ export const useDepartments = () => {
     totalDepartmentsCount,
     totalEmployeesCount,
     isLoading,
+    isPending,
     isFetching,
     isError,
     error,
@@ -127,3 +131,113 @@ export const useDepartments = () => {
     refetch,
   };
 };
+
+/**
+ * Hook to fetch detailed data, metrics, and member lists for a specific department
+ */
+export const useDepartmentDetail = (department) => {
+  const normalizedDept = department?.toLowerCase();
+
+  const {
+    data,
+    isLoading,
+    isPending,
+    isFetching,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["admin", "department", normalizedDept],
+    queryFn: () => getDepartmentDetail(normalizedDept),
+    enabled: Boolean(normalizedDept),
+    staleTime: 60 * 1000,
+  });
+
+  const theme = DEPARTMENT_THEMES[normalizedDept] || DEPARTMENT_THEMES.common;
+
+  const {
+    metrics,
+    employees,
+    activeEmployees,
+    inactiveEmployees,
+    totalEmployeesCount,
+    activeEmployeesCount,
+  } = useMemo(() => {
+    const rawMetrics = data?.metrics || {};
+    const rawEmployees = data?.employees || [];
+
+    const totalEmployees = rawMetrics.totalEmployees ?? rawEmployees.length;
+    const activeEmployeesList = rawEmployees.filter((emp) => emp.status === "active");
+    const inactiveEmployeesList = rawEmployees.filter((emp) => emp.status === "inactive");
+
+    const activeCount = rawMetrics.activeEmployees ?? activeEmployeesList.length;
+    const inactiveCount = rawMetrics.inactiveEmployees ?? inactiveEmployeesList.length;
+    const activeRate =
+      rawMetrics.activeRate ||
+      (totalEmployees > 0 ? `${((activeCount / totalEmployees) * 100).toFixed(1)}%` : "0.0%");
+
+    const formattedMetrics = {
+      totalEmployees,
+      activeEmployees: activeCount,
+      inactiveEmployees: inactiveCount,
+      activeRate: typeof activeRate === "number" ? `${activeRate}%` : activeRate,
+      configuredUnits: rawMetrics.configuredUnits ?? totalEmployees,
+      averageTeamSize: rawMetrics.averageTeamSize ?? (totalEmployees > 0 ? "1.0" : "0.0"),
+    };
+
+    return {
+      metrics: formattedMetrics,
+      employees: rawEmployees,
+      activeEmployees: activeEmployeesList,
+      inactiveEmployees: inactiveEmployeesList,
+      totalEmployeesCount: totalEmployees,
+      activeEmployeesCount: activeCount,
+    };
+  }, [data]);
+
+  const handleRetry = () => {
+    refetch();
+  };
+
+  const handleExport = (exportList = employees) => {
+    if (!exportList || exportList.length === 0) {
+      alert("No employee data to export.");
+      return;
+    }
+    const dataStr = JSON.stringify(exportList, null, 2);
+    const blob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${normalizedDept || "department"}_employees_export_${new Date().toISOString().split("T")[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  return {
+    data,
+    metrics,
+    employees,
+    activeEmployees,
+    inactiveEmployees,
+    totalEmployeesCount,
+    activeEmployeesCount,
+    theme,
+    isLoading,
+    isPending,
+    isFetching,
+    isError,
+    error,
+    handleRetry,
+    refetch,
+    handleExport,
+  };
+};
+
+// Default alias export for convenience
+export const useDepartment = useDepartmentDetail;
+export default useDepartments;

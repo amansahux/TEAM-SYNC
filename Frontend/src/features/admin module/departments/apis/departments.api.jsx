@@ -7,5 +7,5 @@ export const getDepartments = async () => {
 
 export const getDepartmentDetail = async (department) => {
   const response = await axiosInstance.get(`/admin/department/${department}`);
-  return response.data;
+  return response.data?.data ?? response.data;
 };

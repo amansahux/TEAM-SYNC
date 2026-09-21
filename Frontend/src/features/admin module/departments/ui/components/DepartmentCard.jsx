@@ -116,7 +116,7 @@ const DepartmentCard = ({ dept }) => {
           </span>
 
           <Link
-            to={`/dashboard/employee?department=${dept.id}`}
+            to={`/dashboard/department/${dept.id}`}
             className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--text-primary)] hover:text-[var(--primary)] transition-colors group/link"
           >
             <span>View Department</span>

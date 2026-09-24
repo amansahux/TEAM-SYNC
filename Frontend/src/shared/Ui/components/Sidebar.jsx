@@ -29,20 +29,20 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
       {/* Confirmation Modal for Logout */}
       {showLogoutModal && (
         <div
-          className="fixed inset-0 z-[110] flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs animate-in fade-in"
+          className="fixed inset-0 z-[110] flex items-center justify-center bg-black/65 p-4 backdrop-blur-sm animate-in fade-in duration-200"
           onClick={() => setShowLogoutModal(false)}
           role="dialog"
           aria-modal="true"
         >
           <div
-            className="w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-2xl space-y-4 animate-in zoom-in-95 duration-150"
+            className="w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 md:p-6 shadow-[var(--shadow-xl)] space-y-4 animate-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-start gap-3">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-red-500/10 text-red-500 border border-red-500/20">
+            <div className="flex items-start gap-3.5">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[var(--danger-light)] text-[var(--danger)] border border-[var(--danger)]/20 shadow-xs">
                 <AlertTriangle size={22} />
               </div>
-              <div className="space-y-1">
+              <div className="space-y-1 flex-1 min-w-0">
                 <h3 className="text-base font-semibold text-[var(--text-primary)]">
                   Confirm Logout
                 </h3>
@@ -53,18 +53,18 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2.5 pt-2">
+            <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-[var(--border-subtle)]">
               <button
                 type="button"
                 onClick={() => setShowLogoutModal(false)}
-                className="cursor-pointer rounded-xl border border-[var(--border)] px-4 py-2 text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--surface)] hover:text-[var(--text-primary)] transition-colors"
+                className="cursor-pointer rounded-lg border border-[var(--border)] bg-transparent px-4 py-2 text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--card-hover)] hover:text-[var(--text-primary)] hover:border-[var(--border-light)] transition-all duration-200 active:scale-95"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={confirmLogout}
-                className="cursor-pointer flex items-center gap-1.5 rounded-xl bg-red-500 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-red-600 transition-colors"
+                className="cursor-pointer flex items-center gap-1.5 rounded-lg bg-[var(--danger)] px-4 py-2 text-xs font-semibold text-white shadow-[var(--shadow-sm)] hover:bg-[var(--danger)]/90 hover:shadow-[var(--shadow-md)] transition-all duration-200 active:scale-95"
               >
                 <LogOut size={14} />
                 Logout
@@ -131,24 +131,27 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
           ))}
         </nav>
 
-        <div className="mt-auto space-y-2  pt-4">
-          <NavItem
-            label="Settings"
-            icon={Settings}
-            to="/dashboard/setting"
-            onClick={() => setIsSidebarOpen(false)}
-          />
-        </div>
+        {/* Bottom Section: Settings pinned above the bordered Logout button */}
+        <div className="mt-auto pt-4 space-y-2 border-t border-[var(--border)]">
+          <div>
+            <NavItem
+              label="Settings"
+              icon={Settings}
+              to="/dashboard/setting"
+              onClick={() => setIsSidebarOpen(false)}
+            />
+          </div>
 
-        <div className="mt-auto space-y-2 border-t border-[var(--border)] pt-4">
-          <Button
-            icon={LogOut}
-            onClick={() => setShowLogoutModal(true)}
-            disabled={isLoggingOut}
-            className="group border border-[var(--accent)]/35 bg-[var(--accent)]/10 text-[var(--accent)] shadow-[var(--glow-accent)] hover:border-[var(--accent)] hover:bg-[var(--accent)]/20 hover:text-[var(--accent-hover)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/40"
-          >
-            {isLoggingOut ? "Signing out..." : "Log out"}
-          </Button>
+          <div className="border-t border-[var(--border)] pt-3">
+            <Button
+              icon={LogOut}
+              onClick={() => setShowLogoutModal(true)}
+              disabled={isLoggingOut}
+              className="group border border-[var(--accent)]/35 bg-[var(--accent)]/10 text-[var(--accent)] shadow-[var(--glow-accent)] hover:border-[var(--accent)] hover:bg-[var(--accent)]/20 hover:text-[var(--accent-hover)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/40"
+            >
+              {isLoggingOut ? "Signing out..." : "Log out"}
+            </Button>
+          </div>
         </div>
       </aside>
     </>

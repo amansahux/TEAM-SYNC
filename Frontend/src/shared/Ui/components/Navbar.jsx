@@ -5,7 +5,8 @@ import { useSelector } from "react-redux";
 const Navbar = ({ setIsSidebarOpen }) => {
   const { initials, handleChangeTheme, theme } = useDashboard();
   const { employee } = useSelector((state) => state.auth);
-  const avtar = employee?.data?.user?.avatar;
+  const user = employee?.user || employee?.data?.user || employee;
+  const avtar = user?.avatar;
 
   return (
     <nav className="sticky top-0 z-20 flex h-[60px] items-center gap-3 border-b border-[var(--border)] bg-[var(--navbar)]/95 px-4 backdrop-blur sm:px-6">

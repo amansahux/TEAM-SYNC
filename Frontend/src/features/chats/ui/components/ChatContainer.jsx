@@ -12,10 +12,8 @@ import ImageLightbox from "./ImageLightbox.jsx";
 import { useSelector } from "react-redux";
 
 const ChatContainer = () => {
-  const {employee} = useSelector(state => state.auth)
-
-  // const { user: userObj } = useAuth();
-  // const employee = userObj?.employee || userObj || {};
+  const { employee } = useSelector((state) => state.auth);
+  const currentUser = employee?.user || employee?.data?.user || employee;
 
   const {
     currentChannel,
@@ -59,7 +57,7 @@ const ChatContainer = () => {
       <div className="flex flex-1 overflow-hidden relative">
         {/* Left Sidebar */}
         <ChatSidebar
-          employee={employee?.data?.user}
+          employee={currentUser}
           isChannelActive={isChannelActive}
           handleChannelClick={handleChannelClick}
           getChannelIcon={getChannelIcon}
@@ -101,7 +99,7 @@ const ChatContainer = () => {
             <ChatMessageList
               messageList={messageList}
               messagesWithSeparators={messagesWithSeparators}
-              userObj={employee?.data?.user}
+              userObj={currentUser}
               currentChannel={currentChannel}
               ChannelIcon={ChannelIcon}
               setLightboxImage={setLightboxImage}

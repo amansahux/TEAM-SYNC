@@ -12,7 +12,9 @@ const authSlice = createSlice({
   },
   reducers: {
     addEmployee: (state, action) => {
-      state.employee = action.payload;
+      state.employee = state.employee
+        ? { ...state.employee, ...action.payload }
+        : action.payload;
     },
     removeEmployee: (state) => {
       state.employee = null;

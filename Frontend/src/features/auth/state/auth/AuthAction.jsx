@@ -21,7 +21,7 @@ export const getCurrentEmployee = createAsyncThunk(
   async (_, thunkApi) => {
     try {
       const res = await axiosInstance.get("/auth/me");
-      return res.data;
+      return res.data.data;
     } catch (error) {
       return thunkApi.rejectWithValue(
         error.response?.data?.message || "Unable to restore your session"

@@ -15,8 +15,9 @@ const useSetting = () => {
   const uploadAvtarMutation = useMutation({
     mutationFn: (file) => uploadAvtar(file),
     onSuccess: (data) => {
-      if (data?.data?.user) {
-        dispatch(addEmployee({ data: { user: data.data.user } }));
+      const updatedUser = data?.data?.user || data?.user;
+      if (updatedUser) {
+        dispatch(addEmployee({ user: updatedUser }));
       }
       queryClient.invalidateQueries({ queryKey: ["messages"] });
     },
@@ -25,8 +26,9 @@ const useSetting = () => {
   const updateNameMutation = useMutation({
     mutationFn: (name) => updateName(name),
     onSuccess: (data) => {
-      if (data?.data?.user) {
-        dispatch(addEmployee({ data: { user: data.data.user } }));
+      const updatedUser = data?.data?.user || data?.user;
+      if (updatedUser) {
+        dispatch(addEmployee({ user: updatedUser }));
       }
       queryClient.invalidateQueries({ queryKey: ["messages"] });
     },

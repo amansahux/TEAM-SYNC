@@ -91,3 +91,16 @@ export const getDepartmentDetail = asyncHandler(async (req, res) => {
         data: result,
     });
 });
+
+export const getAllTask = async () => {
+}
+
+export const createTask = async () => {
+
+}
+export const updateTask = async () => {
+
+}
+export const deleteTask = async () => {
+
+}

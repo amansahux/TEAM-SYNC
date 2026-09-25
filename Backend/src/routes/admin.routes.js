@@ -4,12 +4,16 @@ import { addEmployeeSchema } from "../validators/auth.validators.js";
 import { authenticate, authorizeRoles } from "../middlewares/auth.middleware.js";
 import {
   addEmployee,
+  createTask,
   deleteEmployee,
+  deleteTask,
   editEmployee,
   getAllEmployee,
+  getAllTask,
   getDepartment,
   getDepartmentDetail,
   toggleEmployeeStatus,
+  updateTask,
 } from "../controllers/admin.controller.js";
 
 
@@ -24,5 +28,10 @@ router.delete("/delete-employee/:id", authenticate, authorizeRoles("admin"), del
 router.get("/department", authenticate, authorizeRoles("admin"), getDepartment);
 
 router.get("/department/:department", authenticate, authorizeRoles("admin"), getDepartmentDetail);
+
+router.get("/tasks", authenticate, authorizeRoles("admin"), getAllTask);
+router.post("/create-task", authenticate, authorizeRoles("admin"), createTask);
+router.put("/update-task/:id", authenticate, authorizeRoles("admin"), updateTask);
+router.delete("/delete-task/:id", authenticate, authorizeRoles("admin"), deleteTask);
 
 export default router;

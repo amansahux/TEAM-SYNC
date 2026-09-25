@@ -276,3 +276,16 @@ export const GetDepartmentDetailService = async (department) => {
     employees,
   };
 };
+
+export const getAllTaskService = async () => {
+}
+
+export const createTaskService = async () => {
+
+}
+export const updateTaskService = async () => {
+
+}
+export const deleteTaskService = async () => {
+
+}

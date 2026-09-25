@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import {
   keepPreviousData,
   useMutation,
@@ -39,6 +39,7 @@ export const useTask = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [assignedToFilter, setAssignedToFilter] = useState("all");
@@ -47,7 +48,16 @@ export const useTask = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState(null);
 
-  // Query: Fetch All Tasks
+  // Debounce search input changes (350ms)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 350);
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  // Query: Fetch All Tasks with debouncedSearch
   const {
     data,
     isLoading,
@@ -62,7 +72,7 @@ export const useTask = () => {
       "tasks",
       page,
       limit,
-      search,
+      debouncedSearch,
       statusFilter,
       priorityFilter,
       assignedToFilter,
@@ -71,7 +81,7 @@ export const useTask = () => {
       getAllTasks({
         page,
         limit,
-        search,
+        search: debouncedSearch,
         status: statusFilter,
         priority: priorityFilter,
         assignedTo: assignedToFilter,
@@ -222,6 +232,7 @@ export const useTask = () => {
     limit,
     setLimit,
     search,
+    debouncedSearch,
     setSearch: handleSearchChange,
     statusFilter,
     setStatusFilter: handleStatusFilter,

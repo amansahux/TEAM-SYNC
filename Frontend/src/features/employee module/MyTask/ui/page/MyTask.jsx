@@ -3,11 +3,11 @@ import { useEmployeeTasks } from "../../hooks/useTask";
 import EmployeeTaskHeader from "../components/EmployeeTaskHeader";
 import EmployeeTaskFilters from "../components/EmployeeTaskFilters";
 import EmployeeTaskCard from "../components/EmployeeTaskCard";
-import TaskMetrics from "../../../admin module/tasks/ui/components/TaskMetrics";
-import TaskSkeleton from "../../../admin module/tasks/ui/components/TaskSkeleton";
-import TaskError from "../../../admin module/tasks/ui/components/TaskError";
-import TaskPagination from "../../../admin module/tasks/ui/components/TaskPagination";
 import { ClipboardCheck } from "lucide-react";
+import TaskMetrics from "../../../../admin module/tasks/ui/components/TaskMetrics";
+import TaskSkeleton from "../../../../admin module/tasks/ui/components/TaskSkeleton";
+import TaskError from "../../../../admin module/tasks/ui/components/TaskError";
+import TaskPagination from "../../../../admin module/tasks/ui/components/TaskPagination";
 
 const MyTask = () => {
   const {

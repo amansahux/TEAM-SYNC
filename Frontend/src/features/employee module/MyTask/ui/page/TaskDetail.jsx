@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams, Link } from "react-router";
 import { useEmployeeTaskDetail } from "../../hooks/useTask";
-import TaskError from "../../../admin module/tasks/ui/components/TaskError";
+
 import {
   ArrowLeft,
   Calendar,
@@ -14,6 +14,7 @@ import {
   Sparkles,
   FileText,
 } from "lucide-react";
+import TaskError from "../../../../admin module/tasks/ui/components/TaskError";
 
 // Priority badge configuration
 const PRIORITY_BADGES = {
@@ -276,4 +277,4 @@ const TaskDetail = () => {
   );
 };
 
-export default TaskDetail;
+export default TaskDetail;

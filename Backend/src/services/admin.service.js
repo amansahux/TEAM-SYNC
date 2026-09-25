@@ -1,4 +1,5 @@
 import User from "../models/user.model.js";
+import Task from "../models/task.model.js";
 import AppError from "../utils/AppError.js";
 import { sanitizeParam } from "../utils/SanitizeParam.js";
 
@@ -277,15 +278,126 @@ export const GetDepartmentDetailService = async (department) => {
   };
 };
 
-export const getAllTaskService = async () => {
-}
+export const getAllTaskService = async ({
+  page = 1,
+  limit = 10,
+  search = "",
+  status = "",
+  priority = "",
+  assignedTo = "",
+} = {}) => {
+  const skip = (page - 1) * limit;
 
-export const createTaskService = async () => {
+  const cleanSearch = sanitizeParam(search);
+  const cleanStatus = sanitizeParam(status).toLowerCase();
+  const cleanPriority = sanitizeParam(priority).toLowerCase();
+  const cleanAssignedTo = sanitizeParam(assignedTo);
 
-}
-export const updateTaskService = async () => {
+  const query = {};
 
-}
-export const deleteTaskService = async () => {
+  if (cleanStatus && cleanStatus !== "all" && cleanStatus !== "status: all") {
+    query.status = cleanStatus;
+  }
 
-}
+  if (cleanPriority && cleanPriority !== "all" && cleanPriority !== "priority: all") {
+    query.priority = cleanPriority;
+  }
+
+  if (cleanAssignedTo && cleanAssignedTo !== "all") {
+    query.assignedTo = cleanAssignedTo;
+  }
+
+  if (cleanSearch) {
+    const searchRegex = new RegExp(cleanSearch, "i");
+    query.$or = [{ title: searchRegex }, { description: searchRegex }];
+  }
+
+  const tasks = await Task.find(query)
+    .populate("assignedTo", "name email avatar department role")
+    .populate("assignedBy", "name email avatar role")
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
+
+  const totalTasks = await Task.countDocuments(query);
+  const todoTasks = await Task.countDocuments({ status: "todo" });
+  const inProgressTasks = await Task.countDocuments({ status: "in-progress" });
+  const completedTasks = await Task.countDocuments({ status: "completed" });
+
+  return {
+    tasks,
+    totalTasks,
+    metrics: {
+      todo: todoTasks,
+      inProgress: inProgressTasks,
+      completed: completedTasks,
+    },
+    totalPages: Math.ceil(totalTasks / limit) || 1,
+    currentPage: page,
+  };
+};
+
+export const createTaskService = async (taskData, adminId) => {
+  const { title, description, assignedTo, priority, dueDate } = taskData;
+
+  if (!title) {
+    throw new AppError("Task title is required", 400);
+  }
+
+  if (!assignedTo) {
+    throw new AppError("Assigned employee is required", 400);
+  }
+
+  const employee = await User.findById(assignedTo);
+  if (!employee) {
+    throw new AppError("Assigned employee not found", 404);
+  }
+
+  const newTask = await Task.create({
+    title,
+    description: description || "",
+    assignedTo,
+    assignedBy: adminId,
+    priority: priority || "medium",
+    dueDate: dueDate || null,
+  });
+
+  const populatedTask = await Task.findById(newTask._id)
+    .populate("assignedTo", "name email avatar department role")
+    .populate("assignedBy", "name email avatar role");
+
+  return populatedTask;
+};
+
+export const updateTaskService = async (taskId, updateData) => {
+  const existingTask = await Task.findById(taskId);
+  if (!existingTask) {
+    throw new AppError("Task not found", 404);
+  }
+
+  if (updateData.assignedTo) {
+    const employee = await User.findById(updateData.assignedTo);
+    if (!employee) {
+      throw new AppError("Assigned employee not found", 404);
+    }
+  }
+
+  const updatedTask = await Task.findByIdAndUpdate(taskId, updateData, {
+    new: true,
+    runValidators: true,
+  })
+    .populate("assignedTo", "name email avatar department role")
+    .populate("assignedBy", "name email avatar role");
+
+  return updatedTask;
+};
+
+export const deleteTaskService = async (taskId) => {
+  const task = await Task.findById(taskId);
+  if (!task) {
+    throw new AppError("Task not found", 404);
+  }
+
+  await Task.findByIdAndDelete(taskId);
+  return { message: "Task deleted successfully" };
+};

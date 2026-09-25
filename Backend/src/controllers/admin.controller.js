@@ -1,11 +1,15 @@
 import {
     addEmployeeService,
+    createTaskService,
     deleteEmployeeService,
+    deleteTaskService,
     editEmployeeService,
     getAllEmployeeService,
+    getAllTaskService,
     GetDepartmentDetailService,
     getDepartmentService,
     MarkActiveInactiveService,
+    updateTaskService,
 } from "../services/admin.service.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
@@ -92,15 +96,68 @@ export const getDepartmentDetail = asyncHandler(async (req, res) => {
     });
 });
 
-export const getAllTask = async () => {
-}
+export const getAllTask = asyncHandler(async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const search = req.query.search || "";
+    const status = req.query.status || "";
+    const priority = req.query.priority || "";
+    const assignedTo = req.query.assignedTo || "";
 
-export const createTask = async () => {
+    const { tasks, totalTasks, metrics, totalPages, currentPage } = await getAllTaskService({
+        page,
+        limit,
+        search,
+        status,
+        priority,
+        assignedTo,
+    });
 
-}
-export const updateTask = async () => {
+    res.status(200).json({
+        success: true,
+        message: "Tasks fetched successfully",
+        data: {
+            tasks,
+            metrics,
+            pagination: {
+                total: totalTasks,
+                page: currentPage,
+                totalPages,
+                limit,
+            },
+        },
+    });
+});
 
-}
-export const deleteTask = async () => {
+export const createTask = asyncHandler(async (req, res) => {
+    const task = await createTaskService(req.body, req.user._id);
 
-}
+    res.status(201).json({
+        success: true,
+        message: "Task created and assigned successfully",
+        data: {
+            task,
+        },
+    });
+});
+
+export const updateTask = asyncHandler(async (req, res) => {
+    const updatedTask = await updateTaskService(req.params.id, req.body);
+
+    res.status(200).json({
+        success: true,
+        message: "Task updated successfully",
+        data: {
+            task: updatedTask,
+        },
+    });
+});
+
+export const deleteTask = asyncHandler(async (req, res) => {
+    const result = await deleteTaskService(req.params.id);
+
+    res.status(200).json({
+        success: true,
+        message: result.message || "Task deleted successfully",
+    });
+});

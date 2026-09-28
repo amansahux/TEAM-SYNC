@@ -1,9 +1,9 @@
 import { Bell, Grid2X2, Menu, Moon, Sun } from "lucide-react";
 
-import { useDashboard } from "../../../features/dashboard/hooks/useDashboard";
+import { useAdminDashboard } from "../../../features/admin module/dashboard/hooks/useAdminDashboard.jsx";
 import { useSelector } from "react-redux";
 const Navbar = ({ setIsSidebarOpen }) => {
-  const { initials, handleChangeTheme, theme } = useDashboard();
+  const { initials, handleChangeTheme, theme } = useAdminDashboard();
   const { employee } = useSelector((state) => state.auth);
   const user = employee?.user || employee?.data?.user || employee;
   const avtar = user?.avatar;

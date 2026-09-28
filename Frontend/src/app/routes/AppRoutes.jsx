@@ -3,7 +3,6 @@ import { createBrowserRouter, RouterProvider } from "react-router";
 import AuthLayout from "../Layout/AuthLayout";
 import Login from "../../features/auth/pages/Login";
 import DashboardLayout from "../Layout/DashboardLayout";
-import Home from "../../features/dashboard/ui/pages/Home";
 import { useDispatch } from "react-redux";
 import { getCurrentEmployee } from "../../features/auth/state/auth/AuthAction";
 import ProtectedRoutes from "../proectedRoutes/ProtectedRoutes";
@@ -12,6 +11,8 @@ import { commonRoutes } from "./CommonRoutes";
 import RoleBasedRoute from "../proectedRoutes/RoleBasedRoute";
 import { adminRoutes } from "./AdminRoutes";
 import { employeeRoutes } from "./EmployeeRoutes.jsx";
+
+import DashboardIndex from "../proectedRoutes/DashboardIndex";
 
 const AppRoutes = () => {
   const dispatch = useDispatch();
@@ -43,6 +44,7 @@ const AppRoutes = () => {
           path: "",
           element: <DashboardLayout />,
           children: [
+            { index: true, element: <DashboardIndex /> },
             ...commonRoutes,
             {
               element: <RoleBasedRoute AllowedRoles={["admin"]} />,

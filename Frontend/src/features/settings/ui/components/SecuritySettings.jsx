@@ -11,10 +11,10 @@ import {
   Loader2,
 } from "lucide-react";
 import PasswordField from "./PasswordField.jsx";
-import { useDashboard } from "../../../dashboard/hooks/useDashboard";
+import { useAdminDashboard } from "../../../admin module/dashboard/hooks/useAdminDashboard.jsx";
 
 const SecuritySettings = ({ changePasswordMutation }) => {
-  const { handleLogout, isLoggingOut } = useDashboard();
+  const { handleLogout, isLoggingOut } = useAdminDashboard();
 
   // Form State
   const [currentPassword, setCurrentPassword] = useState("");

@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { AlertTriangle, LogOut, Settings, X } from "lucide-react";
-import { useDashboard } from "../../../features/dashboard/hooks/useDashboard";
+import { useAdminDashboard } from "../../../features/admin module/dashboard/hooks/useAdminDashboard.jsx";
 import Button from "./Button";
 import NavItem from "./NavItem";
 import { useShared } from "../../hooks/useShared";
 
 const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
-  const { handleLogout, isLoggingOut } = useDashboard();
+  const { handleLogout, isLoggingOut } = useAdminDashboard();
   const { navigationItems } = useShared();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 

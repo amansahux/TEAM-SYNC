@@ -1,7 +1,7 @@
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { LogoutEmployee } from "../../auth/state/auth/AuthAction.jsx";
-import { toggleTheme } from "../../../shared/state/Theme.slice.jsx";
+import { LogoutEmployee } from "../../../auth/state/auth/AuthAction.jsx";
+import { toggleTheme } from "../../../../shared/state/Theme.slice.jsx";
 
 export const useDashboard = () => {
   const dispatch = useDispatch();

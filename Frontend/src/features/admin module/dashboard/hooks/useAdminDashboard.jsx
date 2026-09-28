@@ -1,0 +1,45 @@
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { LogoutEmployee } from "../../auth/state/auth/AuthAction.jsx";
+import { toggleTheme } from "../../../shared/state/Theme.slice.jsx";
+
+export const useAdminDashboard = () => {
+  const dispatch = useDispatch();
+  const { employee, isLoggingOut, error } = useSelector((state) => state.auth);
+  const theme = useSelector((state) => state.theme.mode);
+
+  const handleLogout = () => {
+    dispatch(LogoutEmployee());
+  };
+  // console.log(employee)
+  const employeeName =
+    employee?.user?.name ||
+    employee?.name ||
+    employee?.employee?.user?.name ||
+    employee?.employee?.name ||
+    employee?.data?.user?.name ||
+    employee?.data?.name ||
+    "";
+
+  const initials =
+    employeeName
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((namePart) => namePart.charAt(0).toUpperCase())
+      .join("") || "?";
+
+  const handleChangeTheme = () => {
+    dispatch(toggleTheme());
+  };
+  return {
+    employee,
+    isLoggingOut,
+    error,
+    handleLogout,
+    initials,
+    handleChangeTheme,
+    theme
+  };
+};

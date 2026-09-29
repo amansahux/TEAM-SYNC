@@ -24,7 +24,7 @@ export const adminRoutes = [
     element: <AddEmployee />,
   },
   {
-    path: "employee",
+    path: "employees",
     element: <Employee />,
   },
   {

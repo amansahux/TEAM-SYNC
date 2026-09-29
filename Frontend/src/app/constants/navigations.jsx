@@ -17,7 +17,7 @@ export const roleNavigationItems = {
     { label: "Dashboard", icon: Grid2X2, to: "/dashboard/admin" },
     { label: "Chat", icon: MessageSquare, to: "/dashboard/chat", alsoActiveFor: ["/dashboard/chat"] },
     { label: "Departments", icon: Users, to: "/dashboard/department" },
-    { label: "Employees", icon: Users, to: "/dashboard/employee", alsoActiveFor: ["/dashboard/add-employee"] },
+    { label: "Employees", icon: Users, to: "/dashboard/employees", alsoActiveFor: ["/dashboard/add-employee"] },
     { label: "Tasks", icon: CheckSquare, to: "/dashboard/task" },
   ],
 };

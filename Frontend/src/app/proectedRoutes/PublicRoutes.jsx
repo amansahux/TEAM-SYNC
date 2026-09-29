@@ -6,11 +6,8 @@ const PublicRoutes = () => {
   const { employee, isHydrating } = useSelector((state) => state.auth);
   if (isHydrating) {
     return (
-      <div className="relative min-h-screen">
-        <Outlet />
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="h-16 w-16 animate-spin rounded-full border-4 border-violet-600 border-t-transparent" />
-        </div>
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--background)]">
+        <div className="h-16 w-16 animate-spin rounded-full border-4 border-[var(--primary)] border-t-transparent" />
       </div>
     );
   }

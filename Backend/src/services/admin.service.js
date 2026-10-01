@@ -59,20 +59,47 @@ export const getAllEmployeeService = async ({
     const searchRegex = new RegExp(cleanSearch, "i");
     query.$or = [{ name: searchRegex }, { email: searchRegex }];
   }
-
-  const employees = await User.find(query)
-    .skip(skip)
-    .limit(limit);
-
-  const totalEmployees = await User.countDocuments(query);
-  const activeEmployees = await User.countDocuments({ role: "employee", status: "active" });
-  const inactiveEmployees = totalEmployees - activeEmployees
+  // Compute twoWeeksAgo upfront (synchronous)
   const twoWeeksAgo = new Date();
   twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
-  const newEmployees = await User.countDocuments({
-    role: "employee",
-    createdAt: { $gte: twoWeeksAgo },
-  });
+
+  const totalStart = performance.now();
+
+  // Run all DB queries in parallel via Promise.all
+  const [employees, totalEmployees, activeEmployees, newEmployees] =
+    await Promise.all([
+      (async () => {
+        const start = performance.now();
+        const result = await User.find(query).skip(skip).limit(limit);
+        console.log(`⏱ Find employees: ${(performance.now() - start).toFixed(2)} ms`);
+        return result;
+      })(),
+      (async () => {
+        const start = performance.now();
+        const result = await User.countDocuments(query);
+        console.log(`⏱ Count total employees: ${(performance.now() - start).toFixed(2)} ms`);
+        return result;
+      })(),
+      (async () => {
+        const start = performance.now();
+        const result = await User.countDocuments({ role: "employee", status: "active" });
+        console.log(`⏱ Count active employees: ${(performance.now() - start).toFixed(2)} ms`);
+        return result;
+      })(),
+      (async () => {
+        const start = performance.now();
+        const result = await User.countDocuments({
+          role: "employee",
+          createdAt: { $gte: twoWeeksAgo },
+        });
+        console.log(`⏱ Count new employees: ${(performance.now() - start).toFixed(2)} ms`);
+        return result;
+      })(),
+    ]);
+
+  const inactiveEmployees = totalEmployees - activeEmployees;
+
+  console.log(`⏱ Total (Promise.all): ${(performance.now() - totalStart).toFixed(2)} ms`);
 
   return {
     employees,
@@ -85,40 +112,36 @@ export const getAllEmployeeService = async ({
   };
 };
 export const editEmployeeService = async (employeeId, employeeData) => {
-  const existingEmployee = await User.findById(employeeId);
-  if (!existingEmployee) {
-    throw new AppError("Employee not found", 404);
-  }
-
   const updatedEmployee = await User.findByIdAndUpdate(employeeId, employeeData, {
     new: true,
     runValidators: true,
   });
+
+  if (!updatedEmployee) {
+    throw new AppError("Employee not found", 404);
+  }
 
   return {
     employee: updatedEmployee.toSafeObject(),
   };
 };
 export const deleteEmployeeService = async (employeeId) => {
-  const existingEmployee = await User.findById(employeeId);
-  if (!existingEmployee) {
+  const deleted = await User.findByIdAndDelete(employeeId);
+  if (!deleted) {
     throw new AppError("Employee not found", 404);
   }
-
-  await User.findByIdAndDelete(employeeId);
 
   return true;
 };
 export const MarkActiveInactiveService = async (employeeId, status) => {
-  const existingEmployee = await User.findById(employeeId);
-  if (!existingEmployee) {
-    throw new AppError("Employee not found", 404);
-  }
-
   const updatedEmployee = await User.findByIdAndUpdate(employeeId, { status }, {
     new: true,
     runValidators: true,
   });
+
+  if (!updatedEmployee) {
+    throw new AppError("Employee not found", 404);
+  }
 
   return {
     employee: updatedEmployee.toSafeObject(),
@@ -179,29 +202,35 @@ export const getDepartmentService = async () => {
     },
   ];
 
-  const aggregation = await User.aggregate([
-    { $match: { role: "employee" } },
-    {
-      $group: {
-        _id: { department: "$department", status: "$status" },
-        count: { $sum: 1 },
-      },
-    },
-  ]);
-
-  const totalEmployees = await User.countDocuments({ role: "employee" });
-  const activeEmployees = await User.countDocuments({
-    role: "employee",
-    status: "active",
-  });
-
   const startOfMonth = new Date();
   startOfMonth.setDate(1);
   startOfMonth.setHours(0, 0, 0, 0);
 
-  const newThisMonth = await User.countDocuments({
-    role: "employee",
-    createdAt: { $gte: startOfMonth },
+  // Run aggregation + newThisMonth in parallel (2 queries instead of 4)
+  const [aggregation, newThisMonth] = await Promise.all([
+    User.aggregate([
+      { $match: { role: "employee" } },
+      {
+        $group: {
+          _id: { department: "$department", status: "$status" },
+          count: { $sum: 1 },
+        },
+      },
+    ]),
+    User.countDocuments({
+      role: "employee",
+      createdAt: { $gte: startOfMonth },
+    }),
+  ]);
+
+  // Derive totalEmployees & activeEmployees from the aggregation (no extra queries)
+  let totalEmployees = 0;
+  let activeEmployees = 0;
+  aggregation.forEach((item) => {
+    totalEmployees += item.count;
+    if ((item._id.status || "").toLowerCase() === "active") {
+      activeEmployees += item.count;
+    }
   });
 
   const departmentCounts = {};
@@ -260,8 +289,15 @@ export const getDepartmentService = async () => {
 export const GetDepartmentDetailService = async (department) => {
   const employees = await User.find({ department: department });
   const totalEmployees = employees.length;
-  const activeEmployees = employees.filter((employee) =>   employee.status === "active").length;
-  const inactiveEmployees = employees.filter((employee) => employee.status === "inactive").length;
+
+  // Single pass instead of two separate .filter() iterations
+  let activeEmployees = 0;
+  let inactiveEmployees = 0;
+  for (const employee of employees) {
+    if (employee.status === "active") activeEmployees++;
+    else if (employee.status === "inactive") inactiveEmployees++;
+  }
+
   const activeRate = totalEmployees > 0 ? ((activeEmployees / totalEmployees) * 100).toFixed(1) : "0.0";
   const configuredUnits = employees.length;
   const averageTeamSize = configuredUnits > 0 ? (totalEmployees / configuredUnits).toFixed(1) : "0.0";
@@ -312,25 +348,33 @@ export const getAllTaskService = async ({
     query.$or = [{ title: searchRegex }, { description: searchRegex }];
   }
 
-  const tasks = await Task.find(query)
-    .populate("assignedTo", "name email avatar department role")
-    .populate("assignedBy", "name email avatar role")
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limit);
+  // Run all queries in parallel (2 DB calls instead of 5)
+  const [tasks, totalTasks, statusMetrics] = await Promise.all([
+    Task.find(query)
+      .populate("assignedTo", "name email avatar department role")
+      .populate("assignedBy", "name email avatar role")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit),
+    Task.countDocuments(query),
+    // Single aggregate replaces 3 separate countDocuments
+    Task.aggregate([
+      { $match: { status: { $in: ["todo", "in-progress", "completed"] } } },
+      { $group: { _id: "$status", count: { $sum: 1 } } },
+    ]),
+  ]);
 
-  const totalTasks = await Task.countDocuments(query);
-  const todoTasks = await Task.countDocuments({ status: "todo" });
-  const inProgressTasks = await Task.countDocuments({ status: "in-progress" });
-  const completedTasks = await Task.countDocuments({ status: "completed" });
+  // Build metrics from aggregation result
+  const metricsMap = {};
+  statusMetrics.forEach((item) => { metricsMap[item._id] = item.count; });
 
   return {
     tasks,
     totalTasks,
     metrics: {
-      todo: todoTasks,
-      inProgress: inProgressTasks,
-      completed: completedTasks,
+      todo: metricsMap["todo"] || 0,
+      inProgress: metricsMap["in-progress"] || 0,
+      completed: metricsMap["completed"] || 0,
     },
     totalPages: Math.ceil(totalTasks / limit) || 1,
     currentPage: page,
@@ -348,8 +392,9 @@ export const createTaskService = async (taskData, adminId) => {
     throw new AppError("Assigned employee is required", 400);
   }
 
-  const employee = await User.findById(assignedTo);
-  if (!employee) {
+  // exists() is lighter than findById — returns only _id or null
+  const employeeExists = await User.exists({ _id: assignedTo });
+  if (!employeeExists) {
     throw new AppError("Assigned employee not found", 404);
   }
 
@@ -362,26 +407,23 @@ export const createTaskService = async (taskData, adminId) => {
     dueDate: dueDate || null,
   });
 
-  const populatedTask = await Task.findById(newTask._id)
-    .populate("assignedTo", "name email avatar department role")
-    .populate("assignedBy", "name email avatar role");
+  // Populate on the created doc instead of re-querying by _id
+  await newTask.populate("assignedTo", "name email avatar department role");
+  await newTask.populate("assignedBy", "name email avatar role");
 
-  return populatedTask;
+  return newTask;
 };
 
 export const updateTaskService = async (taskId, updateData) => {
-  const existingTask = await Task.findById(taskId);
-  if (!existingTask) {
-    throw new AppError("Task not found", 404);
-  }
-
+  // Validate assignedTo exists if provided (lightweight exists check)
   if (updateData.assignedTo) {
-    const employee = await User.findById(updateData.assignedTo);
-    if (!employee) {
+    const employeeExists = await User.exists({ _id: updateData.assignedTo });
+    if (!employeeExists) {
       throw new AppError("Assigned employee not found", 404);
     }
   }
 
+  // findByIdAndUpdate returns null if not found — no need for separate findById
   const updatedTask = await Task.findByIdAndUpdate(taskId, updateData, {
     new: true,
     runValidators: true,
@@ -389,15 +431,18 @@ export const updateTaskService = async (taskId, updateData) => {
     .populate("assignedTo", "name email avatar department role")
     .populate("assignedBy", "name email avatar role");
 
+  if (!updatedTask) {
+    throw new AppError("Task not found", 404);
+  }
+
   return updatedTask;
 };
 
 export const deleteTaskService = async (taskId) => {
-  const task = await Task.findById(taskId);
-  if (!task) {
+  const deleted = await Task.findByIdAndDelete(taskId);
+  if (!deleted) {
     throw new AppError("Task not found", 404);
   }
 
-  await Task.findByIdAndDelete(taskId);
   return { message: "Task deleted successfully" };
 };
